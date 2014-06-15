@@ -1,0 +1,44 @@
+{
+  "name": "shallow-stringify",
+  "version": "0.0.1",
+  "description": "Limited depth stringify",
+  "keywords": [
+    "stringify"
+  ],
+  "main": "index.js",
+  "files": [
+    "README.md",
+    "index.js",
+    "package.json",
+    "test"
+  ],
+  "dependencies": {
+    "object-keys": "~0.5.1",
+    "type-name": "~0.1.1"
+  },
+  "devDependencies": {
+    "mocha": "~1.20.1"
+  },
+  "scripts": {
+    "build": "browserify index.js --standalone stringify > ./build/shallow-stringify.js",
+    "jshint": "jshint index.js",
+    "test": "./node_modules/.bin/mocha"
+  },
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twada/shallow-stringify.git"
+  },
+  "homepage": "https://github.com/twada/shallow-stringify",
+  "bugs": "https://github.com/twada/shallow-stringify/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://twada.mit-license.org/"
+    }
+  ]
+}

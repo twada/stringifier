@@ -1,0 +1,15 @@
+{
+  "name": "shallow-stringify",
+  "description": "Limited depth stringify",
+  "keywords": [
+    "stringify"
+  ],
+  "main": "build/shallow-stringify.js",
+  "license": "http://twada.mit-license.org/",
+  "ignore": [
+    "**/.*",
+    "index.js",
+    "package.json",
+    "test"
+  ]
+}
