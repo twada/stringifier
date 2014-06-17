@@ -12,7 +12,7 @@
 
 var traverse = require('traverse'),
     typeName = require('type-name'),
-    dump = require('./dump');
+    dump = require('./lib/dump');
 
 function stringify(obj, opts) {
     // var depth = 1;
