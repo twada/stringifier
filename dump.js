@@ -10,6 +10,13 @@ function stringifyNumber(num) {
     return JSON.stringify(num);
 }
 
+function sanitizeKey (key) {
+    if (!/^[A-Za-z_]+$/.test(key)) {
+        return JSON.stringify(key);
+    }
+    return key;
+}
+
 function dumper (acc, x) {
     var maxDepth = 1;
     var tname = typeName(this.node);
@@ -80,7 +87,7 @@ function dumper (acc, x) {
             acc.push('}');
         });
         this.pre(function (val, key) {
-            acc.push(key + ':');
+            acc.push(sanitizeKey(key) + ':');
         });
         this.post(function (node) {
             var parentKeys = node.parent.keys,

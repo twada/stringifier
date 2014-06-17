@@ -171,6 +171,11 @@ describe('stringify', function () {
                 obj.val = input;
                 assert.equal(stringify(obj), 'Object{val:' + sut.pruned + '}');
             });
+            it('non-regular prop name' + testTarget, function () {
+                var obj = {};
+                obj['^pr"op-na:me'] = input;
+                assert.equal(stringify(obj), 'Object{"^pr\\"op-na:me":' + sut.pruned + '}');
+            });
         })();
     }
 });
