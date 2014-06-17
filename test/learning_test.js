@@ -9,8 +9,7 @@ describe('traverse', function () {
         });
         it('nested', function () {
             var input = [4, [5, [6, 7, 8], 9], 10];
-            //assert.equal(stringify(input), '[4,[5,[6,7,8],9],10]');
-            assert.equal(stringify(input), '[4,#Array#,10]');
+            assert.equal(stringify(input), '[4,[5,[6,7,8],9],10]');
         });
     });
 });

@@ -11,16 +11,10 @@
 'use strict';
 
 var traverse = require('traverse'),
-    typeName = require('type-name'),
-    dump = require('./lib/dump');
+    createDumper = require('./lib/dump');
 
 function stringify(obj, opts) {
-    // var depth = 1;
-    // if (typeName(opts) === 'Object' && typeName(opts.maxDepth) === 'number') {
-    //     depth = opts.maxDepth;
-    // }
-    var actual = traverse(obj).reduce(dump, []);
-    return actual.join('');
+    return traverse(obj).reduce(createDumper(opts), []).join('');
 }
 
 module.exports = stringify;

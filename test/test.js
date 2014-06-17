@@ -159,22 +159,22 @@ describe('stringify', function () {
                 sut = fixtures[testTarget],
                 input = sut.input;
             it('single ' + testTarget, function () {
-                assert.equal(stringify(input), sut.expected);
+                assert.equal(stringify(input, {maxDepth: 1}), sut.expected);
             });
             it('Array containing ' + testTarget, function () {
                 var ary = [];
                 ary.push(input);
-                assert.equal(stringify(ary), '[' + sut.pruned + ']');
+                assert.equal(stringify(ary, {maxDepth: 1}), '[' + sut.pruned + ']');
             });
             it('Object containing ' + testTarget, function () {
                 var obj = {};
                 obj.val = input;
-                assert.equal(stringify(obj), 'Object{val:' + sut.pruned + '}');
+                assert.equal(stringify(obj, {maxDepth: 1}), 'Object{val:' + sut.pruned + '}');
             });
             it('non-regular prop name' + testTarget, function () {
                 var obj = {};
                 obj['^pr"op-na:me'] = input;
-                assert.equal(stringify(obj), 'Object{"^pr\\"op-na:me":' + sut.pruned + '}');
+                assert.equal(stringify(obj, {maxDepth: 1}), 'Object{"^pr\\"op-na:me":' + sut.pruned + '}');
             });
         })();
     }
