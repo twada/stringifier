@@ -164,9 +164,19 @@ describe('stringify', function () {
             it('Array containing ' + testTarget, function () {
                 var ary = [];
                 ary.push(input);
+                assert.equal(stringify(ary), '[' + sut.expected + ']');
+            });
+            it('with maxDepth = 1, Array containing ' + testTarget, function () {
+                var ary = [];
+                ary.push(input);
                 assert.equal(stringify(ary, {maxDepth: 1}), '[' + sut.pruned + ']');
             });
             it('Object containing ' + testTarget, function () {
+                var obj = {};
+                obj.val = input;
+                assert.equal(stringify(obj), 'Object{val:' + sut.expected + '}');
+            });
+            it('with maxDepth = 1, Object containing ' + testTarget, function () {
                 var obj = {};
                 obj.val = input;
                 assert.equal(stringify(obj, {maxDepth: 1}), 'Object{val:' + sut.pruned + '}');
