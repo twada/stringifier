@@ -185,6 +185,12 @@ describe('stringify', function () {
                     var actual = traverse(ary).reduce(dump, []);
                     assert.equal(actual.join(''), '[' + sut.pruned + ']');
                 });
+                it('Object containing ' + testTarget, function () {
+                    var obj = {};
+                    obj.val = input;
+                    var actual = traverse(obj).reduce(dump, []);
+                    assert.equal(actual.join(''), 'Object{val:' + sut.pruned + '}');
+                });
             });
         })();
     }

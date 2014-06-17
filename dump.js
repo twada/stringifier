@@ -11,8 +11,9 @@ function stringifyNumber(num) {
 }
 
 function dumper (acc, x) {
-    //console.log(JSON.stringify(this.path));
+    var maxDepth = 1;
     var tname = typeName(this.node);
+    tname = (tname === '') ? 'Object' : tname;
     switch(tname) {
     case 'null':
         acc.push('null');
@@ -34,17 +35,22 @@ function dumper (acc, x) {
         acc.push(x.toString());
         break;
     case 'String':
-        this.before(function (node) {
-            this.keys = [];  // skip child iteration
-        });
-        acc.push('new ' + tname + '(' + JSON.stringify(x) + ')');
-        break;
     case 'Boolean':
     case 'Number':
     case 'Date':
+        this.before(function (node) {
+            this.keys = [];  // skip child iteration if any
+        });
         acc.push('new ' + tname + '(' + JSON.stringify(x) + ')');
         break;
     case 'Array':
+        if (maxDepth <= this.level) {
+            this.before(function (node) {
+                this.keys = [];  // skip child iteration
+            });
+            acc.push('#Array#');
+            break;
+        }
         this.before(function () {
             acc.push('[');
         });
@@ -59,11 +65,16 @@ function dumper (acc, x) {
             }
         });
         break;
-    default:
-        // Object
+    default:  // Object
+        if (maxDepth <= this.level) {
+            this.before(function (node) {
+                this.keys = [];  // skip child iteration
+            });
+            acc.push('#' + tname + '#');
+            break;
+        }
         this.before(function (node) {
-            var className = tname === '' ? 'Object' : tname;
-            acc.push(className + '{');
+            acc.push(tname + '{');
         });
         this.after(function (node) {
             acc.push('}');
