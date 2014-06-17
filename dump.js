@@ -34,6 +34,11 @@ function dumper (acc, x) {
         acc.push(x.toString());
         break;
     case 'String':
+        this.before(function (node) {
+            this.keys = [];  // skip child iteration
+        });
+        acc.push('new ' + tname + '(' + JSON.stringify(x) + ')');
+        break;
     case 'Boolean':
     case 'Number':
     case 'Date':
@@ -46,9 +51,9 @@ function dumper (acc, x) {
         this.after(function () {
             acc.push(']');
         });
-        this.post(function (ctx) {
-            var parentKeys = ctx.parent.keys,
-                idx = parentKeys.indexOf(ctx.key);
+        this.post(function (node) {
+            var parentKeys = node.parent.keys,
+                idx = parentKeys.indexOf(node.key);
             if (idx !== -1 && idx < (parentKeys.length - 1)) {
                 acc.push(',');
             }
@@ -56,18 +61,19 @@ function dumper (acc, x) {
         break;
     default:
         // Object
-        this.before(function () {
-            acc.push(tname + '{');
+        this.before(function (node) {
+            var className = tname === '' ? 'Object' : tname;
+            acc.push(className + '{');
         });
-        this.after(function () {
+        this.after(function (node) {
             acc.push('}');
         });
-        this.pre(function (ctx) {
-            acc.push(ctx.key + ':');
+        this.pre(function (val, key) {
+            acc.push(key + ':');
         });
-        this.post(function (ctx) {
-            var parentKeys = ctx.parent.keys,
-                idx = parentKeys.indexOf(ctx.key);
+        this.post(function (node) {
+            var parentKeys = node.parent.keys,
+                idx = parentKeys.indexOf(node.key);
             if (idx !== -1 && idx < (parentKeys.length - 1)) {
                 acc.push(',');
             }

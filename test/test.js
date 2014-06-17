@@ -11,6 +11,8 @@ var AnonPerson = function(name, age) {
 var stringify = require('..'),
     keys = Object.keys || require('object-keys'),
     assert = require('assert'),
+    traverse = require('traverse'),
+    dump = require('../dump'),
     fixtures = {
         'string literal':  {
             input:    'foo',
@@ -170,6 +172,19 @@ describe('stringify', function () {
                 var obj = {};
                 obj.val = input;
                 assert.equal(stringify(obj), 'Object{val:' + sut.pruned + '}');
+            });
+
+            describe('traverse and dump', function () {
+                it('single ' + testTarget, function () {
+                    var actual = traverse(input).reduce(dump, []);
+                    assert.equal(actual.join(''), sut.expected);
+                });
+                it('Array containing ' + testTarget, function () {
+                    var ary = [];
+                    ary.push(input);
+                    var actual = traverse(ary).reduce(dump, []);
+                    assert.equal(actual.join(''), '[' + sut.pruned + ']');
+                });
             });
         })();
     }
