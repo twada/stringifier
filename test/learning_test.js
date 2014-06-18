@@ -59,6 +59,17 @@ describe('traverse', function () {
                 ].join('\n');
             assert.equal(stringify(input, {indent: '  '}), expected);
         });
+        it('nested array with maxDepth option', function () {
+            var input = [3, [4, 5], 8],
+                expected = [
+                    '[',
+                    '  3,',
+                    '  #Array#,',
+                    '  8',
+                    ']'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  ', maxDepth: 1}), expected);
+        });
     });
 
 });
