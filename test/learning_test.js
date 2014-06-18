@@ -13,7 +13,8 @@ describe('traverse', function () {
         });
     });
 
-    describe('indent', function () {
+
+    describe('Array indentation', function () {
         it('empty array', function () {
             var input = [];
             assert.equal(stringify(input, {indent: '  '}), '[]');
@@ -69,6 +70,20 @@ describe('traverse', function () {
                     ']'
                 ].join('\n');
             assert.equal(stringify(input, {indent: '  ', maxDepth: 1}), expected);
+        });
+    });
+
+
+    describe('Object indentation', function () {
+        it('two props Object', function () {
+            var input = {name: 'bob', age: 3},
+                expected = [
+                    'Object{',
+                    '  name: "bob",',
+                    '  age: 3',
+                    '}'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  '}), expected);
         });
     });
 
