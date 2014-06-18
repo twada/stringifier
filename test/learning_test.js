@@ -75,7 +75,11 @@ describe('traverse', function () {
 
 
     describe('Object indentation', function () {
-        it('two props Object', function () {
+        it('empty object', function () {
+            var input = {};
+            assert.equal(stringify(input, {indent: '  '}), 'Object{}');
+        });
+        it('two props object', function () {
             var input = {name: 'bob', age: 3},
                 expected = [
                     'Object{',
