@@ -1,10 +1,10 @@
 {
-  "name": "shallow-stringify",
-  "description": "Limited depth stringify",
+  "name": "stringifier",
+  "description": "Yet another stringify function",
   "keywords": [
     "stringify"
   ],
-  "main": "build/shallow-stringify.js",
+  "main": "build/stringifier.js",
   "license": "http://twada.mit-license.org/",
   "ignore": [
     "**/.*",

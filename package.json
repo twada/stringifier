@@ -1,7 +1,7 @@
 {
-  "name": "shallow-stringify",
+  "name": "stringifier",
   "version": "0.0.1",
-  "description": "Limited depth stringify",
+  "description": "Yet another stringify function",
   "keywords": [
     "stringify"
   ],
@@ -21,7 +21,7 @@
     "mocha": "~1.20.1"
   },
   "scripts": {
-    "build": "browserify index.js --standalone stringify > ./build/shallow-stringify.js",
+    "build": "browserify index.js --standalone stringify > ./build/stringifier.js",
     "jshint": "jshint index.js",
     "test": "./node_modules/.bin/mocha"
   },
@@ -32,10 +32,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/twada/shallow-stringify.git"
+    "url": "git://github.com/twada/stringifier.git"
   },
-  "homepage": "https://github.com/twada/shallow-stringify",
-  "bugs": "https://github.com/twada/shallow-stringify/issues",
+  "homepage": "https://github.com/twada/stringifier",
+  "bugs": "https://github.com/twada/stringifier/issues",
   "licenses": [
     {
       "type": "MIT",

@@ -1,14 +1,14 @@
-shallow-stringify
+stringifier
 ================================
 
-Shallow (depth limited) stringify function
+Yet another stringify function.
 
 
 EXAMPLE
 ---------------------------------------
 
 ```javascript
-var stringify = require('shallow-stringify');
+var stringify = require('stringifier');
 console.log(stringify(anyVar));
 ```
 
@@ -20,12 +20,12 @@ INSTALL
 
 Install
 
-    $ npm install --save shallow-stringify
+    $ npm install --save stringifier
 
 Use
 
 ```javascript
-var stringify = require('shallow-stringify');
+var stringify = require('stringifier');
 console.log(stringify(anyVar));
 ```
 
@@ -33,11 +33,11 @@ console.log(stringify(anyVar));
 
 Install
 
-    $ bower install --save shallow-stringify
+    $ bower install --save stringifier
 
 Load (`shallowStringify` function is exported)
 
-    <script type="text/javascript" src="./path/to/bower_components/shallow-stringify/build/shallow-stringify.js"></script>
+    <script type="text/javascript" src="./path/to/bower_components/stringifier/build/stringifier.js"></script>
 
 Use
 
