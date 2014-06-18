@@ -48,6 +48,17 @@ describe('traverse', function () {
                 ].join('\n');
             assert.equal(stringify(input, {indent: '  '}), expected);
         });
+        it('nested empty array', function () {
+            var input = [3, [], 8],
+                expected = [
+                    '[',
+                    '  3,',
+                    '  [],',
+                    '  8',
+                    ']'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  '}), expected);
+        });
     });
 
 });
