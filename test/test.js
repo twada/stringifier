@@ -158,29 +158,39 @@ describe('stringify', function () {
             var testTarget = testKeys[i],
                 sut = fixtures[testTarget],
                 input = sut.input;
-            it('single ' + testTarget, function () {
-                assert.equal(stringify(input, {maxDepth: 1}), sut.expected);
+
+            describe('without maxDepth option', function () {
+                it('single ' + testTarget, function () {
+                    assert.equal(stringify(input), sut.expected);
+                });
+                it('Array containing ' + testTarget, function () {
+                    var ary = [];
+                    ary.push(input);
+                    assert.equal(stringify(ary), '[' + sut.expected + ']');
+                });
+                it('Object containing ' + testTarget, function () {
+                    var obj = {};
+                    obj.val = input;
+                    assert.equal(stringify(obj), 'Object{val:' + sut.expected + '}');
+                });
             });
-            it('Array containing ' + testTarget, function () {
-                var ary = [];
-                ary.push(input);
-                assert.equal(stringify(ary), '[' + sut.expected + ']');
+
+            describe('with maxDepth = 1', function () {
+                it('single ' + testTarget, function () {
+                    assert.equal(stringify(input, {maxDepth: 1}), sut.expected);
+                });
+                it('Array containing ' + testTarget, function () {
+                    var ary = [];
+                    ary.push(input);
+                    assert.equal(stringify(ary, {maxDepth: 1}), '[' + sut.pruned + ']');
+                });
+                it('Object containing ' + testTarget, function () {
+                    var obj = {};
+                    obj.val = input;
+                    assert.equal(stringify(obj, {maxDepth: 1}), 'Object{val:' + sut.pruned + '}');
+                });
             });
-            it('with maxDepth = 1, Array containing ' + testTarget, function () {
-                var ary = [];
-                ary.push(input);
-                assert.equal(stringify(ary, {maxDepth: 1}), '[' + sut.pruned + ']');
-            });
-            it('Object containing ' + testTarget, function () {
-                var obj = {};
-                obj.val = input;
-                assert.equal(stringify(obj), 'Object{val:' + sut.expected + '}');
-            });
-            it('with maxDepth = 1, Object containing ' + testTarget, function () {
-                var obj = {};
-                obj.val = input;
-                assert.equal(stringify(obj, {maxDepth: 1}), 'Object{val:' + sut.pruned + '}');
-            });
+
             it('non-regular prop name' + testTarget, function () {
                 var obj = {};
                 obj['^pr"op-na:me'] = input;
