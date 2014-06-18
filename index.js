@@ -14,7 +14,12 @@ var traverse = require('traverse'),
     createDumper = require('./lib/dump');
 
 function stringify(obj, opts) {
-    return traverse(obj).reduce(createDumper(opts), []).join('');
+    var acc = [],
+        push = function (str) {
+            acc.push(str);
+        };
+    traverse(obj).reduce(createDumper(opts), push);
+    return acc.join('');
 }
 
 module.exports = stringify;
