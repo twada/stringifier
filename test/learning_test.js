@@ -29,6 +29,25 @@ describe('traverse', function () {
                 ].join('\n');
             assert.equal(stringify(input, {indent: '  '}), expected);
         });
+        it('nested array', function () {
+            var input = [4, [5, [6, 7, 8], 9], 10],
+                expected = [
+                    '[',
+                    '  4,',
+                    '  [',
+                    '    5,',
+                    '    [',
+                    '      6,',
+                    '      7,',
+                    '      8',
+                    '    ],',
+                    '    9',
+                    '  ],',
+                    '  10',
+                    ']'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  '}), expected);
+        });
     });
 
 });
