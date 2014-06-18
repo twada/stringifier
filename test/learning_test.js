@@ -89,6 +89,42 @@ describe('traverse', function () {
                 ].join('\n');
             assert.equal(stringify(input, {indent: '  '}), expected);
         });
+        it('nested object', function () {
+            var input = {a: 'A', b: {ba: 'BA', bb: 'BB'}, c: 4},
+                expected = [
+                    'Object{',
+                    '  a: "A",',
+                    '  b: Object{',
+                    '    ba: "BA",',
+                    '    bb: "BB"',
+                    '  },',
+                    '  c: 4',
+                    '}'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  '}), expected);
+        });
+        it('nested empty object', function () {
+            var input = {a: 'A', b: {}, c: 4},
+                expected = [
+                    'Object{',
+                    '  a: "A",',
+                    '  b: Object{},',
+                    '  c: 4',
+                    '}'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  '}), expected);
+        });
+        it('nested object with maxDepth option', function () {
+            var input = {a: 'A', b: {ba: 'BA', bb: 'BB'}, c: 4},
+                expected = [
+                    'Object{',
+                    '  a: "A",',
+                    '  b: #Object#,',
+                    '  c: 4',
+                    '}'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  ', maxDepth: 1}), expected);
+        });
     });
 
 });
