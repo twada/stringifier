@@ -14,6 +14,10 @@ describe('traverse', function () {
     });
 
     describe('indent', function () {
+        it('empty array', function () {
+            var input = [];
+            assert.equal(stringify(input, {indent: '  '}), '[]');
+        });
         it('3 items array', function () {
             var input = [3, 5, 8],
                 expected = [
