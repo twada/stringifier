@@ -12,4 +12,19 @@ describe('traverse', function () {
             assert.equal(stringify(input), '[4,[5,[6,7,8],9],10]');
         });
     });
+
+    describe('indent', function () {
+        it('3 items array', function () {
+            var input = [3, 5, 8],
+                expected = [
+                    '[',
+                    '  3,',
+                    '  5,',
+                    '  8',
+                    ']'
+                ].join('\n');
+            assert.equal(stringify(input, {indent: '  '}), expected);
+        });
+    });
+
 });
