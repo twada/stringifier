@@ -135,10 +135,10 @@ describe('traverse', function () {
             circularObj.list = [ circularObj, circularObj ];
             var expected = [
                 'Object{',
-                '  circularRef: #Object@Circular#,',
+                '  circularRef: #@Circular#,',
                 '  list: [',
-                '    #Object@Circular#,',
-                '    #Object@Circular#',
+                '    #@Circular#,',
+                '    #@Circular#',
                 '  ]',
                 '}'
             ].join('\n');
@@ -151,7 +151,7 @@ describe('traverse', function () {
                 '[',
                 '  3,',
                 '  5,',
-                '  #Array@Circular#',
+                '  #@Circular#',
                 ']'
             ].join('\n');
             assert.equal(stringify(circularArray, {indent: '  '}), expected);
