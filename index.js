@@ -8,18 +8,4 @@
  *   http://twada.mit-license.org/
  */
 
-'use strict';
-
-var traverse = require('traverse'),
-    createDumper = require('./lib/dump');
-
-function stringify(obj, opts) {
-    var acc = [],
-        push = function (str) {
-            acc.push(str);
-        };
-    traverse(obj).reduce(createDumper(opts), push);
-    return acc.join('');
-}
-
-module.exports = stringify;
+module.exports = require('./lib/stringify');
