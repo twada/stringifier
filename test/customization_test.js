@@ -1,5 +1,5 @@
 var stringify = require('..'),
-    strategies = require('../lib/strategies'),
+    strategies = require('../strategies'),
     assert = require('assert');
 
 describe('customization', function () {

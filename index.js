@@ -8,4 +8,4 @@
  *   http://twada.mit-license.org/
  */
 
-module.exports = require('./lib/stringify');
+module.exports = require('./stringify');
