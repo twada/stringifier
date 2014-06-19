@@ -127,4 +127,34 @@ describe('traverse', function () {
         });
     });
 
+
+    describe('circular references', function () {
+        it('circular object', function () {
+            var circularObj = {};
+            circularObj.circularRef = circularObj;
+            circularObj.list = [ circularObj, circularObj ];
+            var expected = [
+                'Object{',
+                '  circularRef: #Object@Circular#,',
+                '  list: [',
+                '    #Object@Circular#,',
+                '    #Object@Circular#',
+                '  ]',
+                '}'
+            ].join('\n');
+            assert.equal(stringify(circularObj, {indent: '  '}), expected);
+        });
+        it('circular array', function () {
+            var circularArray = [3, 5];
+            circularArray.push(circularArray);
+            var expected = [
+                '[',
+                '  3,',
+                '  5,',
+                '  #Array@Circular#',
+                ']'
+            ].join('\n');
+            assert.equal(stringify(circularArray, {indent: '  '}), expected);
+        });
+    });
 });
