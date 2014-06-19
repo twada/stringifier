@@ -14,7 +14,8 @@
   ],
   "dependencies": {
     "traverse": "^0.6.6",
-    "type-name": "~0.1.1"
+    "type-name": "~0.1.1",
+    "xtend": "~3.0.0"
   },
   "devDependencies": {
     "object-keys": "~0.5.1",
