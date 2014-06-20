@@ -110,6 +110,26 @@ function arrayx (inner) {
     };
 }
 
+function objectx (inner) {
+    return function (push, x, config) {
+        this.before(function (node) {
+            push('{');
+        });
+        this.after(function (node) {
+            afterCompound(this, push, config);
+            push('}');
+        });
+        this.pre(function (val, key) {
+            preCompound(this, push, config);
+            push(sanitizeKey(key) + (config.indent ? ': ' : ':'));
+        });
+        this.post(function (childContext) {
+            postCompound(childContext, push);
+        });
+        return inner.call(this, push, x, config);
+    };
+}
+
 
 
 
@@ -307,6 +327,7 @@ module.exports = {
         ifCircular: ifCircular,
         ifMaxDepth: ifMaxDepth,
         array: arrayx,
+        object: objectx,
         iter: iter,
         skip: skip
     },

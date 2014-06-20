@@ -16,7 +16,7 @@ var traverse = require('traverse'),
     f = require('./strategies').f;
 
 function defaultHandlers () {
-    var compositeObjectFilter = filters.circular(filters.maxDepth(filters.typeName(filters.object()))),
+    var compositeObjectFilter = f.compose(f.ifCircular(f.compose(f.rune('#@Circular#'), f.skip)), f.ifMaxDepth(f.compose(f.rune('#'), f.typeNameOr('Object'), f.rune('#'), f.skip)), f.typeNameOr('Object'), f.object, f.iter),
         newLike = [f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.jsonx(), f.rune(')')];
     return {
         'null': [f.rune('null')],
