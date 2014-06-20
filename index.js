@@ -18,7 +18,7 @@ function defaultHandlers () {
     return {
         'null': strategies.fixed('null'),
         'undefined': strategies.fixed('undefined'),
-        'function': strategies.fixed('#function#'),
+        'function': strategies.prune(),
         'string': strategies.json(),
         'boolean': strategies.json(),
         'number': strategies.number(),
