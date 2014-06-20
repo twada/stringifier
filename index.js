@@ -12,10 +12,11 @@
 var traverse = require('traverse'),
     typeName = require('type-name'),
     extend = require('xtend'),
-    f = require('./strategies');
+    filters = require('./strategies'),
+    f = require('./strategies').f;
 
 function defaultHandlers () {
-    var compositeObjectFilter = f.circular(f.maxDepth(f.typeName(f.object()))),
+    var compositeObjectFilter = filters.circular(filters.maxDepth(filters.typeName(filters.object()))),
         newLike = [f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.jsonx(), f.rune(')')];
     return {
         'null': [f.rune('null')],
@@ -29,7 +30,7 @@ function defaultHandlers () {
         'Boolean': newLike,
         'Number': newLike,
         'Date': newLike,
-        'Array': f.circular(f.maxDepth(f.array())),
+        'Array': filters.circular(filters.maxDepth(filters.array())),
         'Object': compositeObjectFilter,
         '@default': compositeObjectFilter
     };
@@ -83,7 +84,7 @@ function stringify (obj, opts, handlers) {
     return acc.join('');
 }
 
-stringify.filters = f;
+stringify.filters = filters;
 stringify.defaultConfig = defaultConfig;
 stringify.defaultHandlers = defaultHandlers;
 module.exports = stringify;

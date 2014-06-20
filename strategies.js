@@ -254,6 +254,14 @@ function postCompound (childContext, push) {
 }
 
 module.exports = {
+    f: {
+        skip: skip,
+        rune: rune,
+        typeNameOr: typeNameOr,
+        jsonx: json,
+        tos: toStr,
+        nanOrInfinity: nanOrInfinity
+    },
     skip: skip,
     rune: rune,
     typeNameOr: typeNameOr,

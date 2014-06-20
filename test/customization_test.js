@@ -1,5 +1,6 @@
 var stringify = require('..'),
     filters = stringify.filters,
+    f = stringify.filters.f,
     assert = require('assert');
 
 describe('filters', function () {
@@ -85,21 +86,21 @@ describe('array like filters', function () {
 
     it('rune', function () {
         var handlers = {
-            'Student': [filters.rune('BOOM')]
+            'Student': [f.rune('BOOM')]
         };
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
 
     it('tname', function () {
         var handlers = {
-            'Student': [filters.typeNameOr('anonymous')]
+            'Student': [f.typeNameOr('anonymous')]
         };
         assert.equal(stringify(this.student, null, handlers), 'Student');
     });
 
     it('new tname', function () {
         var handlers = {
-            'Student': [filters.rune('new '), filters.typeNameOr('anonymous'), filters.rune('('), filters.rune(')')]
+            'Student': [f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.rune(')')]
         };
         assert.equal(stringify(this.student, null, handlers), 'new Student()');
     });
