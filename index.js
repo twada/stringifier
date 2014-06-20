@@ -23,7 +23,7 @@ function defaultHandlers () {
         'string': [f.jsonx()],
         'boolean': [f.jsonx()],
         'number': [f.nanOrInfinity, f.jsonx()],
-        'RegExp': f.toStr(),
+        'RegExp': [f.tos],
         'String': f.newLike(),
         'Boolean': f.newLike(),
         'Number': f.newLike(),

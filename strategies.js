@@ -34,6 +34,13 @@ function json (replacer) {
     };
 }
 
+function toStr (inner) {
+    return function (push, x, config) {
+        push(x.toString());
+        return inner.call(this, push, x, config);
+    };
+}
+
 function nanOrInfinity (inner) {
     return function (push, x, config) {
         if (isNaN(x)) {
@@ -76,9 +83,6 @@ function stringifyByPrunedName (mark) {
         push(mark + tname + mark);
     };
 }
-
-
-
 
 function skipChildren (inner) {
     return function (push, x, config) {
@@ -254,14 +258,15 @@ module.exports = {
     rune: rune,
     typeNameOr: typeNameOr,
     jsonx: json,
+    tos: toStr,
     nanOrInfinity: nanOrInfinity,
 
 
     fixed: fixed,
     skipChildren: skipChildren,
     prune: stringifyByPrunedName,
-    toStr: stringifyByToString,
     json: stringifyByJSON,
+    toStr: stringifyByToString,
     number: stringifyNumber,
     newLike: stringifyNewLike,
     circular: stringifyCircular,
