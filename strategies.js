@@ -55,17 +55,41 @@ function stringifyNewLike (inner) {
     };
 }
 
-function stringifyArray () {
+function stringifyTypeName (inner) {
+    return function (push, x, config) {
+        var tname = typeName(this.node);
+        tname = (tname === '') ? 'Object' : tname;
+        push(tname);
+        inner.call(this, push, x, config);
+    };
+}
+
+function stringifyCircular (inner, str) {
+    str = str || '#@Circular#';
     return function (push, x, config) {
         if (this.circular) {
-            push('#@Circular#');
+            push(str);
             return;
         }
+        inner.call(this, push, x, config);
+    };
+}
+
+function stringifyMaxDepth (inner) {
+    return function (push, x, config) {
+        var tname = typeName(this.node);
+        tname = (tname === '') ? 'Object' : tname;
         if (isMaxDepth(this, config)) {
             skipChildIteration(this);
-            push('#Array#');
+            push('#' + tname + '#');
             return;
         }
+        inner.call(this, push, x, config);
+    };
+}
+
+function stringifyArray () {
+    return function (push, x, config) {
         this.before(function (node) {
             push('[');
         });
@@ -84,19 +108,8 @@ function stringifyArray () {
 
 function stringifyObject () {
     return function (push, x, config) {
-        var tname = typeName(this.node);
-        tname = (tname === '') ? 'Object' : tname;
-        if (this.circular) {
-            push('#@Circular#');
-            return;
-        }
-        if (isMaxDepth(this, config)) {
-            skipChildIteration(this);
-            push('#' + tname + '#');
-            return;
-        }
         this.before(function (node) {
-            push(tname + '{');
+            push('{');
         });
         this.after(function (node) {
             afterCompound(this, push, config);
@@ -157,6 +170,9 @@ module.exports = {
     json: stringifyByJSON,
     number: stringifyNumber,
     newLike: stringifyNewLike,
+    circular: stringifyCircular,
+    maxDepth: stringifyMaxDepth,
+    typeName: stringifyTypeName,
     array: stringifyArray,
     object: stringifyObject
 };

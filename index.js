@@ -15,6 +15,7 @@ var traverse = require('traverse'),
     strategies = require('./strategies');
 
 function defaultHandlers () {
+    var compositeObjectFilter = strategies.circular(strategies.maxDepth(strategies.typeName(strategies.object())));
     return {
         'null': strategies.fixed('null'),
         'undefined': strategies.fixed('undefined'),
@@ -27,9 +28,9 @@ function defaultHandlers () {
         'Boolean': strategies.newLike(),
         'Number': strategies.newLike(),
         'Date': strategies.newLike(),
-        'Array': strategies.array(),
-        'Object': strategies.object(),
-        '@default':  strategies.object()
+        'Array': strategies.circular(strategies.maxDepth(strategies.array())),
+        'Object': compositeObjectFilter,
+        '@default': compositeObjectFilter
     };
 }
 
