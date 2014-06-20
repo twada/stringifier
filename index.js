@@ -48,22 +48,23 @@ function createStringifier (opts, handlers) {
     var config = extend(defaultConfig(), opts),
         typeHandlers = extend(defaultHandlers(), handlers);
     return function stringifyAny (push, x) {
-        var tname = typeName(this.node);
+        var tname = typeName(this.node),
+            children;
         if (typeName(typeHandlers[tname]) === 'function') {
-            typeHandlers[tname].call(this, push, x, config);
+            children = typeHandlers[tname].call(this, push, x, config);
         } else if (typeName(typeHandlers[tname]) === 'Array') {
             // console.log('custom filter for: ' + tname);
             var func = typeHandlers[tname].reduceRight(function(right, left) {
                 return left(right);
             }, f.skip);
-            var ret = func.call(this, push, x, config);
-            if (typeName(ret) === 'Array') {
-                this.before(function (node) {
-                    this.keys = ret;
-                });
-            }
+            children = func.call(this, push, x, config);
         } else {
-            typeHandlers['@default'].call(this, push, x, config);
+            children = typeHandlers['@default'].call(this, push, x, config);
+        }
+        if (typeName(children) === 'Array') {
+            this.before(function (node) {
+                this.keys = children;
+            });
         }
         return push;
     };
