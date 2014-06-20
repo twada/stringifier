@@ -16,20 +16,20 @@ var traverse = require('traverse'),
 
 function defaultHandlers () {
     return {
-        'null': strategies.stringifyByFixedValue('null'),
-        'undefined': strategies.stringifyByFixedValue('undefined'),
-        'function': strategies.stringifyByFixedValue('#function#'),
-        'string': strategies.stringifyByJSON,
-        'boolean': strategies.stringifyByJSON,
-        'number': strategies.stringifyNumber,
-        'RegExp': strategies.stringifyByToString,
-        'String': strategies.stringifyPrimitiveWrapper,
-        'Boolean': strategies.stringifyPrimitiveWrapper,
-        'Number': strategies.stringifyPrimitiveWrapper,
-        'Date': strategies.stringifyPrimitiveWrapper,
-        'Array': strategies.stringifyArray,
-        'Object': strategies.stringifyObject,
-        '@default':  strategies.stringifyObject
+        'null': strategies.fixed('null'),
+        'undefined': strategies.fixed('undefined'),
+        'function': strategies.fixed('#function#'),
+        'string': strategies.json(),
+        'boolean': strategies.json(),
+        'number': strategies.number(),
+        'RegExp': strategies.toStr(),
+        'String': strategies.primitiveWrapper(),
+        'Boolean': strategies.primitiveWrapper(),
+        'Number': strategies.primitiveWrapper(),
+        'Date': strategies.primitiveWrapper(),
+        'Array': strategies.array(),
+        'Object': strategies.object(),
+        '@default':  strategies.object()
     };
 }
 
