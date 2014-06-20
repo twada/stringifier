@@ -12,23 +12,23 @@
 var traverse = require('traverse'),
     typeName = require('type-name'),
     extend = require('xtend'),
-    strategies = require('./strategies');
+    filters = require('./strategies');
 
 function defaultHandlers () {
-    var compositeObjectFilter = strategies.circular(strategies.maxDepth(strategies.typeName(strategies.object())));
+    var compositeObjectFilter = filters.circular(filters.maxDepth(filters.typeName(filters.object())));
     return {
-        'null': strategies.fixed('null'),
-        'undefined': strategies.fixed('undefined'),
-        'function': strategies.prune(),
-        'string': strategies.json(),
-        'boolean': strategies.json(),
-        'number': strategies.number(),
-        'RegExp': strategies.toStr(),
-        'String': strategies.newLike(),
-        'Boolean': strategies.newLike(),
-        'Number': strategies.newLike(),
-        'Date': strategies.newLike(),
-        'Array': strategies.circular(strategies.maxDepth(strategies.array())),
+        'null': filters.fixed('null'),
+        'undefined': filters.fixed('undefined'),
+        'function': filters.prune(),
+        'string': filters.json(),
+        'boolean': filters.json(),
+        'number': filters.number(),
+        'RegExp': filters.toStr(),
+        'String': filters.newLike(),
+        'Boolean': filters.newLike(),
+        'Number': filters.newLike(),
+        'Date': filters.newLike(),
+        'Array': filters.circular(filters.maxDepth(filters.array())),
         'Object': compositeObjectFilter,
         '@default': compositeObjectFilter
     };
@@ -65,7 +65,7 @@ function stringify (obj, opts, handlers) {
     return acc.join('');
 }
 
-stringify.strategies = strategies;
+stringify.filters = filters;
 stringify.defaultConfig = defaultConfig;
 stringify.defaultHandlers = defaultHandlers;
 module.exports = stringify;

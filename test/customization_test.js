@@ -1,8 +1,8 @@
 var stringify = require('..'),
-    strategies = require('../strategies'),
+    filters = stringify.filters,
     assert = require('assert');
 
-describe('strategies', function () {
+describe('filters', function () {
     function Student (name, age, gender) {
         this.name = name;
         this.age = age;
@@ -19,42 +19,42 @@ describe('strategies', function () {
 
     it('fixed', function () {
         var handlers = {
-            'Student': strategies.fixed('BOOM')
+            'Student': filters.fixed('BOOM')
         };
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
 
     it('prune', function () {
         var handlers = {
-            'Student': strategies.prune()
+            'Student': filters.prune()
         };
         assert.equal(stringify(this.student, null, handlers), '#Student#');
     });
 
     it('json', function () {
         var handlers = {
-            'Student': strategies.json()
+            'Student': filters.json()
         };
         assert.equal(stringify(this.student, null, handlers), '{"name":"tom","age":10,"gender":"M"}');
     });
 
     it('toStr', function () {
         var handlers = {
-            'Student': strategies.toStr()
+            'Student': filters.toStr()
         };
         assert.equal(stringify(this.student, null, handlers), '[object Object]');
     });
     
     it('newLike', function () {
         var handlers = {
-            'Student': strategies.newLike()
+            'Student': filters.newLike()
         };
         assert.equal(stringify(this.student, null, handlers), 'new Student({"name":"tom","age":10,"gender":"M"})');
     });
 
     it('composite newLike strategy', function () {
         var handlers = {
-            'Student': strategies.newLike(strategies.fixed('WOA'))
+            'Student': filters.newLike(filters.fixed('WOA'))
         };
         assert.equal(stringify(this.student, null, handlers), 'new Student(WOA)');
     });
@@ -65,7 +65,7 @@ describe('strategies', function () {
 
     it('composite number strategy', function () {
         var handlers = {
-            'number': strategies.number(strategies.fixed('BOO'))
+            'number': filters.number(filters.fixed('BOO'))
         };
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,BOO,Infinity,BOO,-Infinity]');
     });
