@@ -24,6 +24,13 @@ describe('strategies', function () {
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
 
+    it('prune', function () {
+        var handlers = {
+                'Student': strategies.prune()
+            };
+        assert.equal(stringify(this.student, null, handlers), '#Student#');
+    });
+
     it('json', function () {
         var handlers = {
                 'Student': strategies.json()
@@ -36,13 +43,6 @@ describe('strategies', function () {
                 'Student': strategies.toStr()
             };
         assert.equal(stringify(this.student, null, handlers), '[object Object]');
-    });
-
-    it('prune', function () {
-        var handlers = {
-                'Student': strategies.prune()
-            };
-        assert.equal(stringify(this.student, null, handlers), '#Student#');
     });
 
 });
