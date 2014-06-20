@@ -15,7 +15,8 @@ var traverse = require('traverse'),
     f = require('./strategies');
 
 function defaultHandlers () {
-    var compositeObjectFilter = f.circular(f.maxDepth(f.typeName(f.object())));
+    var compositeObjectFilter = f.circular(f.maxDepth(f.typeName(f.object()))),
+        newLike = [f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.jsonx(), f.rune(')')];
     return {
         'null': [f.rune('null')],
         'undefined': [f.rune('undefined')],
@@ -24,10 +25,10 @@ function defaultHandlers () {
         'boolean': [f.jsonx()],
         'number': [f.nanOrInfinity, f.jsonx()],
         'RegExp': [f.tos],
-        'String': f.newLike(),
-        'Boolean': f.newLike(),
-        'Number': f.newLike(),
-        'Date': f.newLike(),
+        'String': newLike,
+        'Boolean': newLike,
+        'Number': newLike,
+        'Date': newLike,
         'Array': f.circular(f.maxDepth(f.array())),
         'Object': compositeObjectFilter,
         '@default': compositeObjectFilter
