@@ -7,6 +7,15 @@ function stringifyByFixedValue (str) {
     };
 }
 
+function stringifyByPrunedName (mark) {
+    mark = mark || '#';
+    return function (push, x, config) {
+        var tname = typeName(this.node);
+        skipChildIteration(this);
+        push(mark + tname + mark);
+    };
+}
+
 function stringifyByJSON (replacer, indent) {
     return function (push, x, config) {
         skipChildIteration(this);
@@ -140,6 +149,7 @@ function postCompound (childContext, push) {
 
 module.exports = {
     fixed: stringifyByFixedValue,
+    prune: stringifyByPrunedName,
     toStr: stringifyByToString,
     json: stringifyByJSON,
     number: stringifyNumber,

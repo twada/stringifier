@@ -45,4 +45,11 @@ describe('strategies', function () {
         assert.equal(stringify(this.student, null, handlers), '[object Object]');
     });
 
+    it('prune', function () {
+        var handlers = {
+                'Student': strategies.prune()
+            };
+        assert.equal(stringify(this.student, null, handlers), '#Student#');
+    });
+
 });
