@@ -12,23 +12,23 @@
 var traverse = require('traverse'),
     typeName = require('type-name'),
     extend = require('xtend'),
-    filters = require('./strategies');
+    f = require('./strategies');
 
 function defaultHandlers () {
-    var compositeObjectFilter = filters.circular(filters.maxDepth(filters.typeName(filters.object())));
+    var compositeObjectFilter = f.circular(f.maxDepth(f.typeName(f.object())));
     return {
-        'null': filters.skipChildren(filters.fixed('null')),
-        'undefined': filters.skipChildren(filters.fixed('undefined')),
-        'function': filters.prune(),
-        'string': filters.json(),
-        'boolean': filters.json(),
-        'number': filters.number(),
-        'RegExp': filters.toStr(),
-        'String': filters.newLike(),
-        'Boolean': filters.newLike(),
-        'Number': filters.newLike(),
-        'Date': filters.newLike(),
-        'Array': filters.circular(filters.maxDepth(filters.array())),
+        'null': f.skipChildren(f.fixed('null')),
+        'undefined': f.skipChildren(f.fixed('undefined')),
+        'function': f.prune(),
+        'string': f.json(),
+        'boolean': f.json(),
+        'number': f.number(),
+        'RegExp': f.toStr(),
+        'String': f.newLike(),
+        'Boolean': f.newLike(),
+        'Number': f.newLike(),
+        'Date': f.newLike(),
+        'Array': f.circular(f.maxDepth(f.array())),
         'Object': compositeObjectFilter,
         '@default': compositeObjectFilter
     };
@@ -52,7 +52,7 @@ function createStringifier (opts, handlers) {
         } else if (typeName(typeHandlers[tname]) === 'Array') {
             var func = typeHandlers[tname].reduceRight(function(prev, next) {
                 return next(prev);
-            }, filters.skip);
+            }, f.skip);
             var ret = func.call(this, push, x, config);
             if (ret !== 'TERMINAL') {
                 skipChildIteration(this);
@@ -79,7 +79,7 @@ function stringify (obj, opts, handlers) {
     return acc.join('');
 }
 
-stringify.filters = filters;
+stringify.filters = f;
 stringify.defaultConfig = defaultConfig;
 stringify.defaultHandlers = defaultHandlers;
 module.exports = stringify;
