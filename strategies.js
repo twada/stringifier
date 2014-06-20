@@ -1,8 +1,19 @@
 var typeName = require('type-name');
 
-function stringifyByFixedValue (str) {
+function nothing () {
+    return function (push, x, config) {
+    };
+}
+
+function skipChildren (inner) {
     return function (push, x, config) {
         skipChildIteration(this);
+        inner.call(this, push, x, config);
+    };
+}
+
+function fixed (str) {
+    return function (push, x, config) {
         push(str);
     };
 }
@@ -164,7 +175,8 @@ function postCompound (childContext, push) {
 }
 
 module.exports = {
-    fixed: stringifyByFixedValue,
+    fixed: fixed,
+    skipChildren: skipChildren,
     prune: stringifyByPrunedName,
     toStr: stringifyByToString,
     json: stringifyByJSON,

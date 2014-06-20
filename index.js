@@ -17,8 +17,8 @@ var traverse = require('traverse'),
 function defaultHandlers () {
     var compositeObjectFilter = filters.circular(filters.maxDepth(filters.typeName(filters.object())));
     return {
-        'null': filters.fixed('null'),
-        'undefined': filters.fixed('undefined'),
+        'null': filters.skipChildren(filters.fixed('null')),
+        'undefined': filters.skipChildren(filters.fixed('undefined')),
         'function': filters.prune(),
         'string': filters.json(),
         'boolean': filters.json(),

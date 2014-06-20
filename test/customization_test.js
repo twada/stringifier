@@ -19,7 +19,7 @@ describe('filters', function () {
 
     it('fixed', function () {
         var handlers = {
-            'Student': filters.fixed('BOOM')
+            'Student': filters.skipChildren(filters.fixed('BOOM'))
         };
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
