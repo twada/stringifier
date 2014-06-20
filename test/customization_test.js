@@ -52,7 +52,7 @@ describe('filters', function () {
         assert.equal(stringify(this.student, null, handlers), 'new Student({"name":"tom","age":10,"gender":"M"})');
     });
 
-    it('composite newLike strategy', function () {
+    it('composite newLike filter', function () {
         var handlers = {
             'Student': filters.newLike(filters.fixed('WOA'))
         };
@@ -63,7 +63,7 @@ describe('filters', function () {
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity]), '[NaN,0,Infinity,0,-Infinity]');
     });
 
-    it('composite number strategy', function () {
+    it('composite number filter', function () {
         var handlers = {
             'number': filters.number(filters.fixed('BOO'))
         };
