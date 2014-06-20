@@ -30,7 +30,8 @@ function stringifyByToString () {
     };
 }
 
-function stringifyNumber () {
+function stringifyNumber (inner) {
+    inner = inner || stringifyByJSON();
     return function (push, x, config) {
         if (isNaN(x)) {
             push('NaN');
@@ -40,7 +41,7 @@ function stringifyNumber () {
             push(x === Infinity ? 'Infinity' : '-Infinity');
             return;
         }
-        push(JSON.stringify(x));
+        inner.call(this, push, x, config);
     };
 }
 

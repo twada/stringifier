@@ -52,10 +52,21 @@ describe('strategies', function () {
         assert.equal(stringify(this.student, null, handlers), 'new Student({"name":"tom","age":10,"gender":"M"})');
     });
 
-    it('composite newLike', function () {
+    it('composite newLike strategy', function () {
         var handlers = {
             'Student': strategies.newLike(strategies.fixed('WOA'))
         };
         assert.equal(stringify(this.student, null, handlers), 'new Student(WOA)');
+    });
+    
+    it('number', function () {
+        assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity]), '[NaN,0,Infinity,0,-Infinity]');
+    });
+
+    it('composite number strategy', function () {
+        var handlers = {
+            'number': strategies.number(strategies.fixed('BOO'))
+        };
+        assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,BOO,Infinity,BOO,-Infinity]');
     });
 });
