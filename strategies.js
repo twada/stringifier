@@ -1,6 +1,7 @@
 var typeName = require('type-name'),
     slice = Array.prototype.slice;
 
+// arguments should end with skip or iter
 function compose () {
     var filters = slice.apply(arguments);
     return filters.reduceRight(function(right, left) {
@@ -9,18 +10,12 @@ function compose () {
 };
 
 function skip (push, x, config) {
-    return [];
+    return []; // skip children
 }
 
 function iter (push, x, config) {
     return; // iterate children
 }
-
-// function iter (inner) {
-//     return function (push, x, config) {
-//         return; // iterate children
-//     };
-// }
 
 function typeNameOr (anon) {
     anon = anon || 'Object';
@@ -33,17 +28,6 @@ function typeNameOr (anon) {
         };
     };
 }
-
-// function around (str) {
-//     return function (inner) {
-//         return function (push, x, config) {
-//             push(str);
-//             var ret = inner.call(this, push, x, config);
-//             push(str);
-//             return ret;
-//         };
-//     };
-// }
 
 function rune (str) {
     return function (inner) {
@@ -88,9 +72,7 @@ function ifCircular (then) {
     return function (inner) {
         return function (push, x, config) {
             if (this.circular) {
-                push(then);
-                //then.call(this, push, x, config);
-                return [];
+                return then.call(this, push, x, config);
             }
             return inner.call(this, push, x, config);
         };
