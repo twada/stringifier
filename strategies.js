@@ -4,6 +4,12 @@ function skip (push, x, config) {
     return [];
 }
 
+function iter (inner) {
+    return function (push, x, config) {
+        return; // iterate children
+    };
+}
+
 function typeNameOr (anon) {
     anon = anon || 'Object';
     return function (inner) {
@@ -15,6 +21,17 @@ function typeNameOr (anon) {
         };
     };
 }
+
+// function around (str) {
+//     return function (inner) {
+//         return function (push, x, config) {
+//             push(str);
+//             var ret = inner.call(this, push, x, config);
+//             push(str);
+//             return ret;
+//         };
+//     };
+// }
 
 function rune (str) {
     return function (inner) {
@@ -55,20 +72,59 @@ function nanOrInfinity (inner) {
     };
 }
 
-// function stringifyNumber (inner) {
-//     inner = inner || stringifyByJSON();
-//     return function (push, x, config) {
-//         if (isNaN(x)) {
-//             push('NaN');
-//             return;
-//         }
-//         if (!isFinite(x)) {
-//             push(x === Infinity ? 'Infinity' : '-Infinity');
-//             return;
-//         }
-//         inner.call(this, push, x, config);
-//     };
-// }
+function ifCircular (then) {
+    return function (inner) {
+        return function (push, x, config) {
+            if (this.circular) {
+                push(then);
+                // then.call(this, push, x, config);
+                return [];
+            }
+            return inner.call(this, push, x, config);
+        };
+    };
+}
+
+function ifMaxDepth (then) {
+    return function (inner) {
+        return function (push, x, config) {
+            if (isMaxDepth(this, config)) {
+                var tname = typeName(this.node);
+                tname = (tname === '') ? 'Object' : tname;
+                push('#' + tname + '#');
+                // then.call(this, push, x, config);
+                return [];
+            }
+            return inner.call(this, push, x, config);
+        };
+    };
+}
+
+function arrayx (inner) {
+    return function (push, x, config) {
+        this.before(function (node) {
+            push('[');
+        });
+        this.after(function (node) {
+            afterCompound(this, push, config);
+            push(']');
+        });
+        this.pre(function (val, key) {
+            preCompound(this, push, config);
+        });
+        this.post(function (childContext) {
+            postCompound(childContext, push);
+        });
+        // return; // iterate children
+        return inner.call(this, push, x, config);
+    };
+}
+
+
+
+
+
+
 
 
 
@@ -255,20 +311,17 @@ function postCompound (childContext, push) {
 
 module.exports = {
     f: {
-        skip: skip,
         rune: rune,
         typeNameOr: typeNameOr,
         jsonx: json,
         tos: toStr,
-        nanOrInfinity: nanOrInfinity
+        nanOrInfinity: nanOrInfinity,
+        ifCircular: ifCircular,
+        ifMaxDepth: ifMaxDepth,
+        array: arrayx,
+        iter: iter,
+        skip: skip
     },
-    skip: skip,
-    rune: rune,
-    typeNameOr: typeNameOr,
-    jsonx: json,
-    tos: toStr,
-    nanOrInfinity: nanOrInfinity,
-
 
     fixed: fixed,
     skipChildren: skipChildren,
@@ -277,6 +330,7 @@ module.exports = {
     toStr: stringifyByToString,
     number: stringifyNumber,
     newLike: stringifyNewLike,
+
     circular: stringifyCircular,
     maxDepth: stringifyMaxDepth,
     typeName: stringifyTypeName,

@@ -30,7 +30,7 @@ function defaultHandlers () {
         'Boolean': newLike,
         'Number': newLike,
         'Date': newLike,
-        'Array': filters.circular(filters.maxDepth(filters.array())),
+        'Array': [f.ifCircular('#@Circular#'), f.ifMaxDepth(), f.array, f.iter],
         'Object': compositeObjectFilter,
         '@default': compositeObjectFilter
     };
