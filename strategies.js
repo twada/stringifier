@@ -1,4 +1,12 @@
-var typeName = require('type-name');
+var typeName = require('type-name'),
+    slice = Array.prototype.slice;
+
+function compose () {
+    var filters = slice.apply(arguments);
+    return filters.reduceRight(function(right, left) {
+        return left(right);
+    });
+};
 
 function skip (push, x, config) {
     return [];
@@ -119,9 +127,6 @@ function arrayx (inner) {
         return inner.call(this, push, x, config);
     };
 }
-
-
-
 
 
 
@@ -311,6 +316,7 @@ function postCompound (childContext, push) {
 
 module.exports = {
     f: {
+        compose: compose,
         rune: rune,
         typeNameOr: typeNameOr,
         jsonx: json,
