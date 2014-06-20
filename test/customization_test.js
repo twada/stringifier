@@ -10,11 +10,18 @@ describe('strategies', function () {
     }
 
     beforeEach(function () {
-        this.input = new Student('tom', 10, 'M');
+        this.student = new Student('tom', 10, 'M');
     });
 
     it('default', function () {
-        assert.equal(stringify(this.input), 'Student{name:"tom",age:10,gender:"M"}');
+        assert.equal(stringify(this.student), 'Student{name:"tom",age:10,gender:"M"}');
+    });
+
+    it('fixed', function () {
+        var handlers = {
+                'Student': strategies.fixed('BOOM')
+            };
+        assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
 
     it('json', function () {
@@ -28,13 +35,14 @@ describe('strategies', function () {
                 '  "gender": "M"',
                 '}'
             ].join('\n');
-        assert.equal(stringify(this.input, null, handlers), expected);
+        assert.equal(stringify(this.student, null, handlers), expected);
     });
 
-    it('fixed', function () {
+    it('toStr', function () {
         var handlers = {
-                'Student': strategies.fixed('BOOM')
+                'Student': strategies.toStr()
             };
-        assert.equal(stringify(this.input, null, handlers), 'BOOM');
+        assert.equal(stringify(this.student, null, handlers), '[object Object]');
     });
+
 });
