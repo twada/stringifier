@@ -16,10 +16,10 @@ function stringifyByPrunedName (mark) {
     };
 }
 
-function stringifyByJSON (replacer, indent) {
+function stringifyByJSON (replacer) {
     return function (push, x, config) {
         skipChildIteration(this);
-        push(JSON.stringify(x, replacer, indent));
+        push(JSON.stringify(x, replacer));
     };
 }
 

@@ -26,16 +26,9 @@ describe('strategies', function () {
 
     it('json', function () {
         var handlers = {
-                'Student': strategies.json(null, '  ')
-            },
-            expected = [
-                '{',
-                '  "name": "tom",',
-                '  "age": 10,',
-                '  "gender": "M"',
-                '}'
-            ].join('\n');
-        assert.equal(stringify(this.student, null, handlers), expected);
+                'Student': strategies.json()
+            };
+        assert.equal(stringify(this.student, null, handlers), '{"name":"tom","age":10,"gender":"M"}');
     });
 
     it('toStr', function () {
