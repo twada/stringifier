@@ -2,6 +2,7 @@ var typeName = require('type-name');
 
 function stringifyByFixedValue (str) {
     return function (push, x, config) {
+        skipChildIteration(this);
         push(str);
     };
 }
