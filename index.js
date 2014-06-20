@@ -16,14 +16,15 @@ var traverse = require('traverse'),
     f = require('./strategies').f;
 
 function defaultHandlers () {
-    var compositeObjectFilter = f.compose(f.ifCircular(f.compose(f.rune('#@Circular#'), f.skip)), f.ifMaxDepth(f.compose(f.rune('#'), f.typeNameOr('Object'), f.rune('#'), f.skip)), f.typeNameOr('Object'), f.object, f.iter),
+    var prune = f.compose(f.rune('#'), f.typeNameOr('Object'), f.rune('#'), f.skip),
+        compositeObjectFilter = f.compose(f.ifCircular(f.compose(f.rune('#@Circular#'), f.skip)), f.ifMaxDepth(prune), f.typeNameOr('Object'), f.object, f.iter),
         newLike = [f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.jsonx(), f.rune(')')];
     return {
-        'null': [f.rune('null')],
-        'undefined': [f.rune('undefined')],
-        'function': [f.rune('#function#')],
-        'string': [f.jsonx()],
-        'boolean': [f.jsonx()],
+        'null': f.compose(f.rune('null'), f.skip),
+        'undefined': f.compose(f.rune('undefined'), f.skip),
+        'function': prune,
+        'string': f.compose(f.jsonx(), f.skip),
+        'boolean': f.compose(f.jsonx(), f.skip),
         'number': [f.nanOrInfinity, f.jsonx()],
         'RegExp': [f.tos],
         'String': newLike,
