@@ -73,7 +73,7 @@ describe('filters', function () {
 });
 
 
-describe('array like filters', function () {
+describe('composable filters', function () {
     function Student (name, age, gender) {
         this.name = name;
         this.age = age;
@@ -86,21 +86,21 @@ describe('array like filters', function () {
 
     it('rune', function () {
         var handlers = {
-            'Student': [f.rune('BOOM')]
+            'Student': f.compose(f.rune('BOOM'), f.skip)
         };
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
 
     it('tname', function () {
         var handlers = {
-            'Student': [f.typeNameOr('anonymous')]
+            'Student': f.compose(f.typeNameOr('anonymous'), f.skip)
         };
         assert.equal(stringify(this.student, null, handlers), 'Student');
     });
 
     it('new tname', function () {
         var handlers = {
-            'Student': [f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.rune(')')]
+            'Student': f.compose(f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.rune(')'), f.skip)
         };
         assert.equal(stringify(this.student, null, handlers), 'new Student()');
     });

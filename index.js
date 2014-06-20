@@ -18,15 +18,15 @@ var traverse = require('traverse'),
 function defaultHandlers () {
     var prune = f.compose(f.rune('#'), f.typeNameOr('Object'), f.rune('#'), f.skip),
         compositeObjectFilter = f.compose(f.ifCircular(f.compose(f.rune('#@Circular#'), f.skip)), f.ifMaxDepth(prune), f.typeNameOr('Object'), f.object, f.iter),
-        newLike = [f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.jsonx(), f.rune(')')];
+        newLike = f.compose(f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.jsonx(), f.rune(')'), f.skip);
     return {
         'null': f.compose(f.rune('null'), f.skip),
         'undefined': f.compose(f.rune('undefined'), f.skip),
         'function': prune,
         'string': f.compose(f.jsonx(), f.skip),
         'boolean': f.compose(f.jsonx(), f.skip),
-        'number': [f.nanOrInfinity, f.jsonx()],
-        'RegExp': [f.tos],
+        'number': f.compose(f.nanOrInfinity, f.jsonx(), f.skip),
+        'RegExp': f.compose(f.tos, f.skip),
         'String': newLike,
         'Boolean': newLike,
         'Number': newLike,
@@ -53,12 +53,6 @@ function createStringifier (opts, handlers) {
             children;
         if (typeName(typeHandlers[tname]) === 'function') {
             children = typeHandlers[tname].call(this, push, x, config);
-        } else if (typeName(typeHandlers[tname]) === 'Array') {
-            // console.log('custom filter for: ' + tname);
-            var func = typeHandlers[tname].reduceRight(function(right, left) {
-                return left(right);
-            }, f.skip);
-            children = func.call(this, push, x, config);
         } else {
             children = typeHandlers['@default'].call(this, push, x, config);
         }
