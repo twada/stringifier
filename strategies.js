@@ -1,16 +1,7 @@
 var typeName = require('type-name');
 
-function terminal (push, x, config) {
-    return 'TERMINAL';
-}
-
-function constant (str) {
-    return function (inner) {
-        return function (push, x, config) {
-            push(str);
-            return;
-        };
-    };
+function skip (push, x, config) {
+    return [];
 }
 
 function typeNameOr (anon) {
@@ -43,20 +34,46 @@ function json (replacer) {
     };
 }
 
+function nanOrInfinity (inner) {
+    return function (push, x, config) {
+        if (isNaN(x)) {
+            push('NaN');
+            return [];
+        }
+        if (!isFinite(x)) {
+            push(x === Infinity ? 'Infinity' : '-Infinity');
+            return [];
+        }
+        return inner.call(this, push, x, config);
+    };
+}
+
+// function stringifyNumber (inner) {
+//     inner = inner || stringifyByJSON();
+//     return function (push, x, config) {
+//         if (isNaN(x)) {
+//             push('NaN');
+//             return;
+//         }
+//         if (!isFinite(x)) {
+//             push(x === Infinity ? 'Infinity' : '-Infinity');
+//             return;
+//         }
+//         inner.call(this, push, x, config);
+//     };
+// }
+
+
+
+
+
+
 function stringifyByPrunedName (mark) {
     mark = mark || '#';
     return function (push, x, config) {
         var tname = typeName(this.node);
         skipChildIteration(this);
         push(mark + tname + mark);
-    };
-}
-
-function skip (inner) {
-    return function (push, x, config) {
-        return [];
-        // skipChildIteration(this);
-        // return inner.call(this, push, x, config);
     };
 }
 
@@ -233,14 +250,14 @@ function postCompound (childContext, push) {
 }
 
 module.exports = {
+    skip: skip,
     rune: rune,
     typeNameOr: typeNameOr,
     jsonx: json,
+    nanOrInfinity: nanOrInfinity,
+
 
     fixed: fixed,
-    constant: constant,
-    skip: skip,
-    terminal: terminal,
     skipChildren: skipChildren,
     prune: stringifyByPrunedName,
     toStr: stringifyByToString,

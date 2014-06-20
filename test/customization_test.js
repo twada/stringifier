@@ -69,12 +69,18 @@ describe('filters', function () {
         };
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,BOO,Infinity,BOO,-Infinity]');
     });
+});
 
-    it('compositional', function () {
-        var handlers = {
-            'Student': [filters.constant('BOOM')]
-        };
-        assert.equal(stringify(this.student, null, handlers), 'BOOM');
+
+describe('array like filters', function () {
+    function Student (name, age, gender) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+    }
+
+    beforeEach(function () {
+        this.student = new Student('tom', 10, 'M');
     });
 
     it('rune', function () {

@@ -22,7 +22,7 @@ function defaultHandlers () {
         'function': [f.rune('#function#')],
         'string': [f.jsonx()],
         'boolean': [f.jsonx()],
-        'number': f.number(),
+        'number': [f.nanOrInfinity, f.jsonx()],
         'RegExp': f.toStr(),
         'String': f.newLike(),
         'Boolean': f.newLike(),
@@ -50,12 +50,15 @@ function createStringifier (opts, handlers) {
         if (typeName(typeHandlers[tname]) === 'function') {
             typeHandlers[tname].call(this, push, x, config);
         } else if (typeName(typeHandlers[tname]) === 'Array') {
-            var func = typeHandlers[tname].reduceRight(function(prev, next) {
-                return next(prev);
+            // console.log('custom filter for: ' + tname);
+            var func = typeHandlers[tname].reduceRight(function(right, left) {
+                return left(right);
             }, f.skip);
             var ret = func.call(this, push, x, config);
-            if (ret !== 'TERMINAL') {
-                skipChildIteration(this);
+            if (typeName(ret) === 'Array') {
+                this.before(function (node) {
+                    this.keys = ret;
+                });
             }
         } else {
             typeHandlers['@default'].call(this, push, x, config);
