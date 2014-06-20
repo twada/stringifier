@@ -69,4 +69,32 @@ describe('filters', function () {
         };
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,BOO,Infinity,BOO,-Infinity]');
     });
+
+    it('compositional', function () {
+        var handlers = {
+            'Student': [filters.constant('BOOM')]
+        };
+        assert.equal(stringify(this.student, null, handlers), 'BOOM');
+    });
+
+    it('rune', function () {
+        var handlers = {
+            'Student': [filters.rune('BOOM')]
+        };
+        assert.equal(stringify(this.student, null, handlers), 'BOOM');
+    });
+
+    it('tname', function () {
+        var handlers = {
+            'Student': [filters.typeNameOr('anonymous')]
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student');
+    });
+
+    it('new tname', function () {
+        var handlers = {
+            'Student': [filters.rune('new '), filters.typeNameOr('anonymous'), filters.rune('('), filters.rune(')')]
+        };
+        assert.equal(stringify(this.student, null, handlers), 'new Student()');
+    });
 });

@@ -47,14 +47,28 @@ function createStringifier (opts, handlers) {
         typeHandlers = extend(defaultHandlers(), handlers);
     return function stringifyAny (push, x) {
         var tname = typeName(this.node);
-        if (typeof typeHandlers[tname] === 'function') {
+        if (typeName(typeHandlers[tname]) === 'function') {
             typeHandlers[tname].call(this, push, x, config);
+        } else if (typeName(typeHandlers[tname]) === 'Array') {
+            var func = typeHandlers[tname].reduceRight(function(prev, next) {
+                return next(prev);
+            }, filters.skip);
+            var ret = func.call(this, push, x, config);
+            if (ret !== 'TERMINAL') {
+                skipChildIteration(this);
+            }
         } else {
             typeHandlers['@default'].call(this, push, x, config);
         }
         return push;
     };
 };
+
+function skipChildIteration (context) {
+    context.before(function (node) {
+        context.keys = [];
+    });
+}
 
 function stringify (obj, opts, handlers) {
     var acc = [],

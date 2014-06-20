@@ -1,9 +1,58 @@
 var typeName = require('type-name');
 
-function nothing () {
-    return function (push, x, config) {
+function terminal (push, x, config) {
+    return 'TERMINAL';
+}
+
+function constant (str) {
+    return function (inner) {
+        return function (push, x, config) {
+            push(str);
+            return;
+        };
     };
 }
+
+function typeNameOr (anon) {
+    anon = anon || 'Object';
+    return function (inner) {
+        return function (push, x, config) {
+            var name = typeName(this.node);
+            name = (name === '') ? anon : name;
+            push(name);
+            return inner.call(this, push, x, config);
+        };
+    };
+}
+
+function rune (str) {
+    return function (inner) {
+        return function (push, x, config) {
+            push(str);
+            return inner.call(this, push, x, config);
+        };
+    };
+}
+
+function stringifyByPrunedName (mark) {
+    mark = mark || '#';
+    return function (push, x, config) {
+        var tname = typeName(this.node);
+        skipChildIteration(this);
+        push(mark + tname + mark);
+    };
+}
+
+function skip (inner) {
+    return function (push, x, config) {
+        return 'SKIP';
+        // skipChildIteration(this);
+        // return inner.call(this, push, x, config);
+    };
+}
+
+
+
 
 function skipChildren (inner) {
     return function (push, x, config) {
@@ -175,7 +224,13 @@ function postCompound (childContext, push) {
 }
 
 module.exports = {
+    rune: rune,
+    typeNameOr: typeNameOr,
+
     fixed: fixed,
+    constant: constant,
+    skip: skip,
+    terminal: terminal,
     skipChildren: skipChildren,
     prune: stringifyByPrunedName,
     toStr: stringifyByToString,
