@@ -44,11 +44,13 @@ function stringifyNumber () {
     };
 }
 
-function stringifyPrimitiveWrapper () {
+function stringifyNewLike (inner) {
+    inner = inner || stringifyByJSON();
     return function (push, x, config) {
-        var tname = typeName(this.node);
         skipChildIteration(this);
-        push('new ' + tname + '(' + JSON.stringify(x) + ')');
+        push('new ' + typeName(this.node) + '(');
+        inner.call(this, push, x, config);
+        push(')');
     };
 }
 
@@ -153,7 +155,7 @@ module.exports = {
     toStr: stringifyByToString,
     json: stringifyByJSON,
     number: stringifyNumber,
-    primitiveWrapper: stringifyPrimitiveWrapper,
+    newLike: stringifyNewLike,
     array: stringifyArray,
     object: stringifyObject
 };

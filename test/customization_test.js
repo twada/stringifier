@@ -19,30 +19,43 @@ describe('strategies', function () {
 
     it('fixed', function () {
         var handlers = {
-                'Student': strategies.fixed('BOOM')
-            };
+            'Student': strategies.fixed('BOOM')
+        };
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
 
     it('prune', function () {
         var handlers = {
-                'Student': strategies.prune()
-            };
+            'Student': strategies.prune()
+        };
         assert.equal(stringify(this.student, null, handlers), '#Student#');
     });
 
     it('json', function () {
         var handlers = {
-                'Student': strategies.json()
-            };
+            'Student': strategies.json()
+        };
         assert.equal(stringify(this.student, null, handlers), '{"name":"tom","age":10,"gender":"M"}');
     });
 
     it('toStr', function () {
         var handlers = {
-                'Student': strategies.toStr()
-            };
+            'Student': strategies.toStr()
+        };
         assert.equal(stringify(this.student, null, handlers), '[object Object]');
     });
+    
+    it('newLike', function () {
+        var handlers = {
+            'Student': strategies.newLike()
+        };
+        assert.equal(stringify(this.student, null, handlers), 'new Student({"name":"tom","age":10,"gender":"M"})');
+    });
 
+    it('composite newLike', function () {
+        var handlers = {
+            'Student': strategies.newLike(strategies.fixed('WOA'))
+        };
+        assert.equal(stringify(this.student, null, handlers), 'new Student(WOA)');
+    });
 });
