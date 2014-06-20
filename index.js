@@ -30,7 +30,7 @@ function defaultHandlers () {
         'Boolean': newLike,
         'Number': newLike,
         'Date': newLike,
-        'Array': f.compose(f.ifCircular('#@Circular#'), f.ifMaxDepth(), f.array, f.iter),
+        'Array': f.compose(f.ifCircular('#@Circular#'), f.ifMaxDepth(f.compose(f.rune('#'), f.typeNameOr('@Anonymous'), f.rune('#'), f.skip)), f.array, f.iter),
         'Object': compositeObjectFilter,
         '@default': compositeObjectFilter
     };

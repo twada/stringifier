@@ -12,11 +12,15 @@ function skip (push, x, config) {
     return [];
 }
 
-function iter (inner) {
-    return function (push, x, config) {
-        return; // iterate children
-    };
+function iter (push, x, config) {
+    return; // iterate children
 }
+
+// function iter (inner) {
+//     return function (push, x, config) {
+//         return; // iterate children
+//     };
+// }
 
 function typeNameOr (anon) {
     anon = anon || 'Object';
@@ -85,7 +89,7 @@ function ifCircular (then) {
         return function (push, x, config) {
             if (this.circular) {
                 push(then);
-                // then.call(this, push, x, config);
+                //then.call(this, push, x, config);
                 return [];
             }
             return inner.call(this, push, x, config);
@@ -97,11 +101,7 @@ function ifMaxDepth (then) {
     return function (inner) {
         return function (push, x, config) {
             if (isMaxDepth(this, config)) {
-                var tname = typeName(this.node);
-                tname = (tname === '') ? 'Object' : tname;
-                push('#' + tname + '#');
-                // then.call(this, push, x, config);
-                return [];
+                return then.call(this, push, x, config);
             }
             return inner.call(this, push, x, config);
         };
