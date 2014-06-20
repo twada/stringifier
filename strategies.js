@@ -34,6 +34,15 @@ function rune (str) {
     };
 }
 
+function json (replacer) {
+    return function (inner) {
+        return function (push, x, config) {
+            push(JSON.stringify(x, replacer));
+            return inner.call(this, push, x, config);
+        };
+    };
+}
+
 function stringifyByPrunedName (mark) {
     mark = mark || '#';
     return function (push, x, config) {
@@ -45,7 +54,7 @@ function stringifyByPrunedName (mark) {
 
 function skip (inner) {
     return function (push, x, config) {
-        return 'SKIP';
+        return [];
         // skipChildIteration(this);
         // return inner.call(this, push, x, config);
     };
@@ -226,6 +235,7 @@ function postCompound (childContext, push) {
 module.exports = {
     rune: rune,
     typeNameOr: typeNameOr,
+    jsonx: json,
 
     fixed: fixed,
     constant: constant,

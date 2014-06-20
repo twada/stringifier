@@ -17,11 +17,11 @@ var traverse = require('traverse'),
 function defaultHandlers () {
     var compositeObjectFilter = f.circular(f.maxDepth(f.typeName(f.object())));
     return {
-        'null': f.skipChildren(f.fixed('null')),
-        'undefined': f.skipChildren(f.fixed('undefined')),
-        'function': f.prune(),
-        'string': f.json(),
-        'boolean': f.json(),
+        'null': [f.rune('null')],
+        'undefined': [f.rune('undefined')],
+        'function': [f.rune('#function#')],
+        'string': [f.jsonx()],
+        'boolean': [f.jsonx()],
         'number': f.number(),
         'RegExp': f.toStr(),
         'String': f.newLike(),
