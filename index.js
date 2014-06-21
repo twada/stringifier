@@ -13,27 +13,24 @@ var traverse = require('traverse'),
     typeName = require('type-name'),
     extend = require('xtend'),
     filters = require('./strategies'),
-    f = require('./strategies').f;
+    s = require('./strategies').s;
 
 function defaultHandlers () {
-    var prune = f.compose(f.str('#'), f.typeNameOr('Object'), f.str('#'), f.skip),
-        compositeObjectFilter = f.compose(f.ifCircular(f.compose(f.str('#@Circular#'), f.skip)), f.ifMaxDepth(prune), f.typeNameOr('Object'), f.object, f.iter),
-        newLike = f.compose(f.str('new '), f.typeNameOr('anonymous'), f.str('('), f.jsonx(), f.str(')'), f.skip);
     return {
-        'null': f.compose(f.str('null'), f.skip),
-        'undefined': f.compose(f.str('undefined'), f.skip),
-        'function': prune,
-        'string': f.compose(f.jsonx(), f.skip),
-        'boolean': f.compose(f.jsonx(), f.skip),
-        'number': f.compose(f.nanOrInfinity, f.jsonx(), f.skip),
-        'RegExp': f.compose(f.tos, f.skip),
-        'String': newLike,
-        'Boolean': newLike,
-        'Number': newLike,
-        'Date': newLike,
-        'Array': f.compose(f.ifCircular(f.compose(f.str('#@Circular#'), f.skip)), f.ifMaxDepth(prune), f.array, f.iter),
-        'Object': compositeObjectFilter,
-        '@default': compositeObjectFilter
+        'null': s.fixed('null'),
+        'undefined': s.fixed('undefined'),
+        'function': s.prune(),
+        'string': s.json(),
+        'boolean': s.json(),
+        'number': s.number(),
+        'RegExp': s.toStr(),
+        'String': s.newLike(),
+        'Boolean': s.newLike(),
+        'Number': s.newLike(),
+        'Date': s.newLike(),
+        'Array': s.array(),
+        'Object': s.object(),
+        '@default': s.object()
     };
 }
 
