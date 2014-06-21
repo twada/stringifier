@@ -1,7 +1,5 @@
 var stringify = require('..'),
-    filters = stringify.filters,
-    f = stringify.filters.f,
-    s = stringify.filters.s,
+    s = stringify.strategies,
     assert = require('assert');
 
 describe('strategies', function () {
@@ -59,39 +57,5 @@ describe('strategies', function () {
             'number': s.number()
         };
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,0,Infinity,0,-Infinity]');
-    });
-});
-
-
-describe('composable filters', function () {
-    function Student (name, age, gender) {
-        this.name = name;
-        this.age = age;
-        this.gender = gender;
-    }
-
-    beforeEach(function () {
-        this.student = new Student('tom', 10, 'M');
-    });
-
-    it('str', function () {
-        var handlers = {
-            'Student': f.compose(f.str('BOOM'), f.skip)
-        };
-        assert.equal(stringify(this.student, null, handlers), 'BOOM');
-    });
-
-    it('tname', function () {
-        var handlers = {
-            'Student': f.compose(f.typeNameOr('@Anonymous'), f.skip)
-        };
-        assert.equal(stringify(this.student, null, handlers), 'Student');
-    });
-
-    it('newLike', function () {
-        var handlers = {
-            'Student': f.compose(f.str('new '), f.typeNameOr('@Anonymous'), f.str('('), f.str(')'), f.skip)
-        };
-        assert.equal(stringify(this.student, null, handlers), 'new Student()');
     });
 });

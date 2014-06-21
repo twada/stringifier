@@ -172,38 +172,33 @@ module.exports = {
         typeNameOr: typeNameOr,
         jsonx: json,
         tos: toStr,
-        nanOrInfinity: nanOrInfinity,
-        ifCircular: ifCircular,
-        ifMaxDepth: ifMaxDepth,
         array: arrayx,
         object: objectx,
         iter: iter,
         skip: skip
     },
-    s: {
-        fixed: function (str) {
-            return compose(fixedString(str), skip);
-        },
-        json: function () {
-            return compose(json(), skip);
-        },
-        toStr: function () {
-            return compose(toStr, skip);
-        },
-        prune: function () {
-            return compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), skip);
-        },
-        number: function () {
-            return compose(nanOrInfinity, json(), skip);
-        },
-        newLike: function () {
-            return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), skip);
-        },
-        array: function () {
-            return compose(omitCircular, omitMaxDepth, arrayx, iter);
-        },
-        object: function () {
-            return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), objectx, iter);
-        }
+    fixed: function (str) {
+        return compose(fixedString(str), skip);
+    },
+    json: function () {
+        return compose(json(), skip);
+    },
+    toStr: function () {
+        return compose(toStr, skip);
+    },
+    prune: function () {
+        return compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), skip);
+    },
+    number: function () {
+        return compose(nanOrInfinity, json(), skip);
+    },
+    newLike: function () {
+        return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), skip);
+    },
+    array: function () {
+        return compose(omitCircular, omitMaxDepth, arrayx, iter);
+    },
+    object: function () {
+        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), objectx, iter);
     }
 };

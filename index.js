@@ -12,8 +12,7 @@
 var traverse = require('traverse'),
     typeName = require('type-name'),
     extend = require('xtend'),
-    filters = require('./strategies'),
-    s = require('./strategies').s;
+    s = require('./strategies');
 
 function defaultHandlers () {
     return {
@@ -71,7 +70,7 @@ function stringify (obj, opts, handlers) {
     return acc.join('');
 }
 
-stringify.filters = filters;
+stringify.strategies = s;
 stringify.defaultConfig = defaultConfig;
 stringify.defaultHandlers = defaultHandlers;
 module.exports = stringify;
