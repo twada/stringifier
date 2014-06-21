@@ -17,6 +17,17 @@ function iter (push, x, config) {
     return; // iterate children
 }
 
+function when (predicate, then) {
+    return function (inner) {
+        return function (push, x, config) {
+            if (predicate.call(this, push, x, config)) {
+                return then.call(this, push, x, config);
+            }
+            return inner.call(this, push, x, config);
+        };
+    };
+}
+
 function typeNameOr (anon) {
     anon = anon || 'Object';
     return function (inner) {
@@ -54,43 +65,7 @@ function toStr (inner) {
     };
 }
 
-function nanOrInfinity (inner) {
-    return function (push, x, config) {
-        if (isNaN(x)) {
-            push('NaN');
-            return [];
-        }
-        if (!isFinite(x)) {
-            push(x === Infinity ? 'Infinity' : '-Infinity');
-            return [];
-        }
-        return inner.call(this, push, x, config);
-    };
-}
-
-function ifCircular (then) {
-    return function (inner) {
-        return function (push, x, config) {
-            if (this.circular) {
-                return then.call(this, push, x, config);
-            }
-            return inner.call(this, push, x, config);
-        };
-    };
-}
-
-function ifMaxDepth (then) {
-    return function (inner) {
-        return function (push, x, config) {
-            if (isMaxDepth(this, config)) {
-                return then.call(this, push, x, config);
-            }
-            return inner.call(this, push, x, config);
-        };
-    };
-}
-
-function arrayx (inner) {
+function iterateArray () {
     return function (push, x, config) {
         this.before(function (node) {
             push('[');
@@ -105,12 +80,11 @@ function arrayx (inner) {
         this.post(function (childContext) {
             postCompound(childContext, push);
         });
-        // return; // iterate children
-        return inner.call(this, push, x, config);
+        return; // iterate children
     };
 }
 
-function objectx (inner) {
+function iterateObject () {
     return function (push, x, config) {
         this.before(function (node) {
             push('{');
@@ -126,12 +100,8 @@ function objectx (inner) {
         this.post(function (childContext) {
             postCompound(childContext, push);
         });
-        return inner.call(this, push, x, config);
+        return; // iterate children
     };
-}
-
-function isMaxDepth (context, config) {
-    return (config.maxDepth && config.maxDepth <= context.level);
 }
 
 function sanitizeKey (key) {
@@ -162,18 +132,43 @@ function postCompound (childContext, push) {
     }
 }
 
-var omitCircular = ifCircular(compose(fixedString('#@Circular#'), skip)),
-    omitMaxDepth = ifMaxDepth(compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), skip));
+function nan (push, x, config) {
+    return isNaN(x);
+}
+
+function positiveInfinity (push, x, config) {
+    return !isFinite(x) && x === Infinity;
+}
+
+function negativeInfinity (push, x, config) {
+    return !isFinite(x) && x !== Infinity;
+}
+
+function circular (push, x, config) {
+    return this.circular;
+}
+
+function maxDepth (push, x, config) {
+    return (config.maxDepth && config.maxDepth <= this.level);
+}
+
+var prune = compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), skip);
+var omitNaN = when(nan, compose(fixedString('NaN'), skip));
+var omitPositiveInfinity = when(positiveInfinity, compose(fixedString('Infinity'), skip));
+var omitNegativeInfinity = when(negativeInfinity, compose(fixedString('-Infinity'), skip));
+var omitCircular = when(circular, compose(fixedString('#@Circular#'), skip));
+var omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
     f: {
         compose: compose,
-        str: fixedString,
+        when: when,
+        fixedString: fixedString,
         typeNameOr: typeNameOr,
-        jsonx: json,
-        tos: toStr,
-        array: arrayx,
-        object: objectx,
+        json: json,
+        toStr: toStr,
+        iterateArray: iterateArray,
+        iterateObject: iterateObject,
         iter: iter,
         skip: skip
     },
@@ -187,18 +182,18 @@ module.exports = {
         return compose(toStr, skip);
     },
     prune: function () {
-        return compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), skip);
+        return prune;
     },
     number: function () {
-        return compose(nanOrInfinity, json(), skip);
+        return compose(omitNaN, omitPositiveInfinity, omitNegativeInfinity, json(), skip);
     },
     newLike: function () {
         return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), skip);
     },
     array: function () {
-        return compose(omitCircular, omitMaxDepth, arrayx, iter);
+        return compose(omitCircular, omitMaxDepth, iterateArray());
     },
     object: function () {
-        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), objectx, iter);
+        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject());
     }
 };
