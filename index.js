@@ -16,12 +16,12 @@ var traverse = require('traverse'),
     f = require('./strategies').f;
 
 function defaultHandlers () {
-    var prune = f.compose(f.rune('#'), f.typeNameOr('Object'), f.rune('#'), f.skip),
-        compositeObjectFilter = f.compose(f.ifCircular(f.compose(f.rune('#@Circular#'), f.skip)), f.ifMaxDepth(prune), f.typeNameOr('Object'), f.object, f.iter),
-        newLike = f.compose(f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.jsonx(), f.rune(')'), f.skip);
+    var prune = f.compose(f.str('#'), f.typeNameOr('Object'), f.str('#'), f.skip),
+        compositeObjectFilter = f.compose(f.ifCircular(f.compose(f.str('#@Circular#'), f.skip)), f.ifMaxDepth(prune), f.typeNameOr('Object'), f.object, f.iter),
+        newLike = f.compose(f.str('new '), f.typeNameOr('anonymous'), f.str('('), f.jsonx(), f.str(')'), f.skip);
     return {
-        'null': f.compose(f.rune('null'), f.skip),
-        'undefined': f.compose(f.rune('undefined'), f.skip),
+        'null': f.compose(f.str('null'), f.skip),
+        'undefined': f.compose(f.str('undefined'), f.skip),
         'function': prune,
         'string': f.compose(f.jsonx(), f.skip),
         'boolean': f.compose(f.jsonx(), f.skip),
@@ -31,7 +31,7 @@ function defaultHandlers () {
         'Boolean': newLike,
         'Number': newLike,
         'Date': newLike,
-        'Array': f.compose(f.ifCircular(f.compose(f.rune('#@Circular#'), f.skip)), f.ifMaxDepth(f.compose(f.rune('#'), f.typeNameOr('@Anonymous'), f.rune('#'), f.skip)), f.array, f.iter),
+        'Array': f.compose(f.ifCircular(f.compose(f.str('#@Circular#'), f.skip)), f.ifMaxDepth(prune), f.array, f.iter),
         'Object': compositeObjectFilter,
         '@default': compositeObjectFilter
     };
@@ -64,12 +64,6 @@ function createStringifier (opts, handlers) {
         return push;
     };
 };
-
-function skipChildIteration (context) {
-    context.before(function (node) {
-        context.keys = [];
-    });
-}
 
 function stringify (obj, opts, handlers) {
     var acc = [],

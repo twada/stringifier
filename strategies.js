@@ -29,7 +29,7 @@ function typeNameOr (anon) {
     };
 }
 
-function rune (str) {
+function fixedString (str) {
     return function (inner) {
         return function (push, x, config) {
             push(str);
@@ -319,7 +319,7 @@ function postCompound (childContext, push) {
 module.exports = {
     f: {
         compose: compose,
-        rune: rune,
+        str: fixedString,
         typeNameOr: typeNameOr,
         jsonx: json,
         tos: toStr,

@@ -84,23 +84,23 @@ describe('composable filters', function () {
         this.student = new Student('tom', 10, 'M');
     });
 
-    it('rune', function () {
+    it('str', function () {
         var handlers = {
-            'Student': f.compose(f.rune('BOOM'), f.skip)
+            'Student': f.compose(f.str('BOOM'), f.skip)
         };
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
 
     it('tname', function () {
         var handlers = {
-            'Student': f.compose(f.typeNameOr('anonymous'), f.skip)
+            'Student': f.compose(f.typeNameOr('@Anonymous'), f.skip)
         };
         assert.equal(stringify(this.student, null, handlers), 'Student');
     });
 
-    it('new tname', function () {
+    it('newLike', function () {
         var handlers = {
-            'Student': f.compose(f.rune('new '), f.typeNameOr('anonymous'), f.rune('('), f.rune(')'), f.skip)
+            'Student': f.compose(f.str('new '), f.typeNameOr('@Anonymous'), f.str('('), f.str(')'), f.skip)
         };
         assert.equal(stringify(this.student, null, handlers), 'new Student()');
     });
