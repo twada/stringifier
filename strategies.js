@@ -1,7 +1,7 @@
 var typeName = require('type-name'),
     slice = Array.prototype.slice;
 
-// arguments should end with skip or iter
+// arguments should end with skip or iter or iterateArray or iterateObject
 function compose () {
     var filters = slice.apply(arguments);
     return filters.reduceRight(function(right, left) {
@@ -58,10 +58,12 @@ function json (replacer) {
     };
 }
 
-function toStr (inner) {
-    return function (push, x, config) {
-        push(x.toString());
-        return inner.call(this, push, x, config);
+function toStr () {
+    return function (inner) {
+        return function (push, x, config) {
+            push(x.toString());
+            return inner.call(this, push, x, config);
+        };
     };
 }
 
@@ -179,7 +181,7 @@ module.exports = {
         return compose(json(), skip);
     },
     toStr: function () {
-        return compose(toStr, skip);
+        return compose(toStr(), skip);
     },
     prune: function () {
         return prune;
