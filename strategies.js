@@ -9,12 +9,16 @@ function compose () {
     });
 };
 
-function end (push, x, config) {
-    return []; // skip children
+function end () {
+    return function (push, x, config) {
+        return []; // skip children
+    };
 }
 
-function iter (push, x, config) {
-    return; // iterate children
+function iter () {
+    return function (push, x, config) {
+        return; // iterate children
+    };
 }
 
 function when (predicate, then) {
@@ -159,11 +163,11 @@ function maxDepth (push, x, config) {
     return (config.maxDepth && config.maxDepth <= this.level);
 }
 
-var prune = compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), end);
-var omitNaN = when(nan, compose(fixedString('NaN'), end));
-var omitPositiveInfinity = when(positiveInfinity, compose(fixedString('Infinity'), end));
-var omitNegativeInfinity = when(negativeInfinity, compose(fixedString('-Infinity'), end));
-var omitCircular = when(circular, compose(fixedString('#@Circular#'), end));
+var prune = compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), end());
+var omitNaN = when(nan, compose(fixedString('NaN'), end()));
+var omitPositiveInfinity = when(positiveInfinity, compose(fixedString('Infinity'), end()));
+var omitNegativeInfinity = when(negativeInfinity, compose(fixedString('-Infinity'), end()));
+var omitCircular = when(circular, compose(fixedString('#@Circular#'), end()));
 var omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
@@ -183,22 +187,22 @@ module.exports = {
         end: end
     },
     fixed: function (str) {
-        return compose(fixedString(str), end);
+        return compose(fixedString(str), end());
     },
     json: function () {
-        return compose(json(), end);
+        return compose(json(), end());
     },
     toStr: function () {
-        return compose(toStr(), end);
+        return compose(toStr(), end());
     },
     prune: function () {
         return prune;
     },
     number: function () {
-        return compose(omitNaN, omitPositiveInfinity, omitNegativeInfinity, json(), end);
+        return compose(omitNaN, omitPositiveInfinity, omitNegativeInfinity, json(), end());
     },
     newLike: function () {
-        return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), end);
+        return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), end());
     },
     array: function () {
         return compose(omitCircular, omitMaxDepth, iterateArray());
