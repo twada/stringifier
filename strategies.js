@@ -133,7 +133,7 @@ function postCompound (childContext, push) {
 }
 
 function nan (push, x, config) {
-    return isNaN(x);
+    return x !== x;
 }
 
 function positiveInfinity (push, x, config) {
