@@ -62,4 +62,11 @@ describe('strategies', function () {
         };
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,0,Infinity,0,-Infinity]');
     });
+
+    it('property whitelist', function () {
+        var handlers = {
+            'Student': s.object(['name', 'age', 'other'])
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
+    });
 });

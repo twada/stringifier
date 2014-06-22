@@ -86,7 +86,7 @@ function iterateArray () {
     };
 }
 
-function iterateObject () {
+function iterateObject (whitelist) {
     return function (push, x, config) {
         this.before(function (node) {
             push('{');
@@ -102,7 +102,12 @@ function iterateObject () {
         this.post(function (childContext) {
             postCompound(childContext, push);
         });
-        return; // iterate children
+        if (typeName(whitelist) === 'Array' && 0 < whitelist.length) {
+            return this.keys.filter(function(attr) {
+                return whitelist.indexOf(attr) !== -1;
+            });
+        }
+        return undefined; // iterate children
     };
 }
 
@@ -198,7 +203,7 @@ module.exports = {
     array: function () {
         return compose(omitCircular, omitMaxDepth, iterateArray());
     },
-    object: function () {
-        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject());
+    object: function (whitelist) {
+        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject(whitelist));
     }
 };

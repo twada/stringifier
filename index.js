@@ -53,9 +53,7 @@ function createStringifier (opts, handlers) {
             children = typeHandlers['@default'].call(this, push, x, config);
         }
         if (typeName(children) === 'Array') {
-            this.before(function (node) {
-                this.keys = children;
-            });
+            this.keys = children;
         }
         return push;
     };
