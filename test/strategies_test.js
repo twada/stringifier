@@ -112,7 +112,7 @@ describe('strategies', function () {
     it('array filtering by index', function () {
         var handlers = {
             'Array': s.array(function (val, index) {
-                return index % 2 === 0;
+                return typeName(index) === 'number' && index % 2 === 0;
             })
         };
         assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["foo","baz"]');
