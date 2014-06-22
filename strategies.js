@@ -1,7 +1,7 @@
 var typeName = require('type-name'),
     slice = Array.prototype.slice;
 
-// arguments should end with skip or iter or iterateArray or iterateObject
+// arguments should end with end or iter or iterateArray or iterateObject
 function compose () {
     var filters = slice.apply(arguments);
     return filters.reduceRight(function(right, left) {
@@ -9,7 +9,7 @@ function compose () {
     });
 };
 
-function skip (push, x, config) {
+function end (push, x, config) {
     return []; // skip children
 }
 
@@ -18,51 +18,51 @@ function iter (push, x, config) {
 }
 
 function when (predicate, then) {
-    return function (inner) {
+    return function (next) {
         return function (push, x, config) {
             if (predicate.call(this, push, x, config)) {
                 return then.call(this, push, x, config);
             }
-            return inner.call(this, push, x, config);
+            return next.call(this, push, x, config);
         };
     };
 }
 
 function typeNameOr (anon) {
     anon = anon || 'Object';
-    return function (inner) {
+    return function (next) {
         return function (push, x, config) {
             var name = typeName(this.node);
             name = (name === '') ? anon : name;
             push(name);
-            return inner.call(this, push, x, config);
+            return next.call(this, push, x, config);
         };
     };
 }
 
 function fixedString (str) {
-    return function (inner) {
+    return function (next) {
         return function (push, x, config) {
             push(str);
-            return inner.call(this, push, x, config);
+            return next.call(this, push, x, config);
         };
     };
 }
 
 function json (replacer) {
-    return function (inner) {
+    return function (next) {
         return function (push, x, config) {
             push(JSON.stringify(x, replacer));
-            return inner.call(this, push, x, config);
+            return next.call(this, push, x, config);
         };
     };
 }
 
 function toStr () {
-    return function (inner) {
+    return function (next) {
         return function (push, x, config) {
             push(x.toString());
-            return inner.call(this, push, x, config);
+            return next.call(this, push, x, config);
         };
     };
 }
@@ -159,11 +159,11 @@ function maxDepth (push, x, config) {
     return (config.maxDepth && config.maxDepth <= this.level);
 }
 
-var prune = compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), skip);
-var omitNaN = when(nan, compose(fixedString('NaN'), skip));
-var omitPositiveInfinity = when(positiveInfinity, compose(fixedString('Infinity'), skip));
-var omitNegativeInfinity = when(negativeInfinity, compose(fixedString('-Infinity'), skip));
-var omitCircular = when(circular, compose(fixedString('#@Circular#'), skip));
+var prune = compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), end);
+var omitNaN = when(nan, compose(fixedString('NaN'), end));
+var omitPositiveInfinity = when(positiveInfinity, compose(fixedString('Infinity'), end));
+var omitNegativeInfinity = when(negativeInfinity, compose(fixedString('-Infinity'), end));
+var omitCircular = when(circular, compose(fixedString('#@Circular#'), end));
 var omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
@@ -180,25 +180,25 @@ module.exports = {
         iterateArray: iterateArray,
         iterateObject: iterateObject,
         iter: iter,
-        skip: skip
+        end: end
     },
     fixed: function (str) {
-        return compose(fixedString(str), skip);
+        return compose(fixedString(str), end);
     },
     json: function () {
-        return compose(json(), skip);
+        return compose(json(), end);
     },
     toStr: function () {
-        return compose(toStr(), skip);
+        return compose(toStr(), end);
     },
     prune: function () {
         return prune;
     },
     number: function () {
-        return compose(omitNaN, omitPositiveInfinity, omitNegativeInfinity, json(), skip);
+        return compose(omitNaN, omitPositiveInfinity, omitNegativeInfinity, json(), end);
     },
     newLike: function () {
-        return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), skip);
+        return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), end);
     },
     array: function () {
         return compose(omitCircular, omitMaxDepth, iterateArray());
