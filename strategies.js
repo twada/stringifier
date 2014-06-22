@@ -1,94 +1,77 @@
-var typeName = require('type-name');
+var typeName = require('type-name'),
+    slice = Array.prototype.slice;
 
-function stringifyByFixedValue (str) {
+// arguments should end with end or iter or iterateArray or iterateObject
+function compose () {
+    var filters = slice.apply(arguments);
+    return filters.reduceRight(function(right, left) {
+        return left(right);
+    });
+};
+
+function end () {
     return function (push, x, config) {
-        skipChildIteration(this);
-        push(str);
+        return []; // skip children
     };
 }
 
-function stringifyByPrunedName (mark) {
-    mark = mark || '#';
+function iter () {
     return function (push, x, config) {
-        var tname = typeName(this.node);
-        skipChildIteration(this);
-        push(mark + tname + mark);
+        return; // iterate children
     };
 }
 
-function stringifyByJSON (replacer) {
-    return function (push, x, config) {
-        skipChildIteration(this);
-        push(JSON.stringify(x, replacer));
+function when (predicate, then) {
+    return function (next) {
+        return function (push, x, config) {
+            if (predicate.call(this, push, x, config)) {
+                return then.call(this, push, x, config);
+            }
+            return next.call(this, push, x, config);
+        };
     };
 }
 
-function stringifyByToString () {
-    return function (push, x, config) {
-        skipChildIteration(this);
-        push(x.toString());
+function typeNameOr (anon) {
+    anon = anon || 'Object';
+    return function (next) {
+        return function (push, x, config) {
+            var name = typeName(this.node);
+            name = (name === '') ? anon : name;
+            push(name);
+            return next.call(this, push, x, config);
+        };
     };
 }
 
-function stringifyNumber (inner) {
-    inner = inner || stringifyByJSON();
-    return function (push, x, config) {
-        if (isNaN(x)) {
-            push('NaN');
-            return;
-        }
-        if (!isFinite(x)) {
-            push(x === Infinity ? 'Infinity' : '-Infinity');
-            return;
-        }
-        inner.call(this, push, x, config);
-    };
-}
-
-function stringifyNewLike (inner) {
-    inner = inner || stringifyByJSON();
-    return function (push, x, config) {
-        skipChildIteration(this);
-        push('new ' + typeName(this.node) + '(');
-        inner.call(this, push, x, config);
-        push(')');
-    };
-}
-
-function stringifyTypeName (inner) {
-    return function (push, x, config) {
-        var tname = typeName(this.node);
-        tname = (tname === '') ? 'Object' : tname;
-        push(tname);
-        inner.call(this, push, x, config);
-    };
-}
-
-function stringifyCircular (inner, str) {
-    str = str || '#@Circular#';
-    return function (push, x, config) {
-        if (this.circular) {
+function fixedString (str) {
+    return function (next) {
+        return function (push, x, config) {
             push(str);
-            return;
-        }
-        inner.call(this, push, x, config);
+            return next.call(this, push, x, config);
+        };
     };
 }
 
-function stringifyMaxDepth (inner) {
-    return function (push, x, config) {
-        var tname = typeName(this.node);
-        tname = (tname === '') ? 'Object' : tname;
-        if (isMaxDepth(this, config)) {
-            skipChildIteration(this);
-            push('#' + tname + '#');
-            return;
-        }
-        inner.call(this, push, x, config);
+function json (replacer) {
+    return function (next) {
+        return function (push, x, config) {
+            push(JSON.stringify(x, replacer));
+            return next.call(this, push, x, config);
+        };
     };
 }
 
-function stringifyArray () {
+function toStr () {
+    return function (next) {
+        return function (push, x, config) {
+            push(x.toString());
+            return next.call(this, push, x, config);
+        };
+    };
+}
+
+function iterateArray () {
     return function (push, x, config) {
         this.before(function (node) {
             push('[');
@@ -103,10 +86,11 @@ function stringifyArray () {
         this.post(function (childContext) {
             postCompound(childContext, push);
         });
+        return; // iterate children
     };
 }
 
-function stringifyObject () {
+function iterateObject (whitelist) {
     return function (push, x, config) {
         this.before(function (node) {
             push('{');
@@ -122,21 +106,17 @@ function stringifyObject () {
         this.post(function (childContext) {
             postCompound(childContext, push);
         });
+        if (typeName(whitelist) === 'Array' && 0 < whitelist.length) {
+            return this.keys.filter(function(attr) {
+                return whitelist.indexOf(attr) !== -1;
+            });
+        }
+        return undefined; // iterate children
     };
-}
-
-function isMaxDepth (context, config) {
-    return (config.maxDepth && config.maxDepth <= context.level);
 }
 
 function sanitizeKey (key) {
     return /^[A-Za-z_]+$/.test(key) ? key : JSON.stringify(key);
-}
-
-function skipChildIteration (context) {
-    context.before(function (node) {
-        context.keys = [];
-    });
 }
 
 function afterCompound (context, push, config) {
@@ -163,16 +143,71 @@ function postCompound (childContext, push) {
     }
 }
 
+function nan (push, x, config) {
+    return x !== x;
+}
+
+function positiveInfinity (push, x, config) {
+    return !isFinite(x) && x === Infinity;
+}
+
+function negativeInfinity (push, x, config) {
+    return !isFinite(x) && x !== Infinity;
+}
+
+function circular (push, x, config) {
+    return this.circular;
+}
+
+function maxDepth (push, x, config) {
+    return (config.maxDepth && config.maxDepth <= this.level);
+}
+
+var prune = compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), end());
+var omitNaN = when(nan, compose(fixedString('NaN'), end()));
+var omitPositiveInfinity = when(positiveInfinity, compose(fixedString('Infinity'), end()));
+var omitNegativeInfinity = when(negativeInfinity, compose(fixedString('-Infinity'), end()));
+var omitCircular = when(circular, compose(fixedString('#@Circular#'), end()));
+var omitMaxDepth = when(maxDepth, prune);
+
 module.exports = {
-    fixed: stringifyByFixedValue,
-    prune: stringifyByPrunedName,
-    toStr: stringifyByToString,
-    json: stringifyByJSON,
-    number: stringifyNumber,
-    newLike: stringifyNewLike,
-    circular: stringifyCircular,
-    maxDepth: stringifyMaxDepth,
-    typeName: stringifyTypeName,
-    array: stringifyArray,
-    object: stringifyObject
+    filters: {
+        when: when,
+        fixedString: fixedString,
+        typeNameOr: typeNameOr,
+        json: json,
+        toStr: toStr,
+        prune: prune
+    },
+    terminators: {
+        compose: compose,
+        iterateArray: iterateArray,
+        iterateObject: iterateObject,
+        iter: iter,
+        end: end
+    },
+    fixed: function (str) {
+        return compose(fixedString(str), end());
+    },
+    json: function () {
+        return compose(json(), end());
+    },
+    toStr: function () {
+        return compose(toStr(), end());
+    },
+    prune: function () {
+        return prune;
+    },
+    number: function () {
+        return compose(omitNaN, omitPositiveInfinity, omitNegativeInfinity, json(), end());
+    },
+    newLike: function () {
+        return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), end());
+    },
+    array: function () {
+        return compose(omitCircular, omitMaxDepth, iterateArray());
+    },
+    object: function (whitelist) {
+        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject(whitelist));
+    }
 };

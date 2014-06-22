@@ -12,25 +12,24 @@
 var traverse = require('traverse'),
     typeName = require('type-name'),
     extend = require('xtend'),
-    filters = require('./strategies');
+    s = require('./strategies');
 
 function defaultHandlers () {
-    var compositeObjectFilter = filters.circular(filters.maxDepth(filters.typeName(filters.object())));
     return {
-        'null': filters.fixed('null'),
-        'undefined': filters.fixed('undefined'),
-        'function': filters.prune(),
-        'string': filters.json(),
-        'boolean': filters.json(),
-        'number': filters.number(),
-        'RegExp': filters.toStr(),
-        'String': filters.newLike(),
-        'Boolean': filters.newLike(),
-        'Number': filters.newLike(),
-        'Date': filters.newLike(),
-        'Array': filters.circular(filters.maxDepth(filters.array())),
-        'Object': compositeObjectFilter,
-        '@default': compositeObjectFilter
+        'null': s.fixed('null'),
+        'undefined': s.fixed('undefined'),
+        'function': s.prune(),
+        'string': s.json(),
+        'boolean': s.json(),
+        'number': s.number(),
+        'RegExp': s.toStr(),
+        'String': s.newLike(),
+        'Boolean': s.newLike(),
+        'Number': s.newLike(),
+        'Date': s.newLike(),
+        'Array': s.array(),
+        'Object': s.object(),
+        '@default': s.object()
     };
 }
 
@@ -46,11 +45,15 @@ function createStringifier (opts, handlers) {
     var config = extend(defaultConfig(), opts),
         typeHandlers = extend(defaultHandlers(), handlers);
     return function stringifyAny (push, x) {
-        var tname = typeName(this.node);
-        if (typeof typeHandlers[tname] === 'function') {
-            typeHandlers[tname].call(this, push, x, config);
+        var tname = typeName(this.node),
+            children;
+        if (typeName(typeHandlers[tname]) === 'function') {
+            children = typeHandlers[tname].call(this, push, x, config);
         } else {
-            typeHandlers['@default'].call(this, push, x, config);
+            children = typeHandlers['@default'].call(this, push, x, config);
+        }
+        if (typeName(children) === 'Array') {
+            this.keys = children;
         }
         return push;
     };
@@ -65,7 +68,7 @@ function stringify (obj, opts, handlers) {
     return acc.join('');
 }
 
-stringify.filters = filters;
+stringify.strategies = s;
 stringify.defaultConfig = defaultConfig;
 stringify.defaultHandlers = defaultHandlers;
 module.exports = stringify;
