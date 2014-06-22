@@ -71,8 +71,9 @@ function toStr () {
     };
 }
 
-function iterateArray () {
+function iterateArray (predicate) {
     return function (push, x, config) {
+        var toBeIterated;
         this.before(function (node) {
             push('[');
         });
@@ -86,7 +87,17 @@ function iterateArray () {
         this.post(function (childContext) {
             postCompound(childContext, push);
         });
-        return; // iterate children
+        if (typeName(predicate) === 'function') {
+            toBeIterated = [];
+            this.keys.forEach(function (key) {
+                var value = this.node[key];
+                if (predicate(value, key, this.node)) {
+                    toBeIterated.push(key);
+                }
+            }, this);
+            return toBeIterated;
+        }
+        return undefined; // iterate children
     };
 }
 
@@ -210,8 +221,8 @@ module.exports = {
     newLike: function () {
         return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), end());
     },
-    array: function () {
-        return compose(omitCircular, omitMaxDepth, iterateArray());
+    array: function (predicate) {
+        return compose(omitCircular, omitMaxDepth, iterateArray(predicate));
     },
     object: function (predicate) {
         return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject(predicate));

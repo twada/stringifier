@@ -99,4 +99,13 @@ describe('strategies', function () {
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
     });
+
+    it('array filtering by value', function () {
+        var handlers = {
+            'Array': s.array(function (val, index) {
+                return /^b.*$/.test(val);
+            })
+        };
+        assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["bar","baz"]');
+    });
 });
