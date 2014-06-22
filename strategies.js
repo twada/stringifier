@@ -111,7 +111,7 @@ function iterateObject (predicate) {
             toBeIterated = [];
             this.keys.forEach(function (key) {
                 var value = this.node[key];
-                if (predicate(key, value)) {
+                if (predicate(value, key, this.node)) {
                     toBeIterated.push(key);
                 }
             }, this);

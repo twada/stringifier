@@ -66,7 +66,7 @@ describe('strategies', function () {
 
     it('whitelist by property name', function () {
         var handlers = {
-            'Student': s.object(function (key, val) {
+            'Student': s.object(function (val, key) {
                 return ['name', 'age'].indexOf(key) !== -1;
             })
         };
@@ -75,7 +75,7 @@ describe('strategies', function () {
 
     it('blacklist by property name', function () {
         var handlers = {
-            'Student': s.object(function (key, val) {
+            'Student': s.object(function (val, key) {
                 return ['age', 'gender'].indexOf(key) === -1;
             })
         };
@@ -84,7 +84,7 @@ describe('strategies', function () {
 
     it('whitelist by property value', function () {
         var handlers = {
-            'Student': s.object(function (key, val) {
+            'Student': s.object(function (val, key) {
                 return typeName(val) === 'string';
             })
         };
@@ -93,7 +93,7 @@ describe('strategies', function () {
 
     it('blacklist by property value', function () {
         var handlers = {
-            'Student': s.object(function (key, val) {
+            'Student': s.object(function (val, key) {
                 return val !== 'M';
             })
         };
