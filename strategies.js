@@ -1,7 +1,7 @@
 var typeName = require('type-name'),
     slice = Array.prototype.slice;
 
-// arguments should end with end or iter or iterateArray or iterateObject
+// arguments should end with end or iterate
 function compose () {
     var filters = slice.apply(arguments);
     return filters.reduceRight(function(right, left) {
@@ -15,9 +15,21 @@ function end () {
     };
 }
 
-function iter () {
+function iterate (predicate) {
     return function (push, x, config) {
-        return; // iterate children
+        var toBeIterated, containerType = typeName(this.node);
+        if (typeName(predicate) === 'function') {
+            toBeIterated = [];
+            this.keys.forEach(function (key) {
+                var value = this.node[key],
+                    indexOrKey = (containerType === 'Array') ? parseInt(key, 10) : key;
+                if (predicate(value, indexOrKey, this.node)) {
+                    toBeIterated.push(key);
+                }
+            }, this);
+            return toBeIterated;
+        }
+        return undefined; // iterate all children
     };
 }
 
@@ -71,47 +83,46 @@ function toStr () {
     };
 }
 
-function iterateArray () {
-    return function (push, x, config) {
-        this.before(function (node) {
-            push('[');
-        });
-        this.after(function (node) {
-            afterCompound(this, push, config);
-            push(']');
-        });
-        this.pre(function (val, key) {
-            preCompound(this, push, config);
-        });
-        this.post(function (childContext) {
-            postCompound(childContext, push);
-        });
-        return; // iterate children
+function decorateArray () {
+    return function (next) {
+        return function (push, x, config) {
+            this.before(function (node) {
+                push('[');
+            });
+            this.after(function (node) {
+                afterCompound(this, push, config);
+                push(']');
+            });
+            this.pre(function (val, key) {
+                preCompound(this, push, config);
+            });
+            this.post(function (childContext) {
+                postCompound(childContext, push);
+            });
+            return next.call(this, push, x, config);
+        };
     };
 }
 
-function iterateObject (whitelist) {
-    return function (push, x, config) {
-        this.before(function (node) {
-            push('{');
-        });
-        this.after(function (node) {
-            afterCompound(this, push, config);
-            push('}');
-        });
-        this.pre(function (val, key) {
-            preCompound(this, push, config);
-            push(sanitizeKey(key) + (config.indent ? ': ' : ':'));
-        });
-        this.post(function (childContext) {
-            postCompound(childContext, push);
-        });
-        if (typeName(whitelist) === 'Array' && 0 < whitelist.length) {
-            return this.keys.filter(function(attr) {
-                return whitelist.indexOf(attr) !== -1;
+function decorateObject () {
+    return function (next) {
+        return function (push, x, config) {
+            this.before(function (node) {
+                push('{');
             });
-        }
-        return undefined; // iterate children
+            this.after(function (node) {
+                afterCompound(this, push, config);
+                push('}');
+            });
+            this.pre(function (val, key) {
+                preCompound(this, push, config);
+                push(sanitizeKey(key) + (config.indent ? ': ' : ':'));
+            });
+            this.post(function (childContext) {
+                postCompound(childContext, push);
+            });
+            return next.call(this, push, x, config);
+        };
     };
 }
 
@@ -177,13 +188,13 @@ module.exports = {
         typeNameOr: typeNameOr,
         json: json,
         toStr: toStr,
-        prune: prune
+        prune: prune,
+        decorateArray: decorateArray,
+        decorateObject: decorateObject
     },
     terminators: {
         compose: compose,
-        iterateArray: iterateArray,
-        iterateObject: iterateObject,
-        iter: iter,
+        iterate: iterate,
         end: end
     },
     fixed: function (str) {
@@ -204,10 +215,10 @@ module.exports = {
     newLike: function () {
         return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), end());
     },
-    array: function () {
-        return compose(omitCircular, omitMaxDepth, iterateArray());
+    array: function (predicate) {
+        return compose(omitCircular, omitMaxDepth, decorateArray(), iterate(predicate));
     },
-    object: function (whitelist) {
-        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject(whitelist));
+    object: function (predicate) {
+        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), decorateObject(), iterate(predicate));
     }
 };

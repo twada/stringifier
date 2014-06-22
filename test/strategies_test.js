@@ -1,5 +1,6 @@
 var stringify = require('..'),
     s = stringify.strategies,
+    typeName = require('type-name'),
     assert = require('assert');
 
 describe('strategies', function () {
@@ -63,10 +64,57 @@ describe('strategies', function () {
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,0,Infinity,0,-Infinity]');
     });
 
-    it('property whitelist', function () {
+    it('whitelist by property name', function () {
         var handlers = {
-            'Student': s.object(['name', 'age', 'other'])
+            'Student': s.object(function (val, key) {
+                return ['name', 'age'].indexOf(key) !== -1;
+            })
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
+    });
+
+    it('blacklist by property name', function () {
+        var handlers = {
+            'Student': s.object(function (val, key) {
+                return ['age', 'gender'].indexOf(key) === -1;
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom"}');
+    });
+
+    it('whitelist by property value', function () {
+        var handlers = {
+            'Student': s.object(function (val, key) {
+                return typeName(val) === 'string';
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",gender:"M"}');
+    });
+
+    it('blacklist by property value', function () {
+        var handlers = {
+            'Student': s.object(function (val, key) {
+                return val !== 'M';
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
+    });
+
+    it('array filtering by value', function () {
+        var handlers = {
+            'Array': s.array(function (val, index) {
+                return /^b.*$/.test(val);
+            })
+        };
+        assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["bar","baz"]');
+    });
+
+    it('array filtering by index', function () {
+        var handlers = {
+            'Array': s.array(function (val, index) {
+                return typeName(index) === 'number' && index % 2 === 0;
+            })
+        };
+        assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["foo","baz"]');
     });
 });
