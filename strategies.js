@@ -92,6 +92,7 @@ function iterateArray () {
 
 function iterateObject (predicate) {
     return function (push, x, config) {
+        var toBeIterated;
         this.before(function (node) {
             push('{');
         });
@@ -107,7 +108,14 @@ function iterateObject (predicate) {
             postCompound(childContext, push);
         });
         if (typeName(predicate) === 'function') {
-            return this.keys.filter(predicate);
+            toBeIterated = [];
+            this.keys.forEach(function (key) {
+                var value = this.node[key];
+                if (predicate(key, value)) {
+                    toBeIterated.push(key);
+                }
+            }, this);
+            return toBeIterated;
         }
         return undefined; // iterate children
     };

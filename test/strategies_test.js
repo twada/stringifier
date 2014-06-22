@@ -1,5 +1,6 @@
 var stringify = require('..'),
     s = stringify.strategies,
+    typeName = require('type-name'),
     assert = require('assert');
 
 describe('strategies', function () {
@@ -63,7 +64,7 @@ describe('strategies', function () {
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,0,Infinity,0,-Infinity]');
     });
 
-    it('property name whitelist', function () {
+    it('whitelist by property name', function () {
         var handlers = {
             'Student': s.object(function (key, val) {
                 return ['name', 'age'].indexOf(key) !== -1;
@@ -72,12 +73,30 @@ describe('strategies', function () {
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
     });
 
-    it('property name blacklist', function () {
+    it('blacklist by property name', function () {
         var handlers = {
             'Student': s.object(function (key, val) {
                 return ['age', 'gender'].indexOf(key) === -1;
             })
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom"}');
+    });
+
+    it('whitelist by property value', function () {
+        var handlers = {
+            'Student': s.object(function (key, val) {
+                return typeName(val) === 'string';
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",gender:"M"}');
+    });
+
+    it('blacklist by property value', function () {
+        var handlers = {
+            'Student': s.object(function (key, val) {
+                return val !== 'M';
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
     });
 });
