@@ -13,10 +13,6 @@ describe('strategies', function () {
         this.student = new Student('tom', 10, 'M');
     });
 
-    it('default', function () {
-        assert.equal(stringify(this.student), 'Student{name:"tom",age:10,gender:"M"}');
-    });
-
     it('fixed', function () {
         var handlers = {
             'Student': s.fixed('BOOM')
@@ -44,7 +40,7 @@ describe('strategies', function () {
         };
         assert.equal(stringify(this.student, null, handlers), '[object Object]');
     });
-    
+
     it('newLike', function () {
         var handlers = {
             'Student': s.newLike()
@@ -52,8 +48,16 @@ describe('strategies', function () {
         assert.equal(stringify(this.student, null, handlers), 'new Student({"name":"tom","age":10,"gender":"M"})');
     });
 
-    it('number', function () {
+    it('object', function () {
         var handlers = {
+            'Student': s.object()
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10,gender:"M"}');
+    });
+
+    it('number and array', function () {
+        var handlers = {
+            'Array': s.array(),
             'number': s.number()
         };
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,0,Infinity,0,-Infinity]');
