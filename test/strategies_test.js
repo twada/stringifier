@@ -108,4 +108,13 @@ describe('strategies', function () {
         };
         assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["bar","baz"]');
     });
+
+    it('array filtering by index', function () {
+        var handlers = {
+            'Array': s.array(function (val, index) {
+                return index % 2 === 0;
+            })
+        };
+        assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["foo","baz"]');
+    });
 });
