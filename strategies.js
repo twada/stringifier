@@ -162,13 +162,15 @@ var omitCircular = when(circular, compose(fixedString('#@Circular#'), skip));
 var omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
-    f: {
-        compose: compose,
+    filters: {
         when: when,
         fixedString: fixedString,
         typeNameOr: typeNameOr,
         json: json,
-        toStr: toStr,
+        toStr: toStr
+    },
+    terminators: {
+        compose: compose,
         iterateArray: iterateArray,
         iterateObject: iterateObject,
         iter: iter,
