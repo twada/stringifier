@@ -167,7 +167,8 @@ module.exports = {
         fixedString: fixedString,
         typeNameOr: typeNameOr,
         json: json,
-        toStr: toStr
+        toStr: toStr,
+        prune: prune
     },
     terminators: {
         compose: compose,
