@@ -90,7 +90,7 @@ function iterateArray () {
     };
 }
 
-function iterateObject (whitelist) {
+function iterateObject (predicate) {
     return function (push, x, config) {
         this.before(function (node) {
             push('{');
@@ -106,10 +106,8 @@ function iterateObject (whitelist) {
         this.post(function (childContext) {
             postCompound(childContext, push);
         });
-        if (typeName(whitelist) === 'Array' && 0 < whitelist.length) {
-            return this.keys.filter(function(attr) {
-                return whitelist.indexOf(attr) !== -1;
-            });
+        if (typeName(predicate) === 'function') {
+            return this.keys.filter(predicate);
         }
         return undefined; // iterate children
     };
@@ -207,7 +205,7 @@ module.exports = {
     array: function () {
         return compose(omitCircular, omitMaxDepth, iterateArray());
     },
-    object: function (whitelist) {
-        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject(whitelist));
+    object: function (predicate) {
+        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), iterateObject(predicate));
     }
 };

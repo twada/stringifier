@@ -63,10 +63,21 @@ describe('strategies', function () {
         assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], null, handlers), '[NaN,0,Infinity,0,-Infinity]');
     });
 
-    it('property whitelist', function () {
+    it('property name whitelist', function () {
         var handlers = {
-            'Student': s.object(['name', 'age', 'other'])
+            'Student': s.object(function (key, val) {
+                return ['name', 'age'].indexOf(key) !== -1;
+            })
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
+    });
+
+    it('property name blacklist', function () {
+        var handlers = {
+            'Student': s.object(function (key, val) {
+                return ['age', 'gender'].indexOf(key) === -1;
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom"}');
     });
 });
