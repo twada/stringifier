@@ -23,7 +23,7 @@
     "mocha": "~1.20.1"
   },
   "scripts": {
-    "build": "browserify index.js --standalone stringify > ./build/stringifier.js",
+    "build": "browserify index.js --standalone stringifier > ./build/stringifier.js",
     "jshint": "jshint index.js",
     "test": "./node_modules/.bin/mocha"
   },

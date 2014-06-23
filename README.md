@@ -35,14 +35,14 @@ Install
 
     $ bower install --save stringifier
 
-Load (`shallowStringify` function is exported)
+Load (`stringifier` function is exported)
 
     <script type="text/javascript" src="./path/to/bower_components/stringifier/build/stringifier.js"></script>
 
 Use
 
 ```javascript
-console.log(shallowStringify(anyVar));
+console.log(stringifier(anyVar));
 ```
 
 
