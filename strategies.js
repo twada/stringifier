@@ -20,20 +20,18 @@ function end () {
 function iterate (filterPredicate) {
     return function (acc, x) {
         var toBeIterated,
-            container = acc.context.node,
-            isIteratingArray = (typeName(container) === 'Array');
+            isIteratingArray = (typeName(x) === 'Array');
         if (typeName(filterPredicate) === 'function') {
             toBeIterated = [];
             acc.context.keys.forEach(function (key) {
-                var value = container[key],
+                var value = x[key],
                     indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
                 if (filterPredicate(value, indexOrKey)) {
                     toBeIterated.push(key);
                 }
             });
-            return toBeIterated;
         }
-        return undefined; // iterate all children
+        return toBeIterated;
     };
 }
 
@@ -52,7 +50,7 @@ function typeNameOr (anon) {
     anon = anon || 'Object';
     return function (next) {
         return function (acc, x) {
-            var name = typeName(acc.context.node);
+            var name = typeName(x);
             name = (name === '') ? anon : name;
             acc.push(name);
             return next(acc, x);
