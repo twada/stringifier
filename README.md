@@ -8,7 +8,7 @@ EXAMPLE
 ---------------------------------------
 
 ```javascript
-var stringify = require('stringifier');
+var stringify = require('stringifier').stringify;
 console.log(stringify(anyVar));
 ```
 
@@ -25,7 +25,7 @@ Install
 Use
 
 ```javascript
-var stringify = require('stringifier');
+var stringify = require('stringifier').stringify;
 console.log(stringify(anyVar));
 ```
 
@@ -42,7 +42,7 @@ Load (`stringifier` function is exported)
 Use
 
 ```javascript
-console.log(stringifier(anyVar));
+console.log(stringifier.stringify(anyVar));
 ```
 
 
