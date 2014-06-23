@@ -12,22 +12,22 @@ function compose () {
 }
 
 function end () {
-    return function (context, push, x, config) {
+    return function (acc, x) {
         return []; // skip children
     };
 }
 
-function iterate (predicate) {
-    return function (context, push, x, config) {
+function iterate (filterPredicate) {
+    return function (acc, x) {
         var toBeIterated,
-            container = context.node,
+            container = acc.context.node,
             isIteratingArray = (typeName(container) === 'Array');
-        if (typeName(predicate) === 'function') {
+        if (typeName(filterPredicate) === 'function') {
             toBeIterated = [];
-            context.keys.forEach(function (key) {
+            acc.context.keys.forEach(function (key) {
                 var value = container[key],
                     indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
-                if (predicate(value, indexOrKey, context, config)) {
+                if (filterPredicate(value, indexOrKey)) {
                     toBeIterated.push(key);
                 }
             });
@@ -37,13 +37,13 @@ function iterate (predicate) {
     };
 }
 
-function when (predicate, then) {
+function when (guard, then) {
     return function (next) {
-        return function (context, push, x, config) {
-            if (predicate(x, context.key, context, config)) {
-                return then(context, push, x, config);
+        return function (acc, x) {
+            if (guard(x, acc.context.key, acc)) {
+                return then(acc, x);
             }
-            return next(context, push, x, config);
+            return next(acc, x);
         };
     };
 }
@@ -51,81 +51,81 @@ function when (predicate, then) {
 function typeNameOr (anon) {
     anon = anon || 'Object';
     return function (next) {
-        return function (context, push, x, config) {
-            var name = typeName(context.node);
+        return function (acc, x) {
+            var name = typeName(acc.context.node);
             name = (name === '') ? anon : name;
-            push(name);
-            return next(context, push, x, config);
+            acc.push(name);
+            return next(acc, x);
         };
     };
 }
 
 function fixedString (str) {
     return function (next) {
-        return function (context, push, x, config) {
-            push(str);
-            return next(context, push, x, config);
+        return function (acc, x) {
+            acc.push(str);
+            return next(acc, x);
         };
     };
 }
 
 function json (replacer) {
     return function (next) {
-        return function (context, push, x, config) {
-            push(JSON.stringify(x, replacer));
-            return next(context, push, x, config);
+        return function (acc, x) {
+            acc.push(JSON.stringify(x, replacer));
+            return next(acc, x);
         };
     };
 }
 
 function toStr () {
     return function (next) {
-        return function (context, push, x, config) {
-            push(x.toString());
-            return next(context, push, x, config);
+        return function (acc, x) {
+            acc.push(x.toString());
+            return next(acc, x);
         };
     };
 }
 
 function decorateArray () {
     return function (next) {
-        return function (context, push, x, config) {
-            context.before(function (node) {
-                push('[');
+        return function (acc, x) {
+            acc.context.before(function (node) {
+                acc.push('[');
             });
-            context.after(function (node) {
-                afterAllChildren(this, push, config);
-                push(']');
+            acc.context.after(function (node) {
+                afterAllChildren(this, acc.push, acc.config);
+                acc.push(']');
             });
-            context.pre(function (val, key) {
-                beforeEachChild(this, push, config);
+            acc.context.pre(function (val, key) {
+                beforeEachChild(this, acc.push, acc.config);
             });
-            context.post(function (childContext) {
-                afterEachChild(childContext, push);
+            acc.context.post(function (childContext) {
+                afterEachChild(childContext, acc.push);
             });
-            return next(context, push, x, config);
+            return next(acc, x);
         };
     };
 }
 
 function decorateObject () {
     return function (next) {
-        return function (context, push, x, config) {
-            context.before(function (node) {
-                push('{');
+        return function (acc, x) {
+            acc.context.before(function (node) {
+                acc.push('{');
             });
-            context.after(function (node) {
-                afterAllChildren(this, push, config);
-                push('}');
+            acc.context.after(function (node) {
+                afterAllChildren(this, acc.push, acc.config);
+                acc.push('}');
             });
-            context.pre(function (val, key) {
-                beforeEachChild(this, push, config);
-                push(sanitizeKey(key) + (config.indent ? ': ' : ':'));
+            acc.context.pre(function (val, key) {
+                beforeEachChild(this, acc.push, acc.config);
+                acc.push(sanitizeKey(key) + (acc.config.indent ? ': ' : ':'));
             });
-            context.post(function (childContext) {
-                afterEachChild(childContext, push);
+            acc.context.post(function (childContext) {
+                afterEachChild(childContext, acc.push);
             });
-            return next(context, push, x, config);
+            return next(acc, x);
         };
     };
 }
@@ -158,24 +158,24 @@ function afterEachChild (childContext, push) {
     }
 }
 
-function nan (val, key, context, config) {
+function nan (val, key, acc) {
     return val !== val;
 }
 
-function positiveInfinity (val, key, context, config) {
+function positiveInfinity (val, key, acc) {
     return !isFinite(val) && val === Infinity;
 }
 
-function negativeInfinity (val, key, context, config) {
+function negativeInfinity (val, key, acc) {
     return !isFinite(val) && val !== Infinity;
 }
 
-function circular (val, key, context, config) {
-    return context.circular;
+function circular (val, key, acc) {
+    return acc.context.circular;
 }
 
-function maxDepth (val, key, context, config) {
-    return (config.maxDepth && config.maxDepth <= context.level);
+function maxDepth (val, key, acc) {
+    return (acc.config.maxDepth && acc.config.maxDepth <= acc.context.level);
 }
 
 var prune = compose(
@@ -249,21 +249,21 @@ module.exports = {
             end()
         );
     },
-    array: function (predicate) {
+    array: function (filterPredicate) {
         return compose(
             omitCircular,
             omitMaxDepth,
             decorateArray(),
-            iterate(predicate)
+            iterate(filterPredicate)
         );
     },
-    object: function (predicate) {
+    object: function (filterPredicate) {
         return compose(
             omitCircular,
             omitMaxDepth,
             typeNameOr('Object'),
             decorateObject(),
-            iterate(predicate)
+            iterate(filterPredicate)
         );
     }
 };

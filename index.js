@@ -45,12 +45,18 @@ function createStringifier (opts, handlers) {
     var config = extend(defaultConfig(), opts),
         typeHandlers = extend(defaultHandlers(), handlers);
     return function stringifyAny (push, x) {
-        var tname = typeName(this.node),
-            children;
+        var context = this,
+            tname = typeName(context.node),
+            children,
+            acc = {
+                context: context,
+                config: config,
+                push: push
+            };
         if (typeName(typeHandlers[tname]) === 'function') {
-            children = typeHandlers[tname](this, push, x, config);
+            children = typeHandlers[tname](acc, x);
         } else {
-            children = typeHandlers['@default'](this, push, x, config);
+            children = typeHandlers['@default'](acc, x);
         }
         if (typeName(children) === 'Array') {
             this.keys = children;
@@ -60,12 +66,12 @@ function createStringifier (opts, handlers) {
 }
 
 function walk (val, reducer) {
-    var acc = [],
+    var buffer = [],
         push = function (str) {
-            acc.push(str);
+            buffer.push(str);
         };
     traverse(val).reduce(reducer, push);
-    return acc.join('');
+    return buffer.join('');
 }
 
 function stringify (val, config, handlers) {
