@@ -59,21 +59,27 @@ function createStringifier (opts, handlers) {
     };
 };
 
-function walk (obj, opts, handlers, push) {
-    traverse(obj).reduce(createStringifier(opts, handlers), push);
-}
-
-function stringify (obj, opts, handlers) {
+function walk (val, reducer) {
     var acc = [],
         push = function (str) {
             acc.push(str);
         };
-    walk(obj, opts, handlers, push);
+    traverse(val).reduce(reducer, push);
     return acc.join('');
 }
 
-stringify.strategies = s;
-stringify.defaultConfig = defaultConfig;
-stringify.defaultHandlers = defaultHandlers;
-stringify.walk = walk;
-module.exports = stringify;
+function stringify (val, config, handlers) {
+    return walk(val, createStringifier(config, handlers));
+}
+
+function stringifier (config, handlers) {
+    return function (val) {
+        return walk(val, createStringifier(config, handlers));
+    };
+}
+
+stringifier.stringify = stringify;
+stringifier.strategies = s;
+stringifier.defaultConfig = defaultConfig;
+stringifier.defaultHandlers = defaultHandlers;
+module.exports = stringifier;

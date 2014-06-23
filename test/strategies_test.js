@@ -1,5 +1,6 @@
-var stringify = require('..'),
-    s = stringify.strategies,
+var stringifier = require('..'),
+    stringify = stringifier.stringify,
+    s = stringifier.strategies,
     typeName = require('type-name'),
     assert = require('assert');
 

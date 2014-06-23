@@ -8,7 +8,8 @@ var AnonPerson = function(name, age) {
     this.age = age;
 };
 
-var stringify = require('..'),
+var stringifier = require('..'),
+    stringify = stringifier.stringify,
     keys = Object.keys || require('object-keys'),
     assert = require('assert'),
     fixtures = {

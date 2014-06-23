@@ -1,4 +1,5 @@
-var stringify = require('..'),
+var stringifier = require('..'),
+    stringify = stringifier.stringify,
     assert = require('assert');
 
 describe('traverse', function () {
