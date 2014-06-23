@@ -25,7 +25,7 @@ function iterate (predicate) {
             this.keys.forEach(function (key) {
                 var value = container[key],
                     indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
-                if (predicate.call(this, value, indexOrKey, container)) {
+                if (predicate.call(this, value, indexOrKey, config)) {
                     toBeIterated.push(key);
                 }
             }, this);
@@ -38,7 +38,7 @@ function iterate (predicate) {
 function when (predicate, then) {
     return function (next) {
         return function (push, x, config) {
-            if (predicate.call(this, push, x, config)) {
+            if (predicate.call(this, x, this.key, config)) {
                 return then.call(this, push, x, config);
             }
             return next.call(this, push, x, config);
@@ -156,23 +156,23 @@ function afterEachChild (childContext, push) {
     }
 }
 
-function nan (push, x, config) {
-    return x !== x;
+function nan (val, key, config) {
+    return val !== val;
 }
 
-function positiveInfinity (push, x, config) {
-    return !isFinite(x) && x === Infinity;
+function positiveInfinity (val, key, config) {
+    return !isFinite(val) && val === Infinity;
 }
 
-function negativeInfinity (push, x, config) {
-    return !isFinite(x) && x !== Infinity;
+function negativeInfinity (val, key, config) {
+    return !isFinite(val) && val !== Infinity;
 }
 
-function circular (push, x, config) {
+function circular (val, key, config) {
     return this.circular;
 }
 
-function maxDepth (push, x, config) {
+function maxDepth (val, key, config) {
     return (config.maxDepth && config.maxDepth <= this.level);
 }
 
