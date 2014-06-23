@@ -57,7 +57,7 @@ function createStringifier (opts, handlers) {
         }
         return push;
     };
-};
+}
 
 function walk (val, reducer) {
     var acc = [],

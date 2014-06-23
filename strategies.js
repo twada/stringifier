@@ -1,3 +1,5 @@
+'use strict';
+
 var typeName = require('type-name'),
     slice = Array.prototype.slice;
 
@@ -7,7 +9,7 @@ function compose () {
     return filters.reduceRight(function(right, left) {
         return left(right);
     });
-};
+}
 
 function end () {
     return function (push, x, config) {
@@ -176,11 +178,28 @@ function maxDepth (val, key, config) {
     return (config.maxDepth && config.maxDepth <= this.level);
 }
 
-var prune = compose(fixedString('#'), typeNameOr('Object'), fixedString('#'), end());
-var omitNaN = when(nan, compose(fixedString('NaN'), end()));
-var omitPositiveInfinity = when(positiveInfinity, compose(fixedString('Infinity'), end()));
-var omitNegativeInfinity = when(negativeInfinity, compose(fixedString('-Infinity'), end()));
-var omitCircular = when(circular, compose(fixedString('#@Circular#'), end()));
+var prune = compose(
+    fixedString('#'),
+    typeNameOr('Object'),
+    fixedString('#'),
+    end()
+);
+var omitNaN = when(nan, compose(
+    fixedString('NaN'),
+    end()
+));
+var omitPositiveInfinity = when(positiveInfinity, compose(
+    fixedString('Infinity'),
+    end()
+));
+var omitNegativeInfinity = when(negativeInfinity, compose(
+    fixedString('-Infinity'),
+    end()
+));
+var omitCircular = when(circular, compose(
+    fixedString('#@Circular#'),
+    end()
+));
 var omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
@@ -212,15 +231,39 @@ module.exports = {
         return prune;
     },
     number: function () {
-        return compose(omitNaN, omitPositiveInfinity, omitNegativeInfinity, json(), end());
+        return compose(
+            omitNaN,
+            omitPositiveInfinity,
+            omitNegativeInfinity,
+            json(),
+            end()
+        );
     },
     newLike: function () {
-        return compose(fixedString('new '), typeNameOr('@Anonymous'), fixedString('('), json(), fixedString(')'), end());
+        return compose(
+            fixedString('new '),
+            typeNameOr('@Anonymous'),
+            fixedString('('),
+            json(),
+            fixedString(')'),
+            end()
+        );
     },
     array: function (predicate) {
-        return compose(omitCircular, omitMaxDepth, decorateArray(), iterate(predicate));
+        return compose(
+            omitCircular,
+            omitMaxDepth,
+            decorateArray(),
+            iterate(predicate)
+        );
     },
     object: function (predicate) {
-        return compose(omitCircular, omitMaxDepth, typeNameOr('Object'), decorateObject(), iterate(predicate));
+        return compose(
+            omitCircular,
+            omitMaxDepth,
+            typeNameOr('Object'),
+            decorateObject(),
+            iterate(predicate)
+        );
     }
 };
