@@ -17,13 +17,15 @@ function end () {
 
 function iterate (predicate) {
     return function (push, x, config) {
-        var toBeIterated, containerType = typeName(this.node);
+        var toBeIterated,
+            container = this.node,
+            isIteratingArray = (typeName(container) === 'Array');
         if (typeName(predicate) === 'function') {
             toBeIterated = [];
             this.keys.forEach(function (key) {
-                var value = this.node[key],
-                    indexOrKey = (containerType === 'Array') ? parseInt(key, 10) : key;
-                if (predicate(value, indexOrKey, this.node)) {
+                var value = container[key],
+                    indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
+                if (predicate(value, indexOrKey, container)) {
                     toBeIterated.push(key);
                 }
             }, this);
