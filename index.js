@@ -48,9 +48,9 @@ function createStringifier (opts, handlers) {
         var tname = typeName(this.node),
             children;
         if (typeName(typeHandlers[tname]) === 'function') {
-            children = typeHandlers[tname].call(this, push, x, config);
+            children = typeHandlers[tname](this, push, x, config);
         } else {
-            children = typeHandlers['@default'].call(this, push, x, config);
+            children = typeHandlers['@default'](this, push, x, config);
         }
         if (typeName(children) === 'Array') {
             this.keys = children;

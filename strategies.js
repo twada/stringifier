@@ -12,25 +12,25 @@ function compose () {
 }
 
 function end () {
-    return function (push, x, config) {
+    return function (context, push, x, config) {
         return []; // skip children
     };
 }
 
 function iterate (predicate) {
-    return function (push, x, config) {
+    return function (context, push, x, config) {
         var toBeIterated,
-            container = this.node,
+            container = context.node,
             isIteratingArray = (typeName(container) === 'Array');
         if (typeName(predicate) === 'function') {
             toBeIterated = [];
-            this.keys.forEach(function (key) {
+            context.keys.forEach(function (key) {
                 var value = container[key],
                     indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
-                if (predicate.call(this, value, indexOrKey, config)) {
+                if (predicate(value, indexOrKey, context, config)) {
                     toBeIterated.push(key);
                 }
-            }, this);
+            });
             return toBeIterated;
         }
         return undefined; // iterate all children
@@ -39,11 +39,11 @@ function iterate (predicate) {
 
 function when (predicate, then) {
     return function (next) {
-        return function (push, x, config) {
-            if (predicate.call(this, x, this.key, config)) {
-                return then.call(this, push, x, config);
+        return function (context, push, x, config) {
+            if (predicate(x, context.key, context, config)) {
+                return then(context, push, x, config);
             }
-            return next.call(this, push, x, config);
+            return next(context, push, x, config);
         };
     };
 }
@@ -51,81 +51,81 @@ function when (predicate, then) {
 function typeNameOr (anon) {
     anon = anon || 'Object';
     return function (next) {
-        return function (push, x, config) {
-            var name = typeName(this.node);
+        return function (context, push, x, config) {
+            var name = typeName(context.node);
             name = (name === '') ? anon : name;
             push(name);
-            return next.call(this, push, x, config);
+            return next(context, push, x, config);
         };
     };
 }
 
 function fixedString (str) {
     return function (next) {
-        return function (push, x, config) {
+        return function (context, push, x, config) {
             push(str);
-            return next.call(this, push, x, config);
+            return next(context, push, x, config);
         };
     };
 }
 
 function json (replacer) {
     return function (next) {
-        return function (push, x, config) {
+        return function (context, push, x, config) {
             push(JSON.stringify(x, replacer));
-            return next.call(this, push, x, config);
+            return next(context, push, x, config);
         };
     };
 }
 
 function toStr () {
     return function (next) {
-        return function (push, x, config) {
+        return function (context, push, x, config) {
             push(x.toString());
-            return next.call(this, push, x, config);
+            return next(context, push, x, config);
         };
     };
 }
 
 function decorateArray () {
     return function (next) {
-        return function (push, x, config) {
-            this.before(function (node) {
+        return function (context, push, x, config) {
+            context.before(function (node) {
                 push('[');
             });
-            this.after(function (node) {
+            context.after(function (node) {
                 afterAllChildren(this, push, config);
                 push(']');
             });
-            this.pre(function (val, key) {
+            context.pre(function (val, key) {
                 beforeEachChild(this, push, config);
             });
-            this.post(function (childContext) {
+            context.post(function (childContext) {
                 afterEachChild(childContext, push);
             });
-            return next.call(this, push, x, config);
+            return next(context, push, x, config);
         };
     };
 }
 
 function decorateObject () {
     return function (next) {
-        return function (push, x, config) {
-            this.before(function (node) {
+        return function (context, push, x, config) {
+            context.before(function (node) {
                 push('{');
             });
-            this.after(function (node) {
+            context.after(function (node) {
                 afterAllChildren(this, push, config);
                 push('}');
             });
-            this.pre(function (val, key) {
+            context.pre(function (val, key) {
                 beforeEachChild(this, push, config);
                 push(sanitizeKey(key) + (config.indent ? ': ' : ':'));
             });
-            this.post(function (childContext) {
+            context.post(function (childContext) {
                 afterEachChild(childContext, push);
             });
-            return next.call(this, push, x, config);
+            return next(context, push, x, config);
         };
     };
 }
@@ -158,24 +158,24 @@ function afterEachChild (childContext, push) {
     }
 }
 
-function nan (val, key, config) {
+function nan (val, key, context, config) {
     return val !== val;
 }
 
-function positiveInfinity (val, key, config) {
+function positiveInfinity (val, key, context, config) {
     return !isFinite(val) && val === Infinity;
 }
 
-function negativeInfinity (val, key, config) {
+function negativeInfinity (val, key, context, config) {
     return !isFinite(val) && val !== Infinity;
 }
 
-function circular (val, key, config) {
-    return this.circular;
+function circular (val, key, context, config) {
+    return context.circular;
 }
 
-function maxDepth (val, key, config) {
-    return (config.maxDepth && config.maxDepth <= this.level);
+function maxDepth (val, key, context, config) {
+    return (config.maxDepth && config.maxDepth <= context.level);
 }
 
 var prune = compose(
