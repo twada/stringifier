@@ -92,14 +92,14 @@ function decorateArray () {
                 push('[');
             });
             this.after(function (node) {
-                afterCompound(this, push, config);
+                afterAllChildren(this, push, config);
                 push(']');
             });
             this.pre(function (val, key) {
-                preCompound(this, push, config);
+                beforeEachChild(this, push, config);
             });
             this.post(function (childContext) {
-                postCompound(childContext, push);
+                afterEachChild(childContext, push);
             });
             return next.call(this, push, x, config);
         };
@@ -113,15 +113,15 @@ function decorateObject () {
                 push('{');
             });
             this.after(function (node) {
-                afterCompound(this, push, config);
+                afterAllChildren(this, push, config);
                 push('}');
             });
             this.pre(function (val, key) {
-                preCompound(this, push, config);
+                beforeEachChild(this, push, config);
                 push(sanitizeKey(key) + (config.indent ? ': ' : ':'));
             });
             this.post(function (childContext) {
-                postCompound(childContext, push);
+                afterEachChild(childContext, push);
             });
             return next.call(this, push, x, config);
         };
@@ -132,7 +132,7 @@ function sanitizeKey (key) {
     return /^[A-Za-z_]+$/.test(key) ? key : JSON.stringify(key);
 }
 
-function afterCompound (context, push, config) {
+function afterAllChildren (context, push, config) {
     if (config.indent && 0 < context.keys.length) {
         push(config.lineSeparator);
         for(var i = 0; i < context.level; i += 1) { // indent level - 1
@@ -141,7 +141,7 @@ function afterCompound (context, push, config) {
     }
 }
 
-function preCompound (context, push, config) {
+function beforeEachChild (context, push, config) {
     if (config.indent) {
         push(config.lineSeparator);
         for(var i = 0; i <= context.level; i += 1) {
@@ -150,7 +150,7 @@ function preCompound (context, push, config) {
     }
 }
 
-function postCompound (childContext, push) {
+function afterEachChild (childContext, push) {
     if (!childContext.isLast) {
         push(',');
     }
