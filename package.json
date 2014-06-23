@@ -24,7 +24,7 @@
   },
   "scripts": {
     "build": "browserify index.js --standalone stringifier > ./build/stringifier.js",
-    "jshint": "jshint index.js",
+    "jshint": "jshint index.js strategies.js",
     "test": "./node_modules/.bin/mocha"
   },
   "author": {
