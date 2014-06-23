@@ -25,7 +25,7 @@ function iterate (predicate) {
             this.keys.forEach(function (key) {
                 var value = container[key],
                     indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
-                if (predicate(value, indexOrKey, container)) {
+                if (predicate.call(this, value, indexOrKey, container)) {
                     toBeIterated.push(key);
                 }
             }, this);
