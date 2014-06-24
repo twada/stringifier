@@ -67,8 +67,8 @@ describe('strategies', function () {
 
     it('whitelist by property name', function () {
         var handlers = {
-            'Student': s.object(function (val, key) {
-                return ['name', 'age'].indexOf(key) !== -1;
+            'Student': s.object(function (kvp) {
+                return ['name', 'age'].indexOf(kvp.key) !== -1;
             })
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
@@ -76,8 +76,8 @@ describe('strategies', function () {
 
     it('blacklist by property name', function () {
         var handlers = {
-            'Student': s.object(function (val, key) {
-                return ['age', 'gender'].indexOf(key) === -1;
+            'Student': s.object(function (kvp) {
+                return ['age', 'gender'].indexOf(kvp.key) === -1;
             })
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom"}');
@@ -85,8 +85,8 @@ describe('strategies', function () {
 
     it('whitelist by property value', function () {
         var handlers = {
-            'Student': s.object(function (val, key) {
-                return typeName(val) === 'string';
+            'Student': s.object(function (kvp) {
+                return typeName(kvp.value) === 'string';
             })
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",gender:"M"}');
@@ -94,8 +94,8 @@ describe('strategies', function () {
 
     it('blacklist by property value', function () {
         var handlers = {
-            'Student': s.object(function (val, key) {
-                return val !== 'M';
+            'Student': s.object(function (kvp) {
+                return kvp.value !== 'M';
             })
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10}');
@@ -103,8 +103,8 @@ describe('strategies', function () {
 
     it('array filtering by value', function () {
         var handlers = {
-            'Array': s.array(function (val, index) {
-                return /^b.*$/.test(val);
+            'Array': s.array(function (kvp) {
+                return /^b.*$/.test(kvp.value);
             })
         };
         assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["bar","baz"]');
@@ -112,8 +112,8 @@ describe('strategies', function () {
 
     it('array filtering by index', function () {
         var handlers = {
-            'Array': s.array(function (val, index) {
-                return typeName(index) === 'number' && index % 2 === 0;
+            'Array': s.array(function (kvp) {
+                return typeName(kvp.key) === 'number' && kvp.key % 2 === 0;
             })
         };
         assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["foo","baz"]');

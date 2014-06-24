@@ -24,9 +24,12 @@ function iterate (filterPredicate) {
         if (typeName(filterPredicate) === 'function') {
             toBeIterated = [];
             acc.context.keys.forEach(function (key) {
-                var value = x[key],
-                    indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
-                if (filterPredicate(value, indexOrKey)) {
+                var indexOrKey = isIteratingArray ? parseInt(key, 10) : key,
+                    kvp = {
+                        key: indexOrKey,
+                        value: x[key]
+                    };
+                if (filterPredicate(kvp)) {
                     toBeIterated.push(key);
                 }
             });
@@ -38,7 +41,11 @@ function iterate (filterPredicate) {
 function when (guard, then) {
     return function (next) {
         return function (acc, x) {
-            if (guard(x, acc.context.key, acc)) {
+            var kvp = {
+                key: acc.context.key,
+                value: x
+            };
+            if (guard(kvp, acc)) {
                 return then(acc, x);
             }
             return next(acc, x);
@@ -156,23 +163,23 @@ function afterEachChild (childContext, push) {
     }
 }
 
-function nan (val, key, acc) {
-    return val !== val;
+function nan (kvp, acc) {
+    return kvp.value !== kvp.value;
 }
 
-function positiveInfinity (val, key, acc) {
-    return !isFinite(val) && val === Infinity;
+function positiveInfinity (kvp, acc) {
+    return !isFinite(kvp.value) && kvp.value === Infinity;
 }
 
-function negativeInfinity (val, key, acc) {
-    return !isFinite(val) && val !== Infinity;
+function negativeInfinity (kvp, acc) {
+    return !isFinite(kvp.value) && kvp.value !== Infinity;
 }
 
-function circular (val, key, acc) {
+function circular (kvp, acc) {
     return acc.context.circular;
 }
 
-function maxDepth (val, key, acc) {
+function maxDepth (kvp, acc) {
     return (acc.config.maxDepth && acc.config.maxDepth <= acc.context.level);
 }
 
