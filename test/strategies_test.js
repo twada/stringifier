@@ -118,4 +118,16 @@ describe('strategies', function () {
         };
         assert.equal(stringify(['foo', 'bar', 'baz'], null, handlers), '["foo","baz"]');
     });
+
+    it('per-property strategy customization', function () {
+        var handlers = {
+            'Student': s.object(function (kvp) {
+                if (kvp.key === 'age') {
+                    return s.fixed('*secret*');
+                }
+                return true;
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:*secret*,gender:"M"}');
+    });
 });

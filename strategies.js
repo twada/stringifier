@@ -29,8 +29,14 @@ function iterate (filterPredicate) {
                         key: indexOrKey,
                         value: x[key]
                     };
-                if (filterPredicate(kvp)) {
+                var ret = filterPredicate(kvp);
+                if (ret) {
                     toBeIterated.push(key);
+                }
+                if (typeName(ret) === 'function') {
+                    var tmppaths = [''].concat(acc.context.path);
+                    tmppaths.push(key);
+                    acc.handlers[tmppaths.join('/')] = ret;
                 }
             });
         }

@@ -41,9 +41,9 @@ function defaultConfig () {
     };
 }
 
-function createStringifier (opts, handlers) {
-    var config = extend(defaultConfig(), opts),
-        typeHandlers = extend(defaultHandlers(), handlers);
+function createStringifier (customConfig, customHandlers) {
+    var config = extend(defaultConfig(), customConfig),
+        handlers = extend(defaultHandlers(), customHandlers);
     return function stringifyAny (push, x) {
         var context = this,
             tname = typeName(context.node),
@@ -51,12 +51,16 @@ function createStringifier (opts, handlers) {
             acc = {
                 context: context,
                 config: config,
+                handlers: handlers,
                 push: push
-            };
-        if (typeName(typeHandlers[tname]) === 'function') {
-            children = typeHandlers[tname](acc, x);
+            },
+            pathStr = '/' + context.path.join('/');
+        if (typeName(handlers[pathStr]) === 'function') {
+            children = handlers[pathStr](acc, x);
+        } else if (typeName(handlers[tname]) === 'function') {
+            children = handlers[tname](acc, x);
         } else {
-            children = typeHandlers['@default'](acc, x);
+            children = handlers['@default'](acc, x);
         }
         if (typeName(children) === 'Array') {
             this.keys = children;
