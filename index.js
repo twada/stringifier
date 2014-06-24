@@ -47,23 +47,23 @@ function createStringifier (customConfig, customHandlers) {
     return function stringifyAny (push, x) {
         var context = this,
             tname = typeName(context.node),
-            children,
+            handler = handlers['@default'],
+            pathStr = '/' + context.path.join('/'),
             acc = {
                 context: context,
                 config: config,
                 handlers: handlers,
                 push: push
             },
-            pathStr = '/' + context.path.join('/');
+            children;
         if (typeName(handlers[pathStr]) === 'function') {
-            children = handlers[pathStr](acc, x);
+            handler = handlers[pathStr];
         } else if (typeName(handlers[tname]) === 'function') {
-            children = handlers[tname](acc, x);
-        } else {
-            children = handlers['@default'](acc, x);
+            handler = handlers[tname];
         }
+        children = handler(acc, x);
         if (typeName(children) === 'Array') {
-            this.keys = children;
+            context.keys = children;
         }
         return push;
     };
