@@ -28,14 +28,26 @@ function iterate (filterPredicate) {
                     kvp = {
                         key: indexOrKey,
                         value: x[key]
-                    };
-                if (filterPredicate(kvp)) {
+                    },
+                    decision = filterPredicate(kvp);
+                if (decision) {
                     toBeIterated.push(key);
+                }
+                if (typeName(decision) === 'function') {
+                    customizeStrategyForKey(key, decision, acc);
                 }
             });
         }
         return toBeIterated;
     };
+}
+
+function customizeStrategyForKey (key, strategy, acc) {
+    var pathToCurrentNode = [''].concat(acc.context.path);
+    if (typeName(key) !== 'undefined') {
+        pathToCurrentNode.push(key);
+    }
+    acc.handlers[pathToCurrentNode.join('/')] = strategy;
 }
 
 function when (guard, then) {

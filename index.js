@@ -41,25 +41,29 @@ function defaultConfig () {
     };
 }
 
-function createStringifier (opts, handlers) {
-    var config = extend(defaultConfig(), opts),
-        typeHandlers = extend(defaultHandlers(), handlers);
+function createStringifier (customConfig, customHandlers) {
+    var config = extend(defaultConfig(), customConfig),
+        handlers = extend(defaultHandlers(), customHandlers);
     return function stringifyAny (push, x) {
         var context = this,
             tname = typeName(context.node),
-            children,
+            handler = handlers['@default'],
+            pathStr = '/' + context.path.join('/'),
             acc = {
                 context: context,
                 config: config,
+                handlers: handlers,
                 push: push
-            };
-        if (typeName(typeHandlers[tname]) === 'function') {
-            children = typeHandlers[tname](acc, x);
-        } else {
-            children = typeHandlers['@default'](acc, x);
+            },
+            children;
+        if (typeName(handlers[pathStr]) === 'function') {
+            handler = handlers[pathStr];
+        } else if (typeName(handlers[tname]) === 'function') {
+            handler = handlers[tname];
         }
+        children = handler(acc, x);
         if (typeName(children) === 'Array') {
-            this.keys = children;
+            context.keys = children;
         }
         return push;
     };
