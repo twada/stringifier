@@ -130,4 +130,11 @@ describe('strategies', function () {
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:*secret*,gender:"M"}');
     });
+
+    it('property whitelist and reordering', function () {
+        var handlers = {
+            'Student': s.object(null, ['gender', 'age'])
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{gender:"M",age:10}');
+    });
 });

@@ -17,28 +17,37 @@ function end () {
     };
 }
 
-function iterate (filterPredicate) {
+function iterate () {
     return function (acc, x) {
-        var toBeIterated,
-            isIteratingArray = (typeName(x) === 'Array');
-        if (typeName(filterPredicate) === 'function') {
-            toBeIterated = [];
-            acc.context.keys.forEach(function (key) {
-                var indexOrKey = isIteratingArray ? parseInt(key, 10) : key,
-                    kvp = {
-                        key: indexOrKey,
-                        value: x[key]
-                    },
-                    decision = filterPredicate(kvp);
-                if (decision) {
-                    toBeIterated.push(key);
-                }
-                if (typeName(decision) === 'function') {
-                    customizeStrategyForKey(key, decision, acc);
-                }
-            });
-        }
-        return toBeIterated;
+        return acc.context.keys;
+    };
+}
+
+function filter (predicate) {
+    return function (next) {
+        return function (acc, x) {
+            var toBeIterated,
+                isIteratingArray = (typeName(x) === 'Array');
+            if (typeName(predicate) === 'function') {
+                toBeIterated = [];
+                acc.context.keys.forEach(function (key) {
+                    var indexOrKey = isIteratingArray ? parseInt(key, 10) : key,
+                        kvp = {
+                            key: indexOrKey,
+                            value: x[key]
+                        },
+                        decision = predicate(kvp);
+                    if (decision) {
+                        toBeIterated.push(key);
+                    }
+                    if (typeName(decision) === 'function') {
+                        customizeStrategyForKey(key, decision, acc);
+                    }
+                });
+                acc.context.keys = toBeIterated;
+            }
+            return next(acc, x);
+        };
     };
 }
 
@@ -48,6 +57,20 @@ function customizeStrategyForKey (key, strategy, acc) {
         pathToCurrentNode.push(key);
     }
     acc.handlers[pathToCurrentNode.join('/')] = strategy;
+}
+
+function allowedKeys (orderedWhiteList) {
+    return function (next) {
+        return function (acc, x) {
+            var isIteratingArray = (typeName(x) === 'Array');
+            if (!isIteratingArray && typeName(orderedWhiteList) === 'Array') {
+                acc.context.keys = orderedWhiteList.filter(function (propKey) {
+                    return acc.context.keys.indexOf(propKey) !== -1;
+                });
+            }
+            return next(acc, x);
+        };
+    };
 }
 
 function when (guard, then) {
@@ -221,7 +244,6 @@ var omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
     filters: {
-        when: when,
         fixedString: fixedString,
         typeNameOr: typeNameOr,
         json: json,
@@ -230,8 +252,11 @@ module.exports = {
         decorateArray: decorateArray,
         decorateObject: decorateObject
     },
-    terminators: {
+    flow: {
         compose: compose,
+        when: when,
+        allowedKeys: allowedKeys,
+        filter: filter,
         iterate: iterate,
         end: end
     },
@@ -266,21 +291,24 @@ module.exports = {
             end()
         );
     },
-    array: function (filterPredicate) {
+    array: function (predicate) {
         return compose(
             omitCircular,
             omitMaxDepth,
             decorateArray(),
-            iterate(filterPredicate)
+            filter(predicate),
+            iterate()
         );
     },
-    object: function (filterPredicate) {
+    object: function (predicate, orderedWhiteList) {
         return compose(
             omitCircular,
             omitMaxDepth,
             typeNameOr('Object'),
             decorateObject(),
-            iterate(filterPredicate)
+            allowedKeys(orderedWhiteList),
+            filter(predicate),
+            iterate()
         );
     }
 };
