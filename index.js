@@ -54,17 +54,13 @@ function createStringifier (customConfig, customHandlers) {
                 config: config,
                 handlers: handlers,
                 push: push
-            },
-            children;
+            };
         if (typeName(handlers[pathStr]) === 'function') {
             handler = handlers[pathStr];
         } else if (typeName(handlers[tname]) === 'function') {
             handler = handlers[tname];
         }
-        children = handler(acc, x);
-        if (typeName(children) === 'Array') {
-            context.keys = children;
-        }
+        handler(acc, x);
         return push;
     };
 }

@@ -1,7 +1,9 @@
 'use strict';
 
 var typeName = require('type-name'),
-    slice = Array.prototype.slice;
+    slice = Array.prototype.slice,
+    END = {},
+    ITERATE = {};
 
 // arguments should end with end or iterate
 function compose () {
@@ -11,15 +13,18 @@ function compose () {
     });
 }
 
+// skip children
 function end () {
     return function (acc, x) {
-        return []; // skip children
+        acc.context.keys = [];
+        return END;
     };
 }
 
+// iterate children
 function iterate () {
     return function (acc, x) {
-        return acc.context.keys;
+        return ITERATE;
     };
 }
 
@@ -259,6 +264,10 @@ module.exports = {
         filter: filter,
         iterate: iterate,
         end: end
+    },
+    symbols: {
+        END: END,
+        ITERATE: ITERATE
     },
     fixed: function (str) {
         return compose(fixedString(str), end());
