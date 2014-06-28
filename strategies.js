@@ -93,6 +93,21 @@ function when (guard, then) {
     };
 }
 
+function truncate (size) {
+    return function (next) {
+        return function (acc, x) {
+            var orig = acc.push, ret;
+            acc.push = function (str) {
+                var truncated = str.substring(0, size);
+                orig.call(acc, truncated + '..(snip)');
+            };
+            ret = next(acc, x);
+            acc.push = orig;
+            return ret;
+        };
+    };
+}
+
 function typeNameOr (anon) {
     anon = anon || 'Object';
     return function (next) {
@@ -254,6 +269,7 @@ module.exports = {
         json: json,
         toStr: toStr,
         prune: prune,
+        truncate: truncate,
         decorateArray: decorateArray,
         decorateObject: decorateObject
     },

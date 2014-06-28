@@ -137,4 +137,16 @@ describe('strategies', function () {
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{gender:"M",age:10}');
     });
+
+    it('per-property truncate', function () {
+        var handlers = {
+            'Student': s.object(function (kvp) {
+                if (kvp.key === 'name') {
+                    return s.filters.truncate(3)(s.json());
+                }
+                return true;
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"to..(snip),age:10,gender:"M"}');
+    });
 });
