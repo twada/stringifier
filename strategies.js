@@ -93,6 +93,21 @@ function when (guard, then) {
     };
 }
 
+function truncate (size) {
+    return function (next) {
+        return function (acc, x) {
+            var orig = acc.push, ret;
+            acc.push = function (str) {
+                var truncated = str.substring(0, size);
+                orig.call(acc, truncated + '..(snip)');
+            };
+            ret = next(acc, x);
+            acc.push = orig;
+            return ret;
+        };
+    };
+}
+
 function typeNameOr (anon) {
     anon = anon || 'Object';
     return function (next) {
@@ -105,7 +120,7 @@ function typeNameOr (anon) {
     };
 }
 
-function fixedString (str) {
+function always (str) {
     return function (next) {
         return function (acc, x) {
             acc.push(str);
@@ -224,36 +239,37 @@ function maxDepth (kvp, acc) {
 }
 
 var prune = compose(
-    fixedString('#'),
+    always('#'),
     typeNameOr('Object'),
-    fixedString('#'),
+    always('#'),
     end()
 );
 var omitNaN = when(nan, compose(
-    fixedString('NaN'),
+    always('NaN'),
     end()
 ));
 var omitPositiveInfinity = when(positiveInfinity, compose(
-    fixedString('Infinity'),
+    always('Infinity'),
     end()
 ));
 var omitNegativeInfinity = when(negativeInfinity, compose(
-    fixedString('-Infinity'),
+    always('-Infinity'),
     end()
 ));
 var omitCircular = when(circular, compose(
-    fixedString('#@Circular#'),
+    always('#@Circular#'),
     end()
 ));
 var omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
     filters: {
-        fixedString: fixedString,
+        always: always,
         typeNameOr: typeNameOr,
         json: json,
         toStr: toStr,
         prune: prune,
+        truncate: truncate,
         decorateArray: decorateArray,
         decorateObject: decorateObject
     },
@@ -269,8 +285,8 @@ module.exports = {
         END: END,
         ITERATE: ITERATE
     },
-    fixed: function (str) {
-        return compose(fixedString(str), end());
+    always: function (str) {
+        return compose(always(str), end());
     },
     json: function () {
         return compose(json(), end());
@@ -292,11 +308,11 @@ module.exports = {
     },
     newLike: function () {
         return compose(
-            fixedString('new '),
+            always('new '),
             typeNameOr('@Anonymous'),
-            fixedString('('),
+            always('('),
             json(),
-            fixedString(')'),
+            always(')'),
             end()
         );
     },

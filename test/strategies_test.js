@@ -15,9 +15,9 @@ describe('strategies', function () {
         this.student = new Student('tom', 10, 'M');
     });
 
-    it('fixed', function () {
+    it('always', function () {
         var handlers = {
-            'Student': s.fixed('BOOM')
+            'Student': s.always('BOOM')
         };
         assert.equal(stringify(this.student, null, handlers), 'BOOM');
     });
@@ -123,7 +123,7 @@ describe('strategies', function () {
         var handlers = {
             'Student': s.object(function (kvp) {
                 if (kvp.key === 'age') {
-                    return s.fixed('*secret*');
+                    return s.always('*secret*');
                 }
                 return true;
             })
@@ -136,5 +136,17 @@ describe('strategies', function () {
             'Student': s.object(null, ['gender', 'age'])
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{gender:"M",age:10}');
+    });
+
+    it('per-property truncate', function () {
+        var handlers = {
+            'Student': s.object(function (kvp) {
+                if (kvp.key === 'name') {
+                    return s.filters.truncate(3)(s.json());
+                }
+                return true;
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"to..(snip),age:10,gender:"M"}');
     });
 });

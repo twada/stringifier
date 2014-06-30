@@ -16,8 +16,8 @@ var traverse = require('traverse'),
 
 function defaultHandlers () {
     return {
-        'null': s.fixed('null'),
-        'undefined': s.fixed('undefined'),
+        'null': s.always('null'),
+        'undefined': s.always('undefined'),
         'function': s.prune(),
         'string': s.json(),
         'boolean': s.json(),
