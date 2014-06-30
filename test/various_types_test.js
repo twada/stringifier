@@ -105,8 +105,8 @@ var stringifier = require('..'),
         },
         'anonymous constructor': {
             input:    new AnonPerson('bob', 4),
-            expected: 'Object{name:"bob",age:4}',
-            pruned:   '#Object#'
+            expected: '@Anonymous{name:"bob",age:4}',
+            pruned:   '#@Anonymous#'
         },
         'NaN': {
             input:    NaN,

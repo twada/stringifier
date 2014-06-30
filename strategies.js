@@ -109,7 +109,7 @@ function truncate (size) {
 }
 
 function typeNameOr (anon) {
-    anon = anon || 'Object';
+    anon = anon || '@Anonymous';
     return function (next) {
         return function (acc, x) {
             var name = typeName(x);
@@ -240,7 +240,7 @@ function maxDepth (kvp, acc) {
 
 var prune = compose(
     always('#'),
-    typeNameOr('Object'),
+    typeNameOr('@Anonymous'),
     always('#'),
     end()
 );
@@ -329,7 +329,7 @@ module.exports = {
         return compose(
             omitCircular,
             omitMaxDepth,
-            typeNameOr('Object'),
+            typeNameOr('@Anonymous'),
             decorateObject(),
             allowedKeys(orderedWhiteList),
             filter(predicate),
