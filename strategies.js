@@ -99,7 +99,7 @@ function truncate (size) {
             var orig = acc.push, ret;
             acc.push = function (str) {
                 var truncated = str.substring(0, size);
-                orig.call(acc, truncated + '..(snip)');
+                orig.call(acc, truncated + acc.config.snip);
             };
             ret = next(acc, x);
             acc.push = orig;

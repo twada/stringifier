@@ -39,6 +39,7 @@ function defaultConfig () {
         indent: null,
         anonymous: '@Anonymous',
         circular: '#@Circular#',
+        snip: '..(snip)',
         lineSeparator: '\n'
     };
 }
