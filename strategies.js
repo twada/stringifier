@@ -130,6 +130,15 @@ function always (str) {
     };
 }
 
+function configName (key) {
+    return function (next) {
+        return function (acc, x) {
+            acc.push(acc.config[key]);
+            return next(acc, x);
+        };
+    };
+}
+
 function json (replacer) {
     return function (next) {
         return function (acc, x) {
@@ -258,7 +267,7 @@ var omitNegativeInfinity = when(negativeInfinity, compose(
     end()
 ));
 var omitCircular = when(circular, compose(
-    always('#@Circular#'),
+    configName('circular'),
     end()
 ));
 var omitMaxDepth = when(maxDepth, prune);

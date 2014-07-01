@@ -38,6 +38,7 @@ function defaultConfig () {
         maxDepth: null,
         indent: null,
         anonymous: '@Anonymous',
+        circular: '#@Circular#',
         lineSeparator: '\n'
     };
 }
