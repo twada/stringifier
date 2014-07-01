@@ -37,6 +37,7 @@ function defaultConfig () {
     return {
         maxDepth: null,
         indent: null,
+        anonymous: '@Anonymous',
         lineSeparator: '\n'
     };
 }

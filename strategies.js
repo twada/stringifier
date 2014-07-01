@@ -108,12 +108,13 @@ function truncate (size) {
     };
 }
 
-function typeNameOr (anon) {
-    anon = anon || '@Anonymous';
+function constructorName () {
     return function (next) {
         return function (acc, x) {
             var name = typeName(x);
-            name = (name === '') ? anon : name;
+            if (name === '') {
+                name = acc.config.anonymous;
+            }
             acc.push(name);
             return next(acc, x);
         };
@@ -240,7 +241,7 @@ function maxDepth (kvp, acc) {
 
 var prune = compose(
     always('#'),
-    typeNameOr('@Anonymous'),
+    constructorName(),
     always('#'),
     end()
 );
@@ -265,7 +266,7 @@ var omitMaxDepth = when(maxDepth, prune);
 module.exports = {
     filters: {
         always: always,
-        typeNameOr: typeNameOr,
+        constructorName: constructorName,
         json: json,
         toStr: toStr,
         prune: prune,
@@ -309,7 +310,7 @@ module.exports = {
     newLike: function () {
         return compose(
             always('new '),
-            typeNameOr('@Anonymous'),
+            constructorName(),
             always('('),
             json(),
             always(')'),
@@ -329,7 +330,7 @@ module.exports = {
         return compose(
             omitCircular,
             omitMaxDepth,
-            typeNameOr('@Anonymous'),
+            constructorName(),
             decorateObject(),
             allowedKeys(orderedWhiteList),
             filter(predicate),

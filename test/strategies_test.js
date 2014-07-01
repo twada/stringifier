@@ -11,8 +11,15 @@ describe('strategies', function () {
         this.gender = gender;
     }
 
+    var AnonStudent = function(name, age, gender) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+    };
+
     beforeEach(function () {
         this.student = new Student('tom', 10, 'M');
+        this.anonymous = new AnonStudent('mary', 9, 'F');
     });
 
     it('always', function () {
@@ -55,6 +62,22 @@ describe('strategies', function () {
             'Student': s.object()
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10,gender:"M"}');
+    });
+
+    it('anonymous constructor object', function () {
+        var handlers = {
+            'Student': s.object(),
+            '': s.object()
+        };
+        assert.equal(stringify(this.anonymous, null, handlers), '@Anonymous{name:"mary",age:9,gender:"F"}');
+    });
+
+    it('anonymous constructor alternate name', function () {
+        var handlers = {
+            'Student': s.object(),
+            '': s.object()
+        };
+        assert.equal(stringify(this.anonymous, {anonymous: 'Anon'}, handlers), 'Anon{name:"mary",age:9,gender:"F"}');
     });
 
     it('number and array', function () {
