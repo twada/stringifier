@@ -45,8 +45,11 @@ function filter (predicate) {
                     if (decision) {
                         toBeIterated.push(key);
                     }
+                    if (typeName(decision) === 'number') {
+                        truncateByKey(decision, key, acc);
+                    }
                     if (typeName(decision) === 'function') {
-                        customizeStrategyForKey(key, decision, acc);
+                        customizeStrategyForKey(decision, key, acc);
                     }
                 });
                 acc.context.keys = toBeIterated;
@@ -56,12 +59,20 @@ function filter (predicate) {
     };
 }
 
-function customizeStrategyForKey (key, strategy, acc) {
+function customizeStrategyForKey (strategy, key, acc) {
+    acc.handlers[currentPath(key, acc)] = strategy;
+}
+
+function truncateByKey (size, key, acc) {
+    acc.handlers[currentPath(key, acc)] = size;
+}
+
+function currentPath (key, acc) {
     var pathToCurrentNode = [''].concat(acc.context.path);
     if (typeName(key) !== 'undefined') {
         pathToCurrentNode.push(key);
     }
-    acc.handlers[pathToCurrentNode.join('/')] = strategy;
+    return pathToCurrentNode.join('/');
 }
 
 function allowedKeys (orderedWhiteList) {

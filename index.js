@@ -49,23 +49,31 @@ function createStringifier (customConfig, customHandlers) {
         handlers = extend(defaultHandlers(), customHandlers);
     return function stringifyAny (push, x) {
         var context = this,
-            tname = typeName(context.node),
-            handler = handlers['@default'],
-            pathStr = '/' + context.path.join('/'),
+            handler = handlerFor(context.node, handlers),
+            currentPath = '/' + context.path.join('/'),
+            customization = handlers[currentPath],
             acc = {
                 context: context,
                 config: config,
                 handlers: handlers,
                 push: push
             };
-        if (typeName(handlers[pathStr]) === 'function') {
-            handler = handlers[pathStr];
-        } else if (typeName(handlers[tname]) === 'function') {
-            handler = handlers[tname];
+        if (typeName(customization) === 'function') {
+            handler = customization;
+        } else if (typeName(customization) === 'number') {
+            handler = s.flow.compose(s.filters.truncate(customization), handler);
         }
         handler(acc, x);
         return push;
     };
+}
+
+function handlerFor (val, handlers) {
+    var tname = typeName(val);
+    if (typeName(handlers[tname]) === 'function') {
+        return handlers[tname];
+    }
+    return handlers['@default'];
 }
 
 function walk (val, reducer) {
