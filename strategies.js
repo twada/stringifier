@@ -122,7 +122,7 @@ function truncate (size) {
 function constructorName () {
     return function (next) {
         return function (acc, x) {
-            var name = typeName(x);
+            var name = acc.config.typeFun(x);
             if (name === '') {
                 name = acc.config.anonymous;
             }

@@ -184,4 +184,26 @@ describe('strategies', function () {
         };
         assert.equal(stringify(this.student, null, handlers), 'Student{name:"to..(snip),age:10,gender:"M"}');
     });
+
+
+    it('type detection override', function () {
+        var config = {
+            typeFun: function (val) {
+                if (typeName(val) === '' &&
+                    typeName(val.name) === 'string' &&
+                    typeName(val.age) === 'number' &&
+                    typeName(val.gender) === 'string'
+                   ) {
+                       return 'Student';
+                   } else {
+                       return typeName(val);
+                   }
+            }
+        };
+        var handlers = {
+            'Student': s.object()
+        };
+        assert.equal(stringify(this.anonymous, config, handlers), 'Student{name:"mary",age:9,gender:"F"}');
+    });
+
 });

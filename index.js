@@ -40,7 +40,8 @@ function defaultConfig () {
         anonymous: '@Anonymous',
         circular: '#@Circular#',
         snip: '..(snip)',
-        lineSeparator: '\n'
+        lineSeparator: '\n',
+        typeFun: typeName
     };
 }
 
@@ -49,7 +50,7 @@ function createStringifier (customConfig, customHandlers) {
         handlers = extend(defaultHandlers(), customHandlers);
     return function stringifyAny (push, x) {
         var context = this,
-            handler = handlerFor(context.node, handlers),
+            handler = handlerFor(context.node, config, handlers),
             currentPath = '/' + context.path.join('/'),
             customization = handlers[currentPath],
             acc = {
@@ -61,15 +62,15 @@ function createStringifier (customConfig, customHandlers) {
         if (typeName(customization) === 'function') {
             handler = customization;
         } else if (typeName(customization) === 'number') {
-            handler = s.flow.compose(s.filters.truncate(customization), handler);
+            handler = s.flow.compose(s.filters.truncate(customization),handler);
         }
         handler(acc, x);
         return push;
     };
 }
 
-function handlerFor (val, handlers) {
-    var tname = typeName(val);
+function handlerFor (val, config, handlers) {
+    var tname = config.typeFun(val);
     if (typeName(handlers[tname]) === 'function') {
         return handlers[tname];
     }
