@@ -187,7 +187,7 @@ describe('strategies', function () {
 
 
     it('type detection override', function () {
-        var config = {
+        var options = {
             typeFun: function (val) {
                 if (typeName(val) === '' &&
                     typeName(val.name) === 'string' &&
@@ -203,7 +203,7 @@ describe('strategies', function () {
         var handlers = {
             'Student': s.object()
         };
-        assert.equal(stringify(this.anonymous, config, handlers), 'Student{name:"mary",age:9,gender:"F"}');
+        assert.equal(stringify(this.anonymous, options, handlers), 'Student{name:"mary",age:9,gender:"F"}');
     });
 
 });

@@ -33,7 +33,7 @@ function defaultHandlers () {
     };
 }
 
-function defaultConfig () {
+function defaultOptions () {
     return {
         maxDepth: null,
         indent: null,
@@ -45,17 +45,17 @@ function defaultConfig () {
     };
 }
 
-function createStringifier (customConfig, customHandlers) {
-    var config = extend(defaultConfig(), customConfig),
+function createStringifier (customOptions, customHandlers) {
+    var options = extend(defaultOptions(), customOptions),
         handlers = extend(defaultHandlers(), customHandlers);
     return function stringifyAny (push, x) {
         var context = this,
-            handler = handlerFor(context.node, config, handlers),
+            handler = handlerFor(context.node, options, handlers),
             currentPath = '/' + context.path.join('/'),
             customization = handlers[currentPath],
             acc = {
                 context: context,
-                config: config,
+                options: options,
                 handlers: handlers,
                 push: push
             };
@@ -69,8 +69,8 @@ function createStringifier (customConfig, customHandlers) {
     };
 }
 
-function handlerFor (val, config, handlers) {
-    var tname = config.typeFun(val);
+function handlerFor (val, options, handlers) {
+    var tname = options.typeFun(val);
     if (typeName(handlers[tname]) === 'function') {
         return handlers[tname];
     }
@@ -86,18 +86,18 @@ function walk (val, reducer) {
     return buffer.join('');
 }
 
-function stringify (val, config, handlers) {
-    return walk(val, createStringifier(config, handlers));
+function stringify (val, options, handlers) {
+    return walk(val, createStringifier(options, handlers));
 }
 
-function stringifier (config, handlers) {
+function stringifier (options, handlers) {
     return function (val) {
-        return walk(val, createStringifier(config, handlers));
+        return walk(val, createStringifier(options, handlers));
     };
 }
 
 stringifier.stringify = stringify;
 stringifier.strategies = s;
-stringifier.defaultConfig = defaultConfig;
+stringifier.defaultOptions = defaultOptions;
 stringifier.defaultHandlers = defaultHandlers;
 module.exports = stringifier;

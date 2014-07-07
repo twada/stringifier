@@ -110,7 +110,7 @@ function truncate (size) {
             var orig = acc.push, ret;
             acc.push = function (str) {
                 var truncated = str.substring(0, size);
-                orig.call(acc, truncated + acc.config.snip);
+                orig.call(acc, truncated + acc.options.snip);
             };
             ret = next(acc, x);
             acc.push = orig;
@@ -122,9 +122,9 @@ function truncate (size) {
 function constructorName () {
     return function (next) {
         return function (acc, x) {
-            var name = acc.config.typeFun(x);
+            var name = acc.options.typeFun(x);
             if (name === '') {
-                name = acc.config.anonymous;
+                name = acc.options.anonymous;
             }
             acc.push(name);
             return next(acc, x);
@@ -141,10 +141,10 @@ function always (str) {
     };
 }
 
-function configName (key) {
+function optionValue (key) {
     return function (next) {
         return function (acc, x) {
-            acc.push(acc.config[key]);
+            acc.push(acc.options[key]);
             return next(acc, x);
         };
     };
@@ -175,11 +175,11 @@ function decorateArray () {
                 acc.push('[');
             });
             acc.context.after(function (node) {
-                afterAllChildren(this, acc.push, acc.config);
+                afterAllChildren(this, acc.push, acc.options);
                 acc.push(']');
             });
             acc.context.pre(function (val, key) {
-                beforeEachChild(this, acc.push, acc.config);
+                beforeEachChild(this, acc.push, acc.options);
             });
             acc.context.post(function (childContext) {
                 afterEachChild(childContext, acc.push);
@@ -196,12 +196,12 @@ function decorateObject () {
                 acc.push('{');
             });
             acc.context.after(function (node) {
-                afterAllChildren(this, acc.push, acc.config);
+                afterAllChildren(this, acc.push, acc.options);
                 acc.push('}');
             });
             acc.context.pre(function (val, key) {
-                beforeEachChild(this, acc.push, acc.config);
-                acc.push(sanitizeKey(key) + (acc.config.indent ? ': ' : ':'));
+                beforeEachChild(this, acc.push, acc.options);
+                acc.push(sanitizeKey(key) + (acc.options.indent ? ': ' : ':'));
             });
             acc.context.post(function (childContext) {
                 afterEachChild(childContext, acc.push);
@@ -215,20 +215,20 @@ function sanitizeKey (key) {
     return /^[A-Za-z_]+$/.test(key) ? key : JSON.stringify(key);
 }
 
-function afterAllChildren (context, push, config) {
-    if (config.indent && 0 < context.keys.length) {
-        push(config.lineSeparator);
+function afterAllChildren (context, push, options) {
+    if (options.indent && 0 < context.keys.length) {
+        push(options.lineSeparator);
         for(var i = 0; i < context.level; i += 1) { // indent level - 1
-            push(config.indent);
+            push(options.indent);
         }
     }
 }
 
-function beforeEachChild (context, push, config) {
-    if (config.indent) {
-        push(config.lineSeparator);
+function beforeEachChild (context, push, options) {
+    if (options.indent) {
+        push(options.lineSeparator);
         for(var i = 0; i <= context.level; i += 1) {
-            push(config.indent);
+            push(options.indent);
         }
     }
 }
@@ -256,7 +256,7 @@ function circular (kvp, acc) {
 }
 
 function maxDepth (kvp, acc) {
-    return (acc.config.maxDepth && acc.config.maxDepth <= acc.context.level);
+    return (acc.options.maxDepth && acc.options.maxDepth <= acc.context.level);
 }
 
 var prune = compose(
@@ -278,7 +278,7 @@ var omitNegativeInfinity = when(negativeInfinity, compose(
     end()
 ));
 var omitCircular = when(circular, compose(
-    configName('circular'),
+    optionValue('circular'),
     end()
 ));
 var omitMaxDepth = when(maxDepth, prune);
