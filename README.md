@@ -10,13 +10,13 @@ DESCRIPTION
 `stringifier` is a function like `JSON.stringify` but intended to be more customizable. For example,
 
 - Max depth for recursive Object tree traversal
-- Per-type customization
+- Per-type output customization
 - Circular reference handling
 
 
 Please note that `stringifier` is a beta version product. Pull-requests, issue reports and patches are always welcomed.
 
-This is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
+Note that `stringifier` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
 
 
 EXAMPLE
@@ -108,7 +108,7 @@ For displaying truncated string
 
 ### handlers
 
-`handlers` is a object where property names are type names (string, number, ...) and values are per-type stringify strategy functions. Various stringify strategies are defined in `stringifier.strategies`.  And default strategies are defined as follows.
+`handlers` is a object where property names are type names (string, number, ...) and values are per-type stringify strategy functions. Various strategies are defined in `stringifier.strategies`, and default strategies are defined as follows.
 
 ```javascript
 var s = require('./strategies');
@@ -132,16 +132,125 @@ function defaultHandlers () {
 }
 ```
 
+If unknown type is detected, strategy function registered by `'@default'` key will be used.
+
+
+### strategies
+
+For given `Student` pseudo-class and a `stringifier`,
+
+```javascript
+var stringifier = require('stringifier'),
+    s = stringifier.strategies,
+    assert = require('assert'),
+
+function Student (name, age, gender) {
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+}
+
+var student = new Student('tom', 10, 'M');
+```
+
+#### always
+
+`always` strategy always returns passed constant (In this case, `'foo'`).
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.always('foo')
+});
+assert(stringify(student) === 'foo');
+```
+
+#### json
+
+`json` strategy applies `JSON.stringify` to input value then return the result string.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.json()
+});
+assert(stringify(student) === '{"name":"tom","age":10,"gender":"M"}');
+```
+
+#### toStr
+
+`toStr` strategy calls `toString()` to input value then return the result string.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.toStr()
+});
+assert(stringify(student) === '[object Object]');
+```
+
+#### prune
+
+`prune` strategy does not serialize target value but returns target type name surrounded by `#`.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.prune()
+});
+assert(stringify(student) === '#Student#');
+```
+
+#### newLike
+
+`newLike` strategy emulates "new constructor call pattern".
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.newLike()
+});
+assert(stringify(student) === 'new Student({"name":"tom","age":10,"gender":"M"})');
+```
+
+#### object
+
+`object` strategy stringifies target object recursively and decorate object literal-like syntax with its type name. `object` is a default strategy for objects, and any other unknown types.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.object()
+});
+assert(stringify(student) === 'Student{name:"tom",age:10,gender:"M"}');
+```
+
+#### array
+
+`array` strategy is an array specific stringification strategy, and is a default strategy for arrays.
+
+```javascript
+var stringify = stringifier(null, {
+  'Array': s.array()
+});
+assert(stringify(['foo', 'bar', 'baz']) === '["foo","bar","baz"]');
+```
+
+#### number
+
+`number` strategy is a number specific stringification strategy, and is a default strategy for number. `number` strategy also provides `NaN`,`Infinity` and `-Infinity` handling.
+
+```javascript
+var stringify = stringifier(null, {
+  'Array': s.array(),
+  'number': s.number()
+});
+assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infinity]');
+```
+
 
 
 HOWTO
 ---------------------------------------
 
-## cookbook
-- blacklist by replacer
+- blacklist
 - whitelist
-- custom strategy by replacer
-
+- truncate
+- custom strategy
 
 
 
