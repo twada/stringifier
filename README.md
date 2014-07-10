@@ -9,25 +9,12 @@ DESCRIPTION
 
 `stringifier` is a function like `JSON.stringify` but intended to be more customizable. For example,
 
-- Max depth for recursive Object tree traversal
+- Max depth for recursive object tree traversal
 - Per-type output customization
 - Circular reference handling
 
 
-Please note that `stringifier` is a beta version product. Pull-requests, issue reports and patches are always welcomed.
-
-Note that `stringifier` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
-
-
-EXAMPLE
----------------------------------------
-
-## Simplest usage
-
-```javascript
-var stringify = require('stringifier').stringify;
-console.log(stringify(anyVar));
-```
+Please note that `stringifier` is a beta version product. Pull-requests, issue reports and patches are always welcomed. `stringifier` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
 
 
 API
@@ -55,196 +42,40 @@ console.log(stringify(anyVar));
 ```
 
 
-CONFIGURATION
+INSTALL
 ---------------------------------------
 
-### options
+### via npm
 
+Install
 
-#### options.maxDepth
-Type: `number`
-Default value: `null`
+    $ npm install --save stringifier
 
-Max depth for recursive Object tree traversal
-
-
-#### options.indent
-Type: `String`
-Default value: `null`
-
-string value for indentation.
-If this value is not empty, stringified result may contain multiple lines.
-
-
-#### options.lineSeparator
-Type: `String`
-Default value: `'\n'`
-
-string value for line-separator.
-Makes sense only if `options.indent` is not empty.
-
-
-#### options.anonymous
-Type: `String`
-Default value: `'@Anonymous'`
-
-Type name string alternative for displaying Object created by anonymous constructor
-
-
-#### options.circular
-Type: `String`
-Default value: `'#@Circular#'`
-
-Alternative string for displaying Circular reference
-
-
-#### options.snip
-Type: `String`
-Default value: `'..(snip)'`
-
-For displaying truncated string
-
-
-
-### handlers
-
-`handlers` is a object where property names are type names (string, number, ...) and values are per-type stringify strategy functions. Various strategies are defined in `stringifier.strategies`, and default strategies are defined as follows.
+Use
 
 ```javascript
-var s = require('./strategies');
-function defaultHandlers () {
-    return {
-        'null': s.always('null'),
-        'undefined': s.always('undefined'),
-        'function': s.prune(),
-        'string': s.json(),
-        'boolean': s.json(),
-        'number': s.number(),
-        'RegExp': s.toStr(),
-        'String': s.newLike(),
-        'Boolean': s.newLike(),
-        'Number': s.newLike(),
-        'Date': s.newLike(),
-        'Array': s.array(),
-        'Object': s.object(),
-        '@default': s.object()
-    };
-}
+var stringify = require('stringifier').stringify;
+console.log(stringify(anyVar));
 ```
 
-If unknown type is detected, strategy function registered by `'@default'` key will be used.
+### via bower
 
+Install
 
-### strategies
+    $ bower install --save stringifier
 
-For given `Student` pseudo-class and a `stringifier`,
+Load (`stringifier` function is exported)
 
-```javascript
-var stringifier = require('stringifier'),
-    s = stringifier.strategies,
-    assert = require('assert'),
+    <script type="text/javascript" src="./path/to/bower_components/stringifier/build/stringifier.js"></script>
 
-function Student (name, age, gender) {
-    this.name = name;
-    this.age = age;
-    this.gender = gender;
-}
-
-var student = new Student('tom', 10, 'M');
-```
-
-#### always
-
-`always` strategy always returns passed constant (In this case, `'foo'`).
+Use
 
 ```javascript
-var stringify = stringifier(null, {
-  'Student': s.always('foo')
-});
-assert(stringify(student) === 'foo');
-```
-
-#### json
-
-`json` strategy applies `JSON.stringify` to input value then return the result string.
-
-```javascript
-var stringify = stringifier(null, {
-  'Student': s.json()
-});
-assert(stringify(student) === '{"name":"tom","age":10,"gender":"M"}');
-```
-
-#### toStr
-
-`toStr` strategy calls `toString()` to input value then return the result string.
-
-```javascript
-var stringify = stringifier(null, {
-  'Student': s.toStr()
-});
-assert(stringify(student) === '[object Object]');
-```
-
-#### prune
-
-`prune` strategy does not serialize target value but returns target type name surrounded by `#`.
-
-```javascript
-var stringify = stringifier(null, {
-  'Student': s.prune()
-});
-assert(stringify(student) === '#Student#');
-```
-
-#### newLike
-
-`newLike` strategy emulates "new constructor call pattern".
-
-```javascript
-var stringify = stringifier(null, {
-  'Student': s.newLike()
-});
-assert(stringify(student) === 'new Student({"name":"tom","age":10,"gender":"M"})');
-```
-
-#### object
-
-`object` strategy stringifies target object recursively and decorate object literal-like syntax with its type name. `object` is a default strategy for objects, and any other unknown types.
-
-```javascript
-var stringify = stringifier(null, {
-  'Student': s.object()
-});
-assert(stringify(student) === 'Student{name:"tom",age:10,gender:"M"}');
-```
-
-#### array
-
-`array` strategy is an array specific stringification strategy, and is a default strategy for arrays.
-
-```javascript
-var stringify = stringifier(null, {
-  'Array': s.array()
-});
-assert(stringify(['foo', 'bar', 'baz']) === '["foo","bar","baz"]');
-```
-
-#### number
-
-`number` strategy is a number specific stringification strategy, and is a default strategy for number. `number` strategy also provides `NaN`,`Infinity` and `-Infinity` handling.
-
-```javascript
-var stringify = stringifier(null, {
-  'Array': s.array(),
-  'number': s.number()
-});
-assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infinity]');
+console.log(stringifier.stringify(anyVar));
 ```
 
 
-
-HOWTO
+EXAMPLE
 ---------------------------------------
 
 For given context,
@@ -454,36 +285,191 @@ assert(stringify(student) === 'Student{name:"to..(snip),age:10,gender:"M"}');
 
 
 
-INSTALL
+CONFIGURATION
 ---------------------------------------
 
-### via npm
+### options
 
-Install
 
-    $ npm install --save stringifier
+#### options.maxDepth
+Type: `number`
+Default value: `null`
 
-Use
+Max depth for recursive Object tree traversal
+
+
+#### options.indent
+Type: `String`
+Default value: `null`
+
+string value for indentation.
+If this value is not empty, stringified result may contain multiple lines.
+
+
+#### options.lineSeparator
+Type: `String`
+Default value: `'\n'`
+
+string value for line-separator.
+Makes sense only if `options.indent` is not empty.
+
+
+#### options.anonymous
+Type: `String`
+Default value: `'@Anonymous'`
+
+Type name string alternative for displaying Object created by anonymous constructor
+
+
+#### options.circular
+Type: `String`
+Default value: `'#@Circular#'`
+
+Alternative string for displaying Circular reference
+
+
+#### options.snip
+Type: `String`
+Default value: `'..(snip)'`
+
+For displaying truncated string
+
+
+
+### handlers
+
+`handlers` is a object where property names are type names (string, number, ...) and values are per-type stringify strategy functions. Various strategies are defined in `stringifier.strategies`, and default strategies are defined as follows.
 
 ```javascript
-var stringify = require('stringifier').stringify;
-console.log(stringify(anyVar));
+var s = require('./strategies');
+function defaultHandlers () {
+    return {
+        'null': s.always('null'),
+        'undefined': s.always('undefined'),
+        'function': s.prune(),
+        'string': s.json(),
+        'boolean': s.json(),
+        'number': s.number(),
+        'RegExp': s.toStr(),
+        'String': s.newLike(),
+        'Boolean': s.newLike(),
+        'Number': s.newLike(),
+        'Date': s.newLike(),
+        'Array': s.array(),
+        'Object': s.object(),
+        '@default': s.object()
+    };
+}
 ```
 
-### via bower
+If unknown type is detected, strategy function registered by `'@default'` key will be used.
 
-Install
 
-    $ bower install --save stringifier
+### strategies
 
-Load (`stringifier` function is exported)
-
-    <script type="text/javascript" src="./path/to/bower_components/stringifier/build/stringifier.js"></script>
-
-Use
+For given `Student` pseudo-class and a `stringifier`,
 
 ```javascript
-console.log(stringifier.stringify(anyVar));
+var stringifier = require('stringifier'),
+    s = stringifier.strategies,
+    assert = require('assert'),
+
+function Student (name, age, gender) {
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+}
+
+var student = new Student('tom', 10, 'M');
+```
+
+#### always
+
+`always` strategy always returns passed constant (In this case, `'foo'`).
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.always('foo')
+});
+assert(stringify(student) === 'foo');
+```
+
+#### json
+
+`json` strategy applies `JSON.stringify` to input value then return the result string.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.json()
+});
+assert(stringify(student) === '{"name":"tom","age":10,"gender":"M"}');
+```
+
+#### toStr
+
+`toStr` strategy calls `toString()` to input value then return the result string.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.toStr()
+});
+assert(stringify(student) === '[object Object]');
+```
+
+#### prune
+
+`prune` strategy does not serialize target value but returns target type name surrounded by `#`.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.prune()
+});
+assert(stringify(student) === '#Student#');
+```
+
+#### newLike
+
+`newLike` strategy emulates "new constructor call pattern".
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.newLike()
+});
+assert(stringify(student) === 'new Student({"name":"tom","age":10,"gender":"M"})');
+```
+
+#### object
+
+`object` strategy stringifies target object recursively and decorate object literal-like syntax with its type name. `object` is a default strategy for objects, and any other unknown types.
+
+```javascript
+var stringify = stringifier(null, {
+  'Student': s.object()
+});
+assert(stringify(student) === 'Student{name:"tom",age:10,gender:"M"}');
+```
+
+#### array
+
+`array` strategy is an array specific stringification strategy, and is a default strategy for arrays.
+
+```javascript
+var stringify = stringifier(null, {
+  'Array': s.array()
+});
+assert(stringify(['foo', 'bar', 'baz']) === '["foo","bar","baz"]');
+```
+
+#### number
+
+`number` strategy is a number specific stringification strategy, and is a default strategy for number. `number` strategy also provides `NaN`,`Infinity` and `-Infinity` handling.
+
+```javascript
+var stringify = stringifier(null, {
+  'Array': s.array(),
+  'number': s.number()
+});
+assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infinity]');
 ```
 
 
