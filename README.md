@@ -247,10 +247,11 @@ assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infi
 HOWTO
 ---------------------------------------
 
-For given values,
+For given context,
 
 ```javascript
-var stringifier = require('stringifier');
+var stringifier = require('stringifier'),
+    assert = require('assert');
 
 function Student (name, age, gender) {
     this.name = name;
@@ -285,7 +286,7 @@ var values = [
 ```
 
 
-#### default output
+#### default single-line output
 
 ```javascript
 var stringify = stringifier();
@@ -298,7 +299,7 @@ result:
 ```
 
 
-#### pretty printing
+#### pretty printing with indentation
 
 Use `indent` option for pretty printing. Using four spaces for indentation in this case.
 
@@ -392,32 +393,63 @@ Use `anonymous` option to specify alternate type name for anonymous constructors
 
 ```javascript
 var stringify = stringifier({anonymous: 'ANON'});
-console.log(stringify(anonStudent));
-```
-
-result:
-
-```javascript
-ANON{name:"mary",age:9,gender:"F"}
+assert(stringify(anonStudent) === 'ANON{name:"mary",age:9,gender:"F"}');
 ```
 
 
 #### omit specific property from output
 
+Customize `handlers` argument
+
 ```javascript
-var handlers = {
+var stringify;
+
+// property whitelist and reordering
+stringify = stringifier(null, {
+    'Student': s.object(null, ['gender', 'age'])
+});
+assert(stringify(student) === 'Student{gender:"M",age:10}');
+
+// blacklist by property name
+stringify = stringifier(null, {
     'Student': s.object(function (kvp) {
         return ['age', 'gender'].indexOf(kvp.key) === -1;
     })
-};
-var stringify = stringifier(null, handlers);
-console.log(stringify(student));
+});
+assert(stringify(student) === 'Student{name:"tom"}');
+
+// blacklist by property value
+stringify = stringifier(null, {
+    'Student': s.object(function (kvp) {
+        return kvp.value !== 'M';
+    })
+});
+assert(stringify(student) === 'Student{name:"tom",age:10}');
+
+// whitelist by property value
+stringify = stringifier(null, {
+    'Student': s.object(function (kvp) {
+        return typeName(kvp.value) === 'string';
+    })
+});
+assert(stringify(student) === 'Student{name:"tom",gender:"M"}');
 ```
 
-result:
+
+#### truncate property value
+
+Return number from object predicate
 
 ```javascript
-Student{name:"tom"}
+stringify = stringifier(null, {
+    'Student': s.object(function (kvp) {
+        if (kvp.key === 'name') {
+            return 3;
+        }
+        return true;
+    })
+});
+assert(stringify(student) === 'Student{name:"to..(snip),age:10,gender:"M"}');
 ```
 
 
