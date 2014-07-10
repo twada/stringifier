@@ -247,10 +247,178 @@ assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infi
 HOWTO
 ---------------------------------------
 
-- blacklist
-- whitelist
-- truncate
-- custom strategy
+For given values,
+
+```javascript
+var stringifier = require('stringifier');
+
+function Student (name, age, gender) {
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+}
+
+var AnonStudent = function(name, age, gender) {
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+};
+
+var student = new Student('tom', 10, 'M');
+var anonStudent = new AnonStudent('mary', 9, 'F');
+
+var values = [
+    'string', 
+    [null, undefined],
+    {
+        primitives: [true, false, -5, 98.6],
+        specific: {
+            regex: /^not/,
+            numbers: [NaN, Infinity, -Infinity]
+        },
+        userDefined: [
+            student,
+            anonStudent
+        ]
+    }
+];
+```
+
+
+#### default output
+
+```javascript
+var stringify = stringifier();
+console.log(stringify(values));
+```
+result:
+
+```javascript
+["string",[null,undefined],Object{primitives:[true,false,-5,98.6],specific:Object{regex:/^not/,numbers:[NaN,Infinity,-Infinity]},userDefined:[Student{name:"tom",age:10,gender:"M"},@Anonymous{name:"mary",age:9,gender:"F"}]}]
+```
+
+
+#### pretty printing
+
+Use `indent` option for pretty printing. Using four spaces for indentation in this case.
+
+```javascript
+var stringify = stringifier({indent: '    '});
+console.log(stringify(values));
+```
+
+result:
+
+```javascript
+[
+    "string",
+    [
+        null,
+        undefined
+    ],
+    Object{
+        primitives: [
+            true,
+            false,
+            -5,
+            98.6
+        ],
+        specific: Object{
+            regex: /^not/,
+            numbers: [
+                NaN,
+                Infinity,
+                -Infinity
+            ]
+        },
+        userDefined: [
+            Student{
+                name: "tom",
+                age: 10,
+                gender: "M"
+            },
+            @Anonymous{
+                name: "mary",
+                age: 9,
+                gender: "F"
+            }
+        ]
+    }
+]
+```
+
+
+#### depth limitation
+
+Use `maxDepth` option to stringify at most specified levels.
+
+```javascript
+var stringify = stringifier({maxDepth: 3, indent: '    '});
+console.log(stringify(values));
+```
+
+result:
+
+```javascript
+[
+    "string",
+    [
+        null,
+        undefined
+    ],
+    Object{
+        primitives: [
+            true,
+            false,
+            -5,
+            98.6
+        ],
+        specific: Object{
+            regex: /^not/,
+            numbers: #Array#
+        },
+        userDefined: [
+            #Student#,
+            #@Anonymous#
+        ]
+    }
+]
+```
+
+
+#### anonymous class label
+
+Use `anonymous` option to specify alternate type name for anonymous constructors.
+
+```javascript
+var stringify = stringifier({anonymous: 'ANON'});
+console.log(stringify(anonStudent));
+```
+
+result:
+
+```javascript
+ANON{name:"mary",age:9,gender:"F"}
+```
+
+
+#### omit specific property from output
+
+```javascript
+var handlers = {
+    'Student': s.object(function (kvp) {
+        return ['age', 'gender'].indexOf(kvp.key) === -1;
+    })
+};
+var stringify = stringifier(null, handlers);
+console.log(stringify(student));
+```
+
+result:
+
+```javascript
+Student{name:"tom"}
+```
 
 
 
