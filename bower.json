@@ -1,15 +1,28 @@
 {
   "name": "stringifier",
   "description": "Yet another stringify function",
-  "keywords": [
-    "stringify"
-  ],
   "main": "build/stringifier.js",
   "license": "http://twada.mit-license.org/",
   "ignore": [
     "**/.*",
     "index.js",
+    "strategies.js",
     "package.json",
     "test"
-  ]
+  ],
+  "keywords": [
+    "stringify"
+  ],
+  "authors": [
+    {
+      "name": "Takuto Wada",
+      "email": "takuto.wada@gmail.com",
+      "homepage": "https://github.com/twada"
+    }
+  ],
+  "homepage": "https://github.com/twada/stringifier",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twada/stringifier.git"
+  }
 }
