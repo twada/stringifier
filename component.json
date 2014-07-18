@@ -1,0 +1,29 @@
+{
+  "name": "stringifier",
+  "repository": "twada/stringifier",
+  "description": "Yet another stringify function",
+  "version": "0.0.1",
+  "keywords": [
+    "stringify"
+  ],
+  "scripts": [
+    "index.js",
+    "strategies.js"
+  ],
+  "dependencies": {
+    "substack/js-traverse": "~0.6.6",
+    "twada/type-name": "~0.1.1",
+    "Raynos/xtend": "~3.0.0"
+  },
+  "development": {
+    "dependencies": {
+      "visionmedia/mocha": "~1.20.1"
+    },
+    "scripts": [
+      "test/array_and_object_test.js",
+      "test/customization_test.js",
+      "test/various_types_test.js"
+    ]
+  },
+  "license": "MIT"
+}
