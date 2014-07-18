@@ -27,7 +27,6 @@
     "gulp-mocha-phantomjs": "~0.3.0",
     "gulp-util": "~2.2.20",
     "mocha": "~1.20.1",
-    "object-keys": "~0.5.1",
     "vinyl-source-stream": "~0.1.1"
   },
   "scripts": {

@@ -1,3 +1,18 @@
+(function (root, factory) {
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        define(['stringifier', 'assert'], factory);
+    } else if (typeof exports === 'object') {
+        factory(require('..'), require('assert'), true);
+    } else {
+        factory(root.stringifier, root.assert);
+    }
+}(this, function (
+    stringifier,
+    assert,
+    isNode
+) {
+
 function Person(name, age) {
     this.name = name;
     this.age = age;
@@ -8,10 +23,8 @@ var AnonPerson = function(name, age) {
     this.age = age;
 };
 
-var stringifier = require('..'),
-    stringify = stringifier.stringify,
-    keys = Object.keys || require('object-keys'),
-    assert = require('assert'),
+var stringify = stringifier.stringify,
+    keys = Object.keys,
     fixtures = {
         'string literal':  {
             input:    'foo',
@@ -90,12 +103,12 @@ var stringifier = require('..'),
         },
         'Error object': {
             input:    new Error('error!'),
-            expected: 'Error{}',
+            expected: 'Error{message:"error!"}',
             pruned:   '#Error#'
         },
         'TypeError object': {
             input:    new TypeError('type error!'),
-            expected: 'Error{}',
+            expected: 'Error{message:"type error!"}',
             pruned:   '#Error#'
         },
         'user-defined constructor': {
@@ -144,6 +157,10 @@ var stringifier = require('..'),
             pruned:   'undefined'
         }
     };
+if (isNode) {
+    fixtures['Error object'].expected = 'Error{}';
+    fixtures['TypeError object'].expected = 'Error{}';
+}
 if (typeof JSON !== 'undefined') {
     fixtures['JSON'] = {
         input:    JSON,
@@ -200,3 +217,5 @@ describe('stringify', function () {
         })();
     }
 });
+
+}));
