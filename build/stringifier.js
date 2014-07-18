@@ -421,7 +421,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 
 },{}],3:[function(_dereq_,module,exports){
 /**
- * type-name - Just a reasonable type name
+ * type-name - Just a reasonable typeof
  * 
  * https://github.com/twada/type-name
  *

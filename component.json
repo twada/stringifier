@@ -12,7 +12,7 @@
   ],
   "dependencies": {
     "substack/js-traverse": "~0.6.6",
-    "twada/type-name": "~0.1.1",
+    "twada/type-name": "~1.0.0",
     "Raynos/xtend": "~3.0.0"
   },
   "development": {

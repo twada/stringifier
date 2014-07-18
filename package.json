@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "traverse": "~0.6.6",
-    "type-name": "~0.1.1",
+    "type-name": "~1.0.0",
     "xtend": "~3.0.0"
   },
   "devDependencies": {
@@ -30,6 +30,7 @@
     "vinyl-source-stream": "~0.1.1"
   },
   "scripts": {
+    "bower": "bower install --config.interactive=false",
     "jshint": "jshint index.js strategies.js",
     "test": "gulp test"
   },
