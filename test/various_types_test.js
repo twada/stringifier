@@ -3,14 +3,13 @@
     if (typeof define === 'function' && define.amd) {
         define(['stringifier', 'assert'], factory);
     } else if (typeof exports === 'object') {
-        factory(require('..'), require('assert'), true);
+        factory(require('..'), require('assert'));
     } else {
         factory(root.stringifier, root.assert);
     }
 }(this, function (
     stringifier,
-    assert,
-    isNode
+    assert
 ) {
 
 function Person(name, age) {
@@ -25,6 +24,7 @@ var AnonPerson = function(name, age) {
 
 var stringify = stringifier.stringify,
     keys = Object.keys,
+    isPhantom = typeof window !== 'undefined' && typeof window.callPhantom === 'function',
     fixtures = {
         'string literal':  {
             input:    'foo',
@@ -103,12 +103,12 @@ var stringify = stringifier.stringify,
         },
         'Error object': {
             input:    new Error('error!'),
-            expected: 'Error{message:"error!"}',
+            expected: 'Error{}',
             pruned:   '#Error#'
         },
         'TypeError object': {
             input:    new TypeError('type error!'),
-            expected: 'Error{message:"type error!"}',
+            expected: 'Error{}',
             pruned:   '#Error#'
         },
         'user-defined constructor': {
@@ -157,9 +157,9 @@ var stringify = stringifier.stringify,
             pruned:   'undefined'
         }
     };
-if (isNode) {
-    fixtures['Error object'].expected = 'Error{}';
-    fixtures['TypeError object'].expected = 'Error{}';
+if (isPhantom) {
+    fixtures['Error object'].expected = 'Error{message:"error!"}';
+    fixtures['TypeError object'].expected = 'Error{message:"type error!"}';
 }
 if (typeof JSON !== 'undefined') {
     fixtures['JSON'] = {
