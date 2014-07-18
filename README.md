@@ -3,6 +3,11 @@ stringifier
 
 Yet another stringify function.
 
+[![Build Status](https://travis-ci.org/twada/stringifier.svg?branch=master)](https://travis-ci.org/twada/stringifier)
+[![NPM version](https://badge.fury.io/js/stringifier.svg)](http://badge.fury.io/js/stringifier)
+[![Dependency Status](https://gemnasium.com/twada/stringifier.svg)](https://gemnasium.com/twada/stringifier)
+[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://twada.mit-license.org/)
+
 
 DESCRIPTION
 ---------------------------------------
