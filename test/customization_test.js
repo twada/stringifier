@@ -1,8 +1,20 @@
-var stringifier = require('..'),
-    stringify = stringifier.stringify,
-    s = stringifier.strategies,
-    typeName = require('type-name'),
-    assert = require('assert');
+(function (root, factory) {
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        define(['stringifier', 'type-name', 'assert'], factory);
+    } else if (typeof exports === 'object') {
+        factory(require('..'), require('type-name'), require('assert'));
+    } else {
+        factory(root.stringifier, root.typeName, root.assert);
+    }
+}(this, function (
+    stringifier,
+    typeName,
+    assert
+) {
+
+var stringify = stringifier.stringify,
+    s = stringifier.strategies;
 
 describe('strategies', function () {
     function Student (name, age, gender) {
@@ -207,3 +219,5 @@ describe('strategies', function () {
     });
 
 });
+
+}));

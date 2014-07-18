@@ -24,5 +24,12 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/twada/stringifier.git"
+  },
+  "devDependencies": {
+    "assert": "Jxck/assert",
+    "mocha": "~1.20.1",
+    "requirejs": "~2.1.14",
+    "type-name": "~1.0.0",
+    "es5-shim": "~4.0.0"
   }
 }

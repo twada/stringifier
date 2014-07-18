@@ -1,3 +1,17 @@
+(function (root, factory) {
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        define(['stringifier', 'assert'], factory);
+    } else if (typeof exports === 'object') {
+        factory(require('..'), require('assert'));
+    } else {
+        factory(root.stringifier, root.assert);
+    }
+}(this, function (
+    stringifier,
+    assert
+) {
+
 function Person(name, age) {
     this.name = name;
     this.age = age;
@@ -8,10 +22,9 @@ var AnonPerson = function(name, age) {
     this.age = age;
 };
 
-var stringifier = require('..'),
-    stringify = stringifier.stringify,
-    keys = Object.keys || require('object-keys'),
-    assert = require('assert'),
+var stringify = stringifier.stringify,
+    keys = Object.keys,
+    isPhantom = typeof window !== 'undefined' && typeof window.callPhantom === 'function',
     fixtures = {
         'string literal':  {
             input:    'foo',
@@ -144,6 +157,10 @@ var stringifier = require('..'),
             pruned:   'undefined'
         }
     };
+if (isPhantom) {
+    fixtures['Error object'].expected = 'Error{message:"error!"}';
+    fixtures['TypeError object'].expected = 'Error{message:"type error!"}';
+}
 if (typeof JSON !== 'undefined') {
     fixtures['JSON'] = {
         input:    JSON,
@@ -200,3 +217,5 @@ describe('stringify', function () {
         })();
     }
 });
+
+}));
