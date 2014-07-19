@@ -3,7 +3,7 @@ var gulp = require('gulp'),
     mocha = require('gulp-mocha'),
     mochaPhantomJS = require('gulp-mocha-phantomjs'),
     connect = require('gulp-connect'),
-    clean = require('gulp-clean'),
+    del = require('del'),
     source = require('vinyl-source-stream'),
     browserify = require('browserify'),
     config = {
@@ -39,10 +39,8 @@ gulp.task('connect', function() {
     });
 });
 
-gulp.task('clean_bundle', function () {
-    return gulp
-        .src(config.bundle.destDir, {read: false})
-        .pipe(clean());
+gulp.task('clean_bundle', function (done) {
+    del([config.bundle.destDir], done);
 });
 
 gulp.task('bundle', ['clean_bundle'], function() {
