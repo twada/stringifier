@@ -13,11 +13,11 @@
   "dependencies": {
     "substack/js-traverse": "~0.6.6",
     "twada/type-name": "~1.0.0",
-    "Raynos/xtend": "~3.0.0"
+    "Raynos/xtend": "~4.0.0"
   },
   "development": {
     "dependencies": {
-      "visionmedia/mocha": "~1.20.1"
+      "visionmedia/mocha": "~1.21.4"
     },
     "scripts": [
       "test/array_and_object_test.js",
