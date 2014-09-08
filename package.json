@@ -19,12 +19,12 @@
     "xtend": "~4.0.0"
   },
   "devDependencies": {
-    "browserify": "~5.9.1",
-    "del": "~0.1.1",
+    "browserify": "~5.11.1",
+    "del": "~0.1.2",
     "gulp": "~3.8.7",
-    "gulp-derequire": "~0.3.0",
-    "gulp-mocha": "~0.5.2",
-    "gulp-mocha-phantomjs": "~0.3.0",
+    "gulp-derequire": "~1.0.0",
+    "gulp-mocha": "~1.0.0",
+    "gulp-mocha-phantomjs": "~0.5.0",
     "gulp-util": "~3.0.0",
     "gulp-webserver": "~0.6.0",
     "mocha": "~1.21.4",
