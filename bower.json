@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "assert": "Jxck/assert",
-    "mocha": "~1.21.5",
+    "mocha": "~2.0.1",
     "requirejs": "~2.1.15",
     "type-name": "~1.0.0",
     "es5-shim": "~4.0.3"

@@ -17,7 +17,7 @@
   },
   "development": {
     "dependencies": {
-      "visionmedia/mocha": "~1.21.4"
+      "visionmedia/mocha": "~2.0.1"
     },
     "scripts": [
       "test/array_and_object_test.js",
