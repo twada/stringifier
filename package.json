@@ -7,6 +7,7 @@
   ],
   "main": "index.js",
   "files": [
+    "CHANGELOG.md",
     "README.md",
     "index.js",
     "strategies.js",
