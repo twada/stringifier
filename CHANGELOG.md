@@ -1,4 +1,4 @@
-### [0.1.2](https://github.com/twada/stringifier/releases/tag/0.1.2) (2014-10-27)
+### [0.1.2](https://github.com/twada/stringifier/releases/tag/v0.1.2) (2014-10-27)
 
 
 #### Bug Fixes
