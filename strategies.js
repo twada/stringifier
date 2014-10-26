@@ -109,8 +109,14 @@ function truncate (size) {
         return function (acc, x) {
             var orig = acc.push, ret;
             acc.push = function (str) {
-                var truncated = str.substring(0, size);
-                orig.call(acc, truncated + acc.options.snip);
+                var savings = str.length - size,
+                    truncated;
+                if (savings <= size) {
+                    orig.call(acc, str);
+                } else {
+                    truncated = str.substring(0, size);
+                    orig.call(acc, truncated + acc.options.snip);
+                }
             };
             ret = next(acc, x);
             acc.push = orig;

@@ -32,6 +32,7 @@ describe('strategies', function () {
     beforeEach(function () {
         this.student = new Student('tom', 10, 'M');
         this.anonymous = new AnonStudent('mary', 9, 'F');
+        this.longNameStudent = new Student('the_long_name_man', 18, 'M');
     });
 
     it('always', function () {
@@ -182,7 +183,19 @@ describe('strategies', function () {
                 return true;
             })
         };
-        assert.equal(stringify(this.student, null, handlers), 'Student{name:"to..(snip),age:10,gender:"M"}');
+        assert.equal(stringify(this.longNameStudent, null, handlers), 'Student{name:"th..(snip),age:18,gender:"M"}');
+    });
+
+    it('do not truncate if string length is short enough', function () {
+        var handlers = {
+            'Student': s.object(function (kvp) {
+                if (kvp.key === 'name') {
+                    return 3;
+                }
+                return true;
+            })
+        };
+        assert.equal(stringify(this.student, null, handlers), 'Student{name:"tom",age:10,gender:"M"}');
     });
 
     it('per-property truncate bare handler', function () {
@@ -194,7 +207,7 @@ describe('strategies', function () {
                 return true;
             })
         };
-        assert.equal(stringify(this.student, null, handlers), 'Student{name:"to..(snip),age:10,gender:"M"}');
+        assert.equal(stringify(this.longNameStudent, null, handlers), 'Student{name:"th..(snip),age:18,gender:"M"}');
     });
 
 
