@@ -2,7 +2,7 @@
   "name": "stringifier",
   "repository": "twada/stringifier",
   "description": "Yet another stringify function",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "keywords": [
     "stringify"
   ],
