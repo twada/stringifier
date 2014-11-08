@@ -46,9 +46,9 @@ function defaultOptions () {
     };
 }
 
-function createStringifier (customOptions, customHandlers) {
+function createStringifier (customOptions) {
     var options = extend(defaultOptions(), customOptions),
-        handlers = extend(defaultHandlers(), customHandlers);
+        handlers = extend(defaultHandlers(), options.handlers);
     return function stringifyAny (push, x) {
         var context = this,
             handler = handlerFor(context.node, options, handlers),
@@ -87,13 +87,13 @@ function walk (val, reducer) {
     return buffer.join('');
 }
 
-function stringify (val, options, handlers) {
-    return walk(val, createStringifier(options, handlers));
+function stringify (val, options) {
+    return walk(val, createStringifier(options));
 }
 
-function stringifier (options, handlers) {
+function stringifier (options) {
     return function (val) {
-        return walk(val, createStringifier(options, handlers));
+        return walk(val, createStringifier(options));
     };
 }
 

@@ -26,20 +26,20 @@ API
 ---------------------------------------
 
 
-### stringifier(options, handlers)
+### stringifier(options)
 
-`require('stringifier')` exports single function `stringifier` that accepts `options` and `handlers` as optional parameters and returns configured function for stringify. This is the comprehensive usage.
+`require('stringifier')` exports single function `stringifier` that accepts `options` as optional parameters and returns configured function for stringify. This is the comprehensive usage.
 
 ```javascript
 var stringifier = require('stringifier');
-var stringify = stringifier(options, handlers);
+var stringify = stringifier(options);
 console.log(stringify(anyVar));
 ```
 
 
-### stringifier.stringify(val, options, handlers)
+### stringifier.stringify(val, options)
 
-For more simplified usage, `stringifier` has a function `stringify`, that simply takes target object/value and returns stringified result string. `stringifier.stringify` accepts `options` and `handlers` as second and third optional parameters too.
+For more simplified usage, `stringifier` has a function `stringify`, that simply takes target object/value and returns stringified result string. `stringifier.stringify` accepts `options` as optional parameter too.
 
 ```javascript
 var stringify = require('stringifier').stringify;
@@ -235,38 +235,46 @@ assert(stringify(anonStudent) === 'ANON{name:"mary",age:9,gender:"F"}');
 
 #### omit specific property from output
 
-Customize `handlers` argument
+Customize `options.handlers`
 
 ```javascript
 var stringify;
 
 // property whitelist and reordering
-stringify = stringifier(null, {
-    'Student': s.object(null, ['gender', 'age'])
+stringify = stringifier({
+    handlers: {
+        'Student': s.object(null, ['gender', 'age'])
+    }
 });
 assert(stringify(student) === 'Student{gender:"M",age:10}');
 
 // blacklist by property name
-stringify = stringifier(null, {
-    'Student': s.object(function (kvp) {
-        return ['age', 'gender'].indexOf(kvp.key) === -1;
-    })
+stringify = stringifier({
+    handlers: {
+        'Student': s.object(function (kvp) {
+            return ['age', 'gender'].indexOf(kvp.key) === -1;
+        })
+    }
 });
 assert(stringify(student) === 'Student{name:"tom"}');
 
 // blacklist by property value
-stringify = stringifier(null, {
-    'Student': s.object(function (kvp) {
-        return kvp.value !== 'M';
-    })
+stringify = stringifier({
+    handlers: {
+        'Student': s.object(function (kvp) {
+            return kvp.value !== 'M';
+        })
+    }
 });
 assert(stringify(student) === 'Student{name:"tom",age:10}');
 
 // whitelist by property value
-stringify = stringifier(null, {
-    'Student': s.object(function (kvp) {
-        return typeName(kvp.value) === 'string';
-    })
+stringify = stringifier({
+    handlers: {
+        'Student': s.object(function (kvp) {
+            return typeName(kvp.value) === 'string';
+        })
+    }
 });
 assert(stringify(student) === 'Student{name:"tom",gender:"M"}');
 ```
@@ -277,13 +285,15 @@ assert(stringify(student) === 'Student{name:"tom",gender:"M"}');
 Return number from object predicate
 
 ```javascript
-stringify = stringifier(null, {
-    'Student': s.object(function (kvp) {
-        if (kvp.key === 'name') {
-            return 3;
-        }
-        return true;
-    })
+stringify = stringifier({
+    handlers: {
+        'Student': s.object(function (kvp) {
+            if (kvp.key === 'name') {
+                return 3;
+            }
+            return true;
+        })
+    }
 });
 assert(stringify(student) === 'Student{name:"to..(snip),age:10,gender:"M"}');
 ```
@@ -340,10 +350,9 @@ Default value: `'..(snip)'`
 For displaying truncated string
 
 
+#### options.handlers
 
-### handlers
-
-`handlers` is a object where property names are type names (string, number, ...) and values are per-type stringify strategy functions. Various strategies are defined in `stringifier.strategies`, and default strategies are defined as follows.
+`options.handlers` is a object where property names are type names (string, number, ...) and values are per-type stringify strategy functions. Various strategies are defined in `stringifier.strategies`, and default strategies are defined as follows.
 
 ```javascript
 var s = require('./strategies');
@@ -393,8 +402,10 @@ var student = new Student('tom', 10, 'M');
 `always` strategy always returns passed constant (In this case, `'foo'`).
 
 ```javascript
-var stringify = stringifier(null, {
-  'Student': s.always('foo')
+var stringify = stringifier({
+    handlers: {
+        'Student': s.always('foo')
+    }
 });
 assert(stringify(student) === 'foo');
 ```
@@ -404,8 +415,10 @@ assert(stringify(student) === 'foo');
 `json` strategy applies `JSON.stringify` to input value then return the result string.
 
 ```javascript
-var stringify = stringifier(null, {
-  'Student': s.json()
+var stringify = stringifier({
+    handlers: {
+        'Student': s.json()
+    }
 });
 assert(stringify(student) === '{"name":"tom","age":10,"gender":"M"}');
 ```
@@ -415,8 +428,10 @@ assert(stringify(student) === '{"name":"tom","age":10,"gender":"M"}');
 `toStr` strategy calls `toString()` to input value then return the result string.
 
 ```javascript
-var stringify = stringifier(null, {
-  'Student': s.toStr()
+var stringify = stringifier({
+    handlers: {
+        'Student': s.toStr()
+    }
 });
 assert(stringify(student) === '[object Object]');
 ```
@@ -426,8 +441,10 @@ assert(stringify(student) === '[object Object]');
 `prune` strategy does not serialize target value but returns target type name surrounded by `#`.
 
 ```javascript
-var stringify = stringifier(null, {
-  'Student': s.prune()
+var stringify = stringifier({
+    handlers: {
+        'Student': s.prune()
+    }
 });
 assert(stringify(student) === '#Student#');
 ```
@@ -437,8 +454,10 @@ assert(stringify(student) === '#Student#');
 `newLike` strategy emulates "new constructor call pattern".
 
 ```javascript
-var stringify = stringifier(null, {
-  'Student': s.newLike()
+var stringify = stringifier({
+    handlers: {
+        'Student': s.newLike()
+    }
 });
 assert(stringify(student) === 'new Student({"name":"tom","age":10,"gender":"M"})');
 ```
@@ -448,8 +467,10 @@ assert(stringify(student) === 'new Student({"name":"tom","age":10,"gender":"M"})
 `object` strategy stringifies target object recursively and decorate object literal-like syntax with its type name. `object` is a default strategy for objects, and any other unknown types.
 
 ```javascript
-var stringify = stringifier(null, {
-  'Student': s.object()
+var stringify = stringifier({
+    handlers: {
+        'Student': s.object()
+    }
 });
 assert(stringify(student) === 'Student{name:"tom",age:10,gender:"M"}');
 ```
@@ -459,8 +480,10 @@ assert(stringify(student) === 'Student{name:"tom",age:10,gender:"M"}');
 `array` strategy is an array specific stringification strategy, and is a default strategy for arrays.
 
 ```javascript
-var stringify = stringifier(null, {
-  'Array': s.array()
+var stringify = stringifier({
+    handlers: {
+        'Array': s.array()
+    }
 });
 assert(stringify(['foo', 'bar', 'baz']) === '["foo","bar","baz"]');
 ```
@@ -470,9 +493,11 @@ assert(stringify(['foo', 'bar', 'baz']) === '["foo","bar","baz"]');
 `number` strategy is a number specific stringification strategy, and is a default strategy for number. `number` strategy also provides `NaN`,`Infinity` and `-Infinity` handling.
 
 ```javascript
-var stringify = stringifier(null, {
-  'Array': s.array(),
-  'number': s.number()
+var stringify = stringifier({
+    handlers: {
+        'Array': s.array(),
+        'number': s.number()
+    }
 });
 assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infinity]');
 ```
