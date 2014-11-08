@@ -48,7 +48,7 @@
   },
   "scripts": {
     "bower": "bower install --config.interactive=false",
-    "jshint": "jshint index.js strategies.js",
+    "lint": "jshint index.js strategies.js",
     "test": "gulp test"
   }
 }
