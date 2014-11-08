@@ -1,19 +1,13 @@
 {
   "name": "stringifier",
-  "version": "0.1.2",
   "description": "Yet another stringify function",
-  "keywords": [
-    "stringify"
-  ],
-  "main": "index.js",
-  "files": [
-    "CHANGELOG.md",
-    "README.md",
-    "index.js",
-    "strategies.js",
-    "package.json",
-    "test"
-  ],
+  "version": "0.1.2",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": "https://github.com/twada/stringifier/issues",
   "dependencies": {
     "traverse": "~0.6.6",
     "type-name": "~1.0.0",
@@ -31,26 +25,30 @@
     "mocha": "~2.0.1",
     "vinyl-source-stream": "~1.0.0"
   },
-  "scripts": {
-    "bower": "bower install --config.interactive=false",
-    "jshint": "jshint index.js strategies.js",
-    "test": "gulp test"
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "index.js",
+    "strategies.js",
+    "package.json",
+    "test"
+  ],
+  "homepage": "https://github.com/twada/stringifier",
+  "keywords": [
+    "stringify"
+  ],
+  "license": {
+    "type": "MIT",
+    "url": "http://twada.mit-license.org/"
   },
-  "author": {
-    "name": "Takuto Wada",
-    "email": "takuto.wada@gmail.com",
-    "url": "https://github.com/twada"
-  },
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/twada/stringifier.git"
   },
-  "homepage": "https://github.com/twada/stringifier",
-  "bugs": "https://github.com/twada/stringifier/issues",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://twada.mit-license.org/"
-    }
-  ]
+  "scripts": {
+    "bower": "bower install --config.interactive=false",
+    "jshint": "jshint index.js strategies.js",
+    "test": "gulp test"
+  }
 }
