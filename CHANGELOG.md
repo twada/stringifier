@@ -1,3 +1,11 @@
+### [1.0.1](https://github.com/twada/stringifier/releases/tag/v1.0.1) (2015-02-14)
+
+
+#### Bug Fixes
+
+* **stringifier:** introduce safeKey filter to skip unsafe property access ([67a9fa72](https://github.com/twada/stringifier/commit/67a9fa725c7602f948772f4f5f5a74806809ee34))
+
+
 ## [1.0.0](https://github.com/twada/stringifier/releases/tag/v1.0.0) (2014-11-09)
 
 
