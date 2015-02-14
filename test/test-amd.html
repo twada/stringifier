@@ -9,6 +9,11 @@
   </head>
   <body>
     <div id="mocha"></div>
+    <div id="sandbox">
+      <form action="#" method="POST">
+        <input type="checkbox" name="confirmation" id="confirmation"/>Confirmation
+      </form>
+    </div>
     <script type="text/javascript" src="../bower_components/mocha/mocha.js"></script>
     <script type="text/javascript">
       mocha.setup('bdd');
@@ -19,7 +24,8 @@
       require([
         "./array_and_object_test.js",
         "./customization_test.js",
-        "./various_types_test.js"
+        "./various_types_test.js",
+        "./runtime_type_error_test.js"
       ], function() {
         mocha.checkLeaks();
         if (window.mochaPhantomJS) {
