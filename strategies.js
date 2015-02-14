@@ -89,6 +89,28 @@ function allowedKeys (orderedWhiteList) {
     };
 }
 
+function safeKeys () {
+    return function (next) {
+        return function (acc, x) {
+            if (typeName(x) !== 'Array') {
+                acc.context.keys = acc.context.keys.filter(function (propKey) {
+                    // Error handling for unsafe property access.
+                    // For example, on PhantomJS,
+                    // accessing HTMLInputElement.selectionEnd causes TypeError
+                    try {
+                        var val = x[propKey];
+                        return true;
+                    } catch (e) {
+                        // skip unsafe key
+                        return false;
+                    }
+                });
+            }
+            return next(acc, x);
+        };
+    };
+}
+
 function when (guard, then) {
     return function (next) {
         return function (acc, x) {
@@ -304,6 +326,7 @@ module.exports = {
         compose: compose,
         when: when,
         allowedKeys: allowedKeys,
+        safeKeys: safeKeys,
         filter: filter,
         iterate: iterate,
         end: end
@@ -359,6 +382,7 @@ module.exports = {
             constructorName(),
             decorateObject(),
             allowedKeys(orderedWhiteList),
+            safeKeys(),
             filter(predicate),
             iterate()
         );

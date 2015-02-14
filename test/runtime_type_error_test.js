@@ -19,7 +19,9 @@ if (typeof document !== 'undefined' && typeof document.getElementById === 'funct
         it('stringifying HTMLInputElement', function () {
             var input = document.getElementById("confirmation");
             var str = stringify(input, {maxDepth: 1});
-            assert.equal(str, '');
+            assert(/^HTMLInputElement/.test(str));
+            assert(/defaultChecked\:false/.test(str));
+            assert(/multiple\:false/.test(str));
         });
     });
 }
