@@ -2,7 +2,7 @@
   "name": "stringifier",
   "description": "Yet another stringify function",
   "main": "build/stringifier.js",
-  "license": "http://twada.mit-license.org/",
+  "license": "http://twada.mit-license.org/2014-2015",
   "ignore": [
     "**/.*",
     "index.js",
