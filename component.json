@@ -12,12 +12,12 @@
   ],
   "dependencies": {
     "substack/js-traverse": "~0.6.6",
-    "twada/type-name": "~1.0.0",
+    "twada/type-name": "~1.0.1",
     "Raynos/xtend": "~4.0.0"
   },
   "development": {
     "dependencies": {
-      "visionmedia/mocha": "~2.0.1"
+      "visionmedia/mocha": "~2.1.0"
     },
     "scripts": [
       "test/array_and_object_test.js",
