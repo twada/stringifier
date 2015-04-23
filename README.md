@@ -63,6 +63,13 @@ var stringify = require('stringifier').stringify;
 console.log(stringify(anyVar));
 ```
 
+#### use stringifier npm module on browser
+
+`stringifier` function is exported
+
+    <script type="text/javascript" src="./path/to/node_modules/stringifier/build/stringifier.js"></script>
+
+
 ### via bower
 
 Install

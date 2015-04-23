@@ -34,6 +34,7 @@
     "README.md",
     "index.js",
     "strategies.js",
+    "build/stringifier.js",
     "package.json",
     "test"
   ],
