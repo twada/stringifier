@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.stringifier=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.stringifier = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
  * stringifier
  * 
@@ -103,7 +103,112 @@ stringifier.defaultOptions = defaultOptions;
 stringifier.defaultHandlers = defaultHandlers;
 module.exports = stringifier;
 
-},{"./strategies":5,"traverse":2,"type-name":3,"xtend":4}],2:[function(_dereq_,module,exports){
+},{"./strategies":9,"traverse":6,"type-name":7,"xtend":8}],2:[function(_dereq_,module,exports){
+
+/**
+ * Array#filter.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @param {Object=} self
+ * @return {Array}
+ * @throw TypeError
+ */
+
+module.exports = function (arr, fn, self) {
+  if (arr.filter) return arr.filter(fn);
+  if (void 0 === arr || null === arr) throw new TypeError;
+  if ('function' != typeof fn) throw new TypeError;
+  var ret = [];
+  for (var i = 0; i < arr.length; i++) {
+    if (!hasOwn.call(arr, i)) continue;
+    var val = arr[i];
+    if (fn.call(self, val, i, arr)) ret.push(val);
+  }
+  return ret;
+};
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
+},{}],3:[function(_dereq_,module,exports){
+/**
+ * array-foreach
+ *   Array#forEach ponyfill for older browsers
+ *   (Ponyfill: A polyfill that doesn't overwrite the native method)
+ * 
+ * https://github.com/twada/array-foreach
+ *
+ * Copyright (c) 2015 Takuto Wada
+ * Licensed under the MIT license.
+ *   http://twada.mit-license.org/
+ */
+'use strict';
+
+module.exports = function forEach (ary, callback, thisArg) {
+    if (ary.forEach) {
+        ary.forEach(callback, thisArg);
+        return;
+    }
+    for (var i = 0; i < ary.length; i+=1) {
+        callback.call(thisArg, ary[i], i, ary);
+    }
+};
+
+},{}],4:[function(_dereq_,module,exports){
+/**
+ * array-reduce-right
+ *   Array#reduceRight ponyfill for older browsers
+ *   (Ponyfill: A polyfill that doesn't overwrite the native method)
+ * 
+ * https://github.com/twada/array-reduce-right
+ *
+ * Copyright (c) 2015 Takuto Wada
+ * Licensed under the MIT license.
+ *   http://twada.mit-license.org/
+ */
+'use strict';
+
+var slice = Array.prototype.slice;
+
+module.exports = function reduceRight (ary, callback /*, initialValue*/) {
+    if (ary.reduceRight) {
+        return ary.reduceRight.apply(ary, slice.apply(arguments).slice(1));
+    }
+    if ('function' !== typeof callback) {
+        throw new TypeError(callback + ' is not a function');
+    }
+    var t = Object(ary), len = t.length >>> 0, k = len - 1, value;
+    if (arguments.length >= 3) {
+        value = arguments[2];
+    } else {
+        while (k >= 0 && !(k in t)) {
+            k--;
+        }
+        if (k < 0) {
+            throw new TypeError('Reduce of empty array with no initial value');
+        }
+        value = t[k--];
+    }
+    for (; k >= 0; k--) {
+        if (k in t) {
+            value = callback(value, t[k], k, t);
+        }
+    }
+    return value;
+};
+
+},{}],5:[function(_dereq_,module,exports){
+
+var indexOf = [].indexOf;
+
+module.exports = function(arr, obj){
+  if (indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+},{}],6:[function(_dereq_,module,exports){
 var traverse = module.exports = function (obj) {
     return new Traverse(obj);
 };
@@ -419,7 +524,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     return key in obj;
 };
 
-},{}],3:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 /**
  * type-name - Just a reasonable typeof
  * 
@@ -459,7 +564,7 @@ function typeName (val) {
 
 module.exports = typeName;
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 module.exports = extend
 
 function extend() {
@@ -478,10 +583,14 @@ function extend() {
     return target
 }
 
-},{}],5:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var typeName = _dereq_('type-name'),
+    forEach = _dereq_('array-foreach'),
+    arrayFilter = _dereq_('array-filter'),
+    reduceRight = _dereq_('array-reduce-right'),
+    indexOf = _dereq_('indexof'),
     slice = Array.prototype.slice,
     END = {},
     ITERATE = {};
@@ -489,7 +598,7 @@ var typeName = _dereq_('type-name'),
 // arguments should end with end or iterate
 function compose () {
     var filters = slice.apply(arguments);
-    return filters.reduceRight(function(right, left) {
+    return reduceRight(filters, function(right, left) {
         return left(right);
     });
 }
@@ -516,7 +625,7 @@ function filter (predicate) {
                 isIteratingArray = (typeName(x) === 'Array');
             if (typeName(predicate) === 'function') {
                 toBeIterated = [];
-                acc.context.keys.forEach(function (key) {
+                forEach(acc.context.keys, function (key) {
                     var indexOrKey = isIteratingArray ? parseInt(key, 10) : key,
                         kvp = {
                             key: indexOrKey,
@@ -561,8 +670,8 @@ function allowedKeys (orderedWhiteList) {
         return function (acc, x) {
             var isIteratingArray = (typeName(x) === 'Array');
             if (!isIteratingArray && typeName(orderedWhiteList) === 'Array') {
-                acc.context.keys = orderedWhiteList.filter(function (propKey) {
-                    return acc.context.keys.indexOf(propKey) !== -1;
+                acc.context.keys = arrayFilter(orderedWhiteList, function (propKey) {
+                    return indexOf(acc.context.keys, propKey) !== -1;
                 });
             }
             return next(acc, x);
@@ -574,7 +683,7 @@ function safeKeys () {
     return function (next) {
         return function (acc, x) {
             if (typeName(x) !== 'Array') {
-                acc.context.keys = acc.context.keys.filter(function (propKey) {
+                acc.context.keys = arrayFilter(acc.context.keys, function (propKey) {
                     // Error handling for unsafe property access.
                     // For example, on PhantomJS,
                     // accessing HTMLInputElement.selectionEnd causes TypeError
@@ -870,5 +979,5 @@ module.exports = {
     }
 };
 
-},{"type-name":3}]},{},[1])(1)
+},{"array-filter":2,"array-foreach":3,"array-reduce-right":4,"indexof":5,"type-name":7}]},{},[1])(1)
 });
