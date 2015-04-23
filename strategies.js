@@ -1,6 +1,10 @@
 'use strict';
 
 var typeName = require('type-name'),
+    forEach = require('array-foreach'),
+    arrayFilter = require('array-filter'),
+    reduceRight = require('array-reduce-right'),
+    indexOf = require('indexof'),
     slice = Array.prototype.slice,
     END = {},
     ITERATE = {};
@@ -8,7 +12,7 @@ var typeName = require('type-name'),
 // arguments should end with end or iterate
 function compose () {
     var filters = slice.apply(arguments);
-    return filters.reduceRight(function(right, left) {
+    return reduceRight(filters, function(right, left) {
         return left(right);
     });
 }
@@ -35,7 +39,7 @@ function filter (predicate) {
                 isIteratingArray = (typeName(x) === 'Array');
             if (typeName(predicate) === 'function') {
                 toBeIterated = [];
-                acc.context.keys.forEach(function (key) {
+                forEach(acc.context.keys, function (key) {
                     var indexOrKey = isIteratingArray ? parseInt(key, 10) : key,
                         kvp = {
                             key: indexOrKey,
@@ -80,8 +84,8 @@ function allowedKeys (orderedWhiteList) {
         return function (acc, x) {
             var isIteratingArray = (typeName(x) === 'Array');
             if (!isIteratingArray && typeName(orderedWhiteList) === 'Array') {
-                acc.context.keys = orderedWhiteList.filter(function (propKey) {
-                    return acc.context.keys.indexOf(propKey) !== -1;
+                acc.context.keys = arrayFilter(orderedWhiteList, function (propKey) {
+                    return indexOf(acc.context.keys, propKey) !== -1;
                 });
             }
             return next(acc, x);
@@ -93,7 +97,7 @@ function safeKeys () {
     return function (next) {
         return function (acc, x) {
             if (typeName(x) !== 'Array') {
-                acc.context.keys = acc.context.keys.filter(function (propKey) {
+                acc.context.keys = arrayFilter(acc.context.keys, function (propKey) {
                     // Error handling for unsafe property access.
                     // For example, on PhantomJS,
                     // accessing HTMLInputElement.selectionEnd causes TypeError
