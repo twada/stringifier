@@ -3,10 +3,11 @@ stringifier
 
 Yet another stringify function.
 
-[![Build Status](https://travis-ci.org/twada/stringifier.svg?branch=master)](https://travis-ci.org/twada/stringifier)
-[![NPM version](https://badge.fury.io/js/stringifier.svg)](http://badge.fury.io/js/stringifier)
-[![Dependency Status](https://gemnasium.com/twada/stringifier.svg)](https://gemnasium.com/twada/stringifier)
-[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://twada.mit-license.org/2014-2015)
+[![Build Status][travis-image]][travis-url]
+[![NPM package][npm-image]][npm-url]
+[![Bower package][bower-image]][bower-url]
+[![Dependency Status][depstat-image]][depstat-url]
+[![License][license-image]][license-url]
 
 
 DESCRIPTION
@@ -518,3 +519,19 @@ AUTHOR
 LICENSE
 ---------------------------------------
 Licensed under the [MIT](http://twada.mit-license.org/2014-2015) license.
+
+
+[travis-url]: http://travis-ci.org/twada/stringifier
+[travis-image]: https://secure.travis-ci.org/twada/stringifier.svg?branch=master
+
+[npm-url]: https://npmjs.org/package/stringifier
+[npm-image]: https://badge.fury.io/js/stringifier.svg
+
+[bower-url]: http://badge.fury.io/bo/stringifier
+[bower-image]: https://badge.fury.io/bo/stringifier.svg
+
+[depstat-url]: https://gemnasium.com/twada/stringifier
+[depstat-image]: https://gemnasium.com/twada/stringifier.svg
+
+[license-url]: http://twada.mit-license.org/
+[license-image]: http://img.shields.io/badge/license-MIT-brightgreen.svg
