@@ -22,6 +22,7 @@
     "del": "~1.1.1",
     "gulp": "~3.8.11",
     "gulp-derequire": "~2.0.0",
+    "gulp-dereserve": "^0.2.0",
     "gulp-mocha": "~2.0.1",
     "gulp-mocha-phantomjs": "~0.6.1",
     "gulp-util": "~3.0.4",
