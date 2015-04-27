@@ -11,13 +11,17 @@
     "strategies.js"
   ],
   "dependencies": {
+    "juliangruber/array-filter": "~0.2.0",
+    "twada/array-foreach": "~1.0.1",
+    "twada/array-reduce-right": "~1.0.0",
+    "component/indexof": "~0.0.1",
     "substack/js-traverse": "~0.6.6",
     "twada/type-name": "~1.0.1",
     "Raynos/xtend": "~4.0.0"
   },
   "development": {
     "dependencies": {
-      "visionmedia/mocha": "~2.1.0"
+      "mochajs/mocha": "~2.2.4"
     },
     "scripts": [
       "test/array_and_object_test.js",
