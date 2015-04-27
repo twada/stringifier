@@ -1,3 +1,13 @@
+## [1.1.0](https://github.com/twada/stringifier/releases/tag/v1.1.0) (2015-04-27)
+
+
+#### Features
+
+* **stringifier:**
+  * use ponyfills for older browsers ([ea4e3f67](https://github.com/twada/stringifier/commit/ea4e3f673592fce8c57b49362100dc888038024e))
+  * ship npm module with built bundle for browsers ([afdbd850](https://github.com/twada/stringifier/commit/afdbd850de3be0e5d40d3b574b4c0940ce2b5144))
+
+
 ### [1.0.1](https://github.com/twada/stringifier/releases/tag/v1.0.1) (2015-02-14)
 
 
