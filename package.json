@@ -55,6 +55,7 @@
   "scripts": {
     "bower": "bower install --config.interactive=false",
     "lint": "jshint index.js strategies.js",
+    "es6": "mocha --harmony test/es6_test.es6",
     "test": "gulp test"
   }
 }
