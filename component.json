@@ -11,7 +11,7 @@
     "strategies.js"
   ],
   "dependencies": {
-    "juliangruber/array-filter": "~0.2.0",
+    "juliangruber/array-filter": "~1.0.0",
     "twada/array-foreach": "~1.0.1",
     "twada/array-reduce-right": "~1.0.0",
     "component/indexof": "~0.0.1",
@@ -21,7 +21,7 @@
   },
   "development": {
     "dependencies": {
-      "mochajs/mocha": "~2.2.4"
+      "mochajs/mocha": "~2.2.5"
     },
     "scripts": [
       "test/array_and_object_test.js",
