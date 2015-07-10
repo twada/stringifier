@@ -27,6 +27,7 @@
     "gulp-mocha-phantomjs": "~0.6.1",
     "gulp-util": "~3.0.4",
     "gulp-webserver": "~0.9.0",
+    "licensify": "^1.1.0",
     "mocha": "~2.2.4",
     "vinyl-source-stream": "~1.1.0"
   },
@@ -54,6 +55,7 @@
   },
   "scripts": {
     "bower": "bower install --config.interactive=false",
+    "build": "npm prune && npm dedupe && gulp bundle",
     "lint": "jshint index.js strategies.js",
     "es6": "./test/travis_es6.sh",
     "test": "npm run es6 && gulp test"

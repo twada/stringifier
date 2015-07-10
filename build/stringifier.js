@@ -1,3 +1,43 @@
+/**
+ * Modules in this bundle
+ * 
+ * array-filter:
+ *   license: MIT
+ *   author: Julian Gruber <mail@juliangruber.com>
+ *   maintainers: juliangruber <julian@juliangruber.com>
+ * 
+ * array-foreach:
+ *   license: MIT
+ *   author: Takuto Wada <takuto.wada@gmail.com>
+ * 
+ * array-reduce-right:
+ *   license: MIT
+ *   author: Takuto Wada <takuto.wada@gmail.com>
+ * 
+ * indexof:
+ *   maintainers: tjholowaychuk <tj@vision-media.ca>
+ * 
+ * stringifier:
+ *   license: MIT
+ *   author: Takuto Wada <takuto.wada@gmail.com>
+ * 
+ * traverse:
+ *   license: MIT
+ *   author: James Halliday <mail@substack.net>
+ *   maintainers: substack <mail@substack.net>
+ * 
+ * type-name:
+ *   license: MIT
+ *   author: Takuto Wada <takuto.wada@gmail.com>
+ *   maintainers: twada <takuto.wada@gmail.com>
+ *   contributors: azu, Yosuke Furukawa
+ * 
+ * xtend:
+ *   licenses: MIT
+ *   author: Raynos <raynos2@gmail.com>
+ *   contributors: Jake Verbaten, Matt Esch
+ * 
+ */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.stringifier = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw (f.code="MODULE_NOT_FOUND", f)}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
  * stringifier
@@ -23,6 +63,7 @@ function defaultHandlers () {
         'string': s.json(),
         'boolean': s.json(),
         'number': s.number(),
+        'symbol': s.toStr(),
         'RegExp': s.toStr(),
         'String': s.newLike(),
         'Boolean': s.newLike(),
