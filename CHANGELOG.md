@@ -1,3 +1,12 @@
+## [1.2.0](https://github.com/twada/stringifier/releases/tag/v1.2.0) (2015-07-10)
+
+
+#### Features
+
+* **stringifier:** 
+  * [support native ES6 Symbol](https://github.com/twada/stringifier/pull/3)
+
+
 ## [1.1.0](https://github.com/twada/stringifier/releases/tag/v1.1.0) (2015-04-27)
 
 
