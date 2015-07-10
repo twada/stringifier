@@ -9,7 +9,7 @@
   },
   "bugs": "https://github.com/twada/stringifier/issues",
   "dependencies": {
-    "array-filter": "~0.2.0",
+    "array-filter": "~1.0.0",
     "array-foreach": "~1.0.1",
     "array-reduce-right": "~1.0.0",
     "indexof": "~0.0.1",
