@@ -20,7 +20,7 @@ DESCRIPTION
 - Circular reference handling
 
 
-Please note that `stringifier` is a beta version product. Pull-requests, issue reports and patches are always welcomed. `stringifier` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
+Pull-requests, issue reports and patches are always welcomed. `stringifier` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
 
 
 API
