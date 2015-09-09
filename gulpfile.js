@@ -42,8 +42,8 @@ gulp.task('serve', function() {
         }));
 });
 
-gulp.task('clean_bundle', function (done) {
-    del([config.bundle.destDir], done);
+gulp.task('clean_bundle', function () {
+    del.sync([config.bundle.destDir]);
 });
 
 gulp.task('bundle', ['clean_bundle'], function() {
