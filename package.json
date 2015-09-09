@@ -55,6 +55,7 @@
     "build": "npm prune && npm dedupe && gulp bundle",
     "lint": "jshint index.js strategies.js",
     "es6": "./test/travis_es6.sh",
+    "unit": "npm run es6 && gulp unit",
     "test": "npm run es6 && gulp test"
   }
 }
