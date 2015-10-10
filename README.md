@@ -534,5 +534,5 @@ Licensed under the [MIT](http://twada.mit-license.org/2014-2015) license.
 [depstat-url]: https://gemnasium.com/twada/stringifier
 [depstat-image]: https://gemnasium.com/twada/stringifier.svg
 
-[license-url]: http://twada.mit-license.org/
+[license-url]: http://twada.mit-license.org/2014-2015
 [license-image]: http://img.shields.io/badge/license-MIT-brightgreen.svg
