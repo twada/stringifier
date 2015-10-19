@@ -21,7 +21,7 @@
   },
   "development": {
     "dependencies": {
-      "mochajs/mocha": "~2.2.5"
+      "mochajs/mocha": "~2.3.3"
     },
     "scripts": [
       "test/array_and_object_test.js",
