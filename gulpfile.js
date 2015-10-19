@@ -1,35 +1,35 @@
-var gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    mocha = require('gulp-mocha'),
-    mochaPhantomJS = require('gulp-mocha-phantomjs'),
-    webserver = require('gulp-webserver'),
-    del = require('del'),
-    path = require('path'),
-    source = require('vinyl-source-stream'),
-    browserify = require('browserify'),
-    licensify = require('licensify'),
-    derequire = require('gulp-derequire'),
-    dereserve = require('gulp-dereserve'),
-    config = {
-        bundle: {
-            standalone: 'stringifier',
-            srcFile: './index.js',
-            destDir: './build',
-            destName: 'stringifier.js'
-        },
-        assert_bundle: {
-            standalone: 'assert',
-            require: 'assert',
-            destDir: './build',
-            destName: 'assert.js'
-        },
-        test: {
-            base: './test/',
-            pattern: '**/*_test.js',
-            amd: 'test/test-amd.html',
-            browser: 'test/test-browser.html'
-        }
-    };
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var mocha = require('gulp-mocha');
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
+var webserver = require('gulp-webserver');
+var del = require('del');
+var path = require('path');
+var source = require('vinyl-source-stream');
+var browserify = require('browserify');
+var licensify = require('licensify');
+var derequire = require('gulp-derequire');
+var dereserve = require('gulp-dereserve');
+var config = {
+    bundle: {
+        standalone: 'stringifier',
+        srcFile: './index.js',
+        destDir: './build',
+        destName: 'stringifier.js'
+    },
+    assert_bundle: {
+        standalone: 'assert',
+        require: 'assert',
+        destDir: './build',
+        destName: 'assert.js'
+    },
+    test: {
+        base: './test/',
+        pattern: '**/*_test.js',
+        amd: 'test/test-amd.html',
+        browser: 'test/test-browser.html'
+    }
+};
 var BUILDS = ['assert'];
 
 function runMochaSimply() {
