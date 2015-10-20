@@ -1,13 +1,13 @@
 'use strict';
 
-var typeName = require('type-name'),
-    forEach = require('array-foreach'),
-    arrayFilter = require('array-filter'),
-    reduceRight = require('array-reduce-right'),
-    indexOf = require('indexof'),
-    slice = Array.prototype.slice,
-    END = {},
-    ITERATE = {};
+var typeName = require('type-name');
+var forEach = require('array-foreach');
+var arrayFilter = require('array-filter');
+var reduceRight = require('array-reduce-right');
+var indexOf = require('indexof');
+var slice = Array.prototype.slice;
+var END = {};
+var ITERATE = {};
 
 // arguments should end with end or iterate
 function compose () {
@@ -35,17 +35,17 @@ function iterate () {
 function filter (predicate) {
     return function (next) {
         return function (acc, x) {
-            var toBeIterated,
-                isIteratingArray = (typeName(x) === 'Array');
+            var toBeIterated;
+            var isIteratingArray = (typeName(x) === 'Array');
             if (typeName(predicate) === 'function') {
                 toBeIterated = [];
                 forEach(acc.context.keys, function (key) {
-                    var indexOrKey = isIteratingArray ? parseInt(key, 10) : key,
-                        kvp = {
-                            key: indexOrKey,
-                            value: x[key]
-                        },
-                        decision = predicate(kvp);
+                    var indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
+                    var kvp = {
+                        key: indexOrKey,
+                        value: x[key]
+                    };
+                    var decision = predicate(kvp);
                     if (decision) {
                         toBeIterated.push(key);
                     }
@@ -133,10 +133,11 @@ function when (guard, then) {
 function truncate (size) {
     return function (next) {
         return function (acc, x) {
-            var orig = acc.push, ret;
+            var orig = acc.push;
+            var ret;
             acc.push = function (str) {
-                var savings = str.length - size,
-                    truncated;
+                var savings = str.length - size;
+                var truncated;
                 if (savings <= size) {
                     orig.call(acc, str);
                 } else {

@@ -9,10 +9,10 @@
  */
 'use strict';
 
-var traverse = require('traverse'),
-    typeName = require('type-name'),
-    extend = require('xtend'),
-    s = require('./strategies');
+var traverse = require('traverse');
+var typeName = require('type-name');
+var extend = require('xtend');
+var s = require('./strategies');
 
 function defaultHandlers () {
     return {
@@ -47,19 +47,19 @@ function defaultOptions () {
 }
 
 function createStringifier (customOptions) {
-    var options = extend(defaultOptions(), customOptions),
-        handlers = extend(defaultHandlers(), options.handlers);
+    var options = extend(defaultOptions(), customOptions);
+    var handlers = extend(defaultHandlers(), options.handlers);
     return function stringifyAny (push, x) {
-        var context = this,
-            handler = handlerFor(context.node, options, handlers),
-            currentPath = '/' + context.path.join('/'),
-            customization = handlers[currentPath],
-            acc = {
-                context: context,
-                options: options,
-                handlers: handlers,
-                push: push
-            };
+        var context = this;
+        var handler = handlerFor(context.node, options, handlers);
+        var currentPath = '/' + context.path.join('/');
+        var customization = handlers[currentPath];
+        var acc = {
+            context: context,
+            options: options,
+            handlers: handlers,
+            push: push
+        };
         if (typeName(customization) === 'function') {
             handler = customization;
         } else if (typeName(customization) === 'number') {
@@ -79,10 +79,10 @@ function handlerFor (val, options, handlers) {
 }
 
 function walk (val, reducer) {
-    var buffer = [],
-        push = function (str) {
-            buffer.push(str);
-        };
+    var buffer = [];
+    var push = function (str) {
+        buffer.push(str);
+    };
     traverse(val).reduce(reducer, push);
     return buffer.join('');
 }
