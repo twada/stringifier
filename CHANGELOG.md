@@ -1,3 +1,12 @@
+### [1.2.1](https://github.com/twada/stringifier/releases/tag/v1.2.1) (2015-10-26)
+
+
+#### Bug Fixes
+
+* **stringifier:**
+  * [stringify sparse arrays correctly](https://github.com/twada/stringifier/pull/5)
+
+
 ## [1.2.0](https://github.com/twada/stringifier/releases/tag/v1.2.0) (2015-07-10)
 
 
