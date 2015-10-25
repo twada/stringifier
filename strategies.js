@@ -115,6 +115,21 @@ function safeKeys () {
     };
 }
 
+function arrayIndicesToKeys () {
+    return function (next) {
+        return function (acc, x) {
+            if (typeName(x) === 'Array' && 0 < x.length) {
+                var indices = Array(x.length);
+                for(var i = 0; i < x.length; i += 1) {
+                    indices[i] = String(i); // traverse uses strings as keys
+                }
+                acc.context.keys = indices;
+            }
+            return next(acc, x);
+        };
+    };
+}
+
 function when (guard, then) {
     return function (next) {
         return function (acc, x) {
@@ -376,6 +391,7 @@ module.exports = {
             omitCircular,
             omitMaxDepth,
             decorateArray(),
+            arrayIndicesToKeys(),
             filter(predicate),
             iterate()
         );

@@ -64,6 +64,9 @@ function createStringifier (customOptions) {
             handler = customization;
         } else if (typeName(customization) === 'number') {
             handler = s.flow.compose(s.filters.truncate(customization),handler);
+        } else if (context.parent && typeName(context.parent.node) === 'Array' && !(context.key in context.parent.node)) {
+            // sparse arrays
+            handler = s.always('');
         }
         handler(acc, x);
         return push;
