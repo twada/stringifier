@@ -24,6 +24,12 @@ describe('traverse', function () {
             var input = [4, [5, [6, 7, 8], 9], 10];
             assert.equal(stringify(input), '[4,[5,[6,7,8],9],10]');
         });
+        it('sparse arrays', function () {
+            var input = [];
+            input[2] = 'foo';
+            input[5] = 'bar';
+            assert.equal(stringify(input), '[,,"foo",,,"bar"]');
+        });
     });
 
 
