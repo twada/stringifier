@@ -6,7 +6,7 @@
  *   license: MIT
  *   author: Takuto Wada <takuto.wada@gmail.com>
  *   homepage: https://github.com/twada/stringifier
- *   version: 1.2.0
+ *   version: 1.2.1
  * 
  * array-filter:
  *   license: MIT
@@ -41,10 +41,9 @@
  * type-name:
  *   license: MIT
  *   author: Takuto Wada <takuto.wada@gmail.com>
- *   maintainers: twada <takuto.wada@gmail.com>
  *   contributors: azu, Yosuke Furukawa
  *   homepage: https://github.com/twada/type-name
- *   version: 1.0.1
+ *   version: 1.1.0
  * 
  * xtend:
  *   licenses: MIT
@@ -67,10 +66,10 @@
  */
 'use strict';
 
-var traverse = _dereq_('traverse'),
-    typeName = _dereq_('type-name'),
-    extend = _dereq_('xtend'),
-    s = _dereq_('./strategies');
+var traverse = _dereq_('traverse');
+var typeName = _dereq_('type-name');
+var extend = _dereq_('xtend');
+var s = _dereq_('./strategies');
 
 function defaultHandlers () {
     return {
@@ -105,23 +104,26 @@ function defaultOptions () {
 }
 
 function createStringifier (customOptions) {
-    var options = extend(defaultOptions(), customOptions),
-        handlers = extend(defaultHandlers(), options.handlers);
+    var options = extend(defaultOptions(), customOptions);
+    var handlers = extend(defaultHandlers(), options.handlers);
     return function stringifyAny (push, x) {
-        var context = this,
-            handler = handlerFor(context.node, options, handlers),
-            currentPath = '/' + context.path.join('/'),
-            customization = handlers[currentPath],
-            acc = {
-                context: context,
-                options: options,
-                handlers: handlers,
-                push: push
-            };
+        var context = this;
+        var handler = handlerFor(context.node, options, handlers);
+        var currentPath = '/' + context.path.join('/');
+        var customization = handlers[currentPath];
+        var acc = {
+            context: context,
+            options: options,
+            handlers: handlers,
+            push: push
+        };
         if (typeName(customization) === 'function') {
             handler = customization;
         } else if (typeName(customization) === 'number') {
             handler = s.flow.compose(s.filters.truncate(customization),handler);
+        } else if (context.parent && typeName(context.parent.node) === 'Array' && !(context.key in context.parent.node)) {
+            // sparse arrays
+            handler = s.always('');
         }
         handler(acc, x);
         return push;
@@ -137,10 +139,10 @@ function handlerFor (val, options, handlers) {
 }
 
 function walk (val, reducer) {
-    var buffer = [],
-        push = function (str) {
-            buffer.push(str);
-        };
+    var buffer = [];
+    var push = function (str) {
+        buffer.push(str);
+    };
     traverse(val).reduce(reducer, push);
     return buffer.join('');
 }
@@ -588,9 +590,9 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
  * 
  * https://github.com/twada/type-name
  *
- * Copyright (c) 2014 Takuto Wada
+ * Copyright (c) 2014-2015 Takuto Wada
  * Licensed under the MIT license.
- *   http://twada.mit-license.org/
+ *   http://twada.mit-license.org/2014-2015
  */
 'use strict';
 
@@ -644,14 +646,14 @@ function extend() {
 },{}],9:[function(_dereq_,module,exports){
 'use strict';
 
-var typeName = _dereq_('type-name'),
-    forEach = _dereq_('array-foreach'),
-    arrayFilter = _dereq_('array-filter'),
-    reduceRight = _dereq_('array-reduce-right'),
-    indexOf = _dereq_('indexof'),
-    slice = Array.prototype.slice,
-    END = {},
-    ITERATE = {};
+var typeName = _dereq_('type-name');
+var forEach = _dereq_('array-foreach');
+var arrayFilter = _dereq_('array-filter');
+var reduceRight = _dereq_('array-reduce-right');
+var indexOf = _dereq_('indexof');
+var slice = Array.prototype.slice;
+var END = {};
+var ITERATE = {};
 
 // arguments should end with end or iterate
 function compose () {
@@ -679,17 +681,17 @@ function iterate () {
 function filter (predicate) {
     return function (next) {
         return function (acc, x) {
-            var toBeIterated,
-                isIteratingArray = (typeName(x) === 'Array');
+            var toBeIterated;
+            var isIteratingArray = (typeName(x) === 'Array');
             if (typeName(predicate) === 'function') {
                 toBeIterated = [];
                 forEach(acc.context.keys, function (key) {
-                    var indexOrKey = isIteratingArray ? parseInt(key, 10) : key,
-                        kvp = {
-                            key: indexOrKey,
-                            value: x[key]
-                        },
-                        decision = predicate(kvp);
+                    var indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
+                    var kvp = {
+                        key: indexOrKey,
+                        value: x[key]
+                    };
+                    var decision = predicate(kvp);
                     if (decision) {
                         toBeIterated.push(key);
                     }
@@ -759,6 +761,21 @@ function safeKeys () {
     };
 }
 
+function arrayIndicesToKeys () {
+    return function (next) {
+        return function (acc, x) {
+            if (typeName(x) === 'Array' && 0 < x.length) {
+                var indices = Array(x.length);
+                for(var i = 0; i < x.length; i += 1) {
+                    indices[i] = String(i); // traverse uses strings as keys
+                }
+                acc.context.keys = indices;
+            }
+            return next(acc, x);
+        };
+    };
+}
+
 function when (guard, then) {
     return function (next) {
         return function (acc, x) {
@@ -777,10 +794,11 @@ function when (guard, then) {
 function truncate (size) {
     return function (next) {
         return function (acc, x) {
-            var orig = acc.push, ret;
+            var orig = acc.push;
+            var ret;
             acc.push = function (str) {
-                var savings = str.length - size,
-                    truncated;
+                var savings = str.length - size;
+                var truncated;
                 if (savings <= size) {
                     orig.call(acc, str);
                 } else {
@@ -1019,6 +1037,7 @@ module.exports = {
             omitCircular,
             omitMaxDepth,
             decorateArray(),
+            arrayIndicesToKeys(),
             filter(predicate),
             iterate()
         );
