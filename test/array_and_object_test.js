@@ -24,11 +24,24 @@ describe('traverse', function () {
             var input = [4, [5, [6, 7, 8], 9], 10];
             assert.equal(stringify(input), '[4,[5,[6,7,8],9],10]');
         });
-        it('sparse arrays', function () {
-            var input = [];
-            input[2] = 'foo';
-            input[5] = 'bar';
-            assert.equal(stringify(input), '[,,"foo",,,"bar"]');
+        describe('sparse arrays', function () {
+            it('empty', function () {
+                var input = Array(3);
+                assert.equal(stringify(input), '[,,]');
+            });
+            it('values', function () {
+                var input = [];
+                input[2] = 'foo';
+                input[5] = 'bar';
+                assert.equal(stringify(input), '[,,"foo",,,"bar"]');
+            });
+            it('nested', function () {
+                var input = [];
+                input[1] = 'foo';
+                input[3] = Array(4);
+                input[5] = 'bar';
+                assert.equal(stringify(input), '[,"foo",,[,,,],,"bar"]');
+            });
         });
     });
 
