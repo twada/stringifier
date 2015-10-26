@@ -334,6 +334,7 @@ var omitMaxDepth = when(maxDepth, prune);
 module.exports = {
     filters: {
         always: always,
+        optionValue: optionValue,
         constructorName: constructorName,
         json: json,
         toStr: toStr,
@@ -347,6 +348,7 @@ module.exports = {
         when: when,
         allowedKeys: allowedKeys,
         safeKeys: safeKeys,
+        arrayIndicesToKeys: arrayIndicesToKeys,
         filter: filter,
         iterate: iterate,
         end: end
