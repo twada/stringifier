@@ -108,8 +108,8 @@ var stringify = stringifier.stringify,
         },
         'TypeError object': {
             input:    new TypeError('type error!'),
-            expected: 'Error{}',
-            pruned:   '#Error#'
+            expected: 'TypeError{}',
+            pruned:   '#TypeError#'
         },
         'user-defined constructor': {
             input:    new Person('alice', 5),
@@ -159,7 +159,7 @@ var stringify = stringifier.stringify,
     };
 if (isPhantom) {
     fixtures['Error object'].expected = 'Error{message:"error!"}';
-    fixtures['TypeError object'].expected = 'Error{message:"type error!"}';
+    fixtures['TypeError object'].expected = 'TypeError{message:"type error!"}';
 }
 if (typeof JSON !== 'undefined') {
     fixtures['JSON'] = {
