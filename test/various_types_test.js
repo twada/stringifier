@@ -157,10 +157,6 @@ var stringify = stringifier.stringify,
             pruned:   'undefined'
         }
     };
-if (isPhantom) {
-    fixtures['Error object'].expected = 'Error{message:"error!"}';
-    fixtures['TypeError object'].expected = 'TypeError{message:"type error!"}';
-}
 if (typeof JSON !== 'undefined') {
     fixtures['JSON'] = {
         input:    JSON,
