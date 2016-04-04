@@ -20,7 +20,7 @@ DESCRIPTION
 - Circular reference handling
 
 
-Pull-requests, issue reports and patches are always welcomed. `stringifier` is a spin-off product of [power-assert](http://github.com/twada/power-assert) project.
+Pull-requests, issue reports and patches are always welcomed. `stringifier` is a spin-off product of [power-assert](https://github.com/power-assert-js/power-assert) project.
 
 
 API
@@ -514,7 +514,7 @@ assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infi
 
 AUTHOR
 ---------------------------------------
-* [Takuto Wada](http://github.com/twada)
+* [Takuto Wada](https://github.com/twada)
 
 
 LICENSE
@@ -522,17 +522,17 @@ LICENSE
 Licensed under the [MIT](http://twada.mit-license.org/2014-2015) license.
 
 
-[travis-url]: http://travis-ci.org/twada/stringifier
+[travis-url]: https://travis-ci.org/twada/stringifier
 [travis-image]: https://secure.travis-ci.org/twada/stringifier.svg?branch=master
 
 [npm-url]: https://npmjs.org/package/stringifier
 [npm-image]: https://badge.fury.io/js/stringifier.svg
 
-[bower-url]: http://badge.fury.io/bo/stringifier
+[bower-url]: https://badge.fury.io/bo/stringifier
 [bower-image]: https://badge.fury.io/bo/stringifier.svg
 
 [depstat-url]: https://gemnasium.com/twada/stringifier
 [depstat-image]: https://gemnasium.com/twada/stringifier.svg
 
 [license-url]: http://twada.mit-license.org/2014-2015
-[license-image]: http://img.shields.io/badge/license-MIT-brightgreen.svg
+[license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
