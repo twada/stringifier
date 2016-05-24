@@ -1,10 +1,10 @@
 'use strict';
 
 var typeName = require('type-name');
-var forEach = require('array-foreach');
-var arrayFilter = require('array-filter');
-var reduceRight = require('array-reduce-right');
-var indexOf = require('indexof');
+var forEach = require('core-js/library/fn/array/for-each');
+var arrayFilter = require('core-js/library/fn/array/filter');
+var reduceRight = require('core-js/library/fn/array/reduce-right');
+var indexOf = require('core-js/library/fn/array/index-of');
 var slice = Array.prototype.slice;
 var END = {};
 var ITERATE = {};

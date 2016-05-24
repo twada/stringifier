@@ -11,7 +11,7 @@
 
 var traverse = require('traverse');
 var typeName = require('type-name');
-var extend = require('xtend');
+var assign = require('core-js/library/fn/object/assign');
 var s = require('./strategies');
 
 function defaultHandlers () {
@@ -47,8 +47,8 @@ function defaultOptions () {
 }
 
 function createStringifier (customOptions) {
-    var options = extend(defaultOptions(), customOptions);
-    var handlers = extend(defaultHandlers(), options.handlers);
+    var options = assign({}, defaultOptions(), customOptions);
+    var handlers = assign({}, defaultHandlers(), options.handlers);
     return function stringifyAny (push, x) {
         var context = this;
         var handler = handlerFor(context.node, options, handlers);
