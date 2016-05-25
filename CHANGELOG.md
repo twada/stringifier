@@ -1,3 +1,11 @@
+## [1.3.0](https://github.com/twada/stringifier/releases/tag/v1.3.0) (2016-05-25)
+
+
+#### Features
+
+* [Consolidate ponyfills into core-js](https://github.com/twada/stringifier/pull/6)
+
+
 ### [1.2.1](https://github.com/twada/stringifier/releases/tag/v1.2.1) (2015-10-26)
 
 
