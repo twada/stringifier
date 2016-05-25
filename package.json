@@ -46,6 +46,8 @@
     "url": "git://github.com/twada/stringifier.git"
   },
   "scripts": {
+    "preversion": "npm test",
+    "version": "npm run build && git add -A build",
     "bower": "bower install --config.interactive=false",
     "build": "npm prune && npm dedupe && gulp bundle",
     "lint": "jshint index.js strategies.js",
