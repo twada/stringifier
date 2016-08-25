@@ -3,9 +3,9 @@
  * 
  * https://github.com/twada/stringifier
  *
- * Copyright (c) 2014-2015 Takuto Wada
+ * Copyright (c) 2014-2016 Takuto Wada
  * Licensed under the MIT license.
- *   https://twada.mit-license.org/2014-2015
+ *   https://twada.mit-license.org/2014-2016
  */
 'use strict';
 
