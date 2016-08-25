@@ -519,7 +519,7 @@ AUTHOR
 
 LICENSE
 ---------------------------------------
-Licensed under the [MIT](http://twada.mit-license.org/2014-2015) license.
+Licensed under the [MIT](https://twada.mit-license.org/2014-2015) license.
 
 
 [travis-url]: https://travis-ci.org/twada/stringifier
@@ -534,5 +534,5 @@ Licensed under the [MIT](http://twada.mit-license.org/2014-2015) license.
 [depstat-url]: https://gemnasium.com/twada/stringifier
 [depstat-image]: https://gemnasium.com/twada/stringifier.svg
 
-[license-url]: http://twada.mit-license.org/2014-2015
+[license-url]: https://twada.mit-license.org/2014-2015
 [license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
