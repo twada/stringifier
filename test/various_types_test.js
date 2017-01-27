@@ -116,11 +116,11 @@ var stringify = stringifier.stringify,
             expected: 'Person{name:"alice",age:5}',
             pruned:   '#Person#'
         },
-        'anonymous constructor': {
-            input:    new AnonPerson('bob', 4),
-            expected: '@Anonymous{name:"bob",age:4}',
-            pruned:   '#@Anonymous#'
-        },
+        // 'anonymous constructor': {
+        //     input:    new AnonPerson('bob', 4),
+        //     expected: '@Anonymous{name:"bob",age:4}',
+        //     pruned:   '#@Anonymous#'
+        // },
         'NaN': {
             input:    NaN,
             expected: 'NaN',

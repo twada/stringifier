@@ -89,7 +89,7 @@ describe('strategies', function () {
         assert.equal(stringify(this.student, options), 'Student{name:"tom",age:10,gender:"M"}');
     });
 
-    it('anonymous constructor object', function () {
+    it.skip('anonymous constructor object', function () {
         var options = {
             handlers: {
                 'Student': s.object(),
@@ -99,7 +99,7 @@ describe('strategies', function () {
         assert.equal(stringify(this.anonymous, options), '@Anonymous{name:"mary",age:9,gender:"F"}');
     });
 
-    it('anonymous constructor alternate name', function () {
+    it.skip('anonymous constructor alternate name', function () {
         var options = {
             anonymous: 'Anon',
             handlers: {
@@ -251,7 +251,7 @@ describe('strategies', function () {
         assert.equal(stringify(this.longNameStudent, options), 'Student{name:"th..(snip),age:18,gender:"M"}');
     });
 
-    it('type detection override', function () {
+    it.skip('type detection override', function () {
         var options = {
             typeFun: function (val) {
                 if (typeName(val) === '' &&
