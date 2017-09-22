@@ -1,14 +1,15 @@
 (function (root, factory) {
     'use strict';
     if (typeof define === 'function' && define.amd) {
-        define(['stringifier', 'assert'], factory);
+        define(['stringifier', 'type-name', 'assert'], factory);
     } else if (typeof exports === 'object') {
-        factory(require('..'), require('assert'));
+        factory(require('..'), require('type-name'), require('assert'));
     } else {
-        factory(root.stringifier, root.assert);
+        factory(root.stringifier, root.typeName, root.assert);
     }
 }(this, function (
     stringifier,
+    typeName,
     assert
 ) {
 
@@ -116,11 +117,6 @@ var stringify = stringifier.stringify,
             expected: 'Person{name:"alice",age:5}',
             pruned:   '#Person#'
         },
-        // 'anonymous constructor': {
-        //     input:    new AnonPerson('bob', 4),
-        //     expected: '@Anonymous{name:"bob",age:4}',
-        //     pruned:   '#@Anonymous#'
-        // },
         'NaN': {
             input:    NaN,
             expected: 'NaN',
@@ -164,6 +160,22 @@ if (typeof JSON !== 'undefined') {
         pruned:   '#JSON#'
     };
 }
+
+var anonymous = new AnonPerson('bob', 4);
+if (typeName(anonymous) === 'AnonPerson') {
+    fixtures['anonymous constructor'] = {
+        input:    anonymous,
+        expected: 'AnonPerson{name:"bob",age:4}',
+        pruned:   '#AnonPerson#'
+    };
+} else {
+    fixtures['anonymous constructor'] = {
+        input:    anonymous,
+        expected: '@Anonymous{name:"bob",age:4}',
+        pruned:   '#@Anonymous#'
+    };
+}
+
 
 describe('stringify', function () {
     var i, testKeys = keys(fixtures);

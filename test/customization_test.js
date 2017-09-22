@@ -28,10 +28,10 @@ describe('strategies', function () {
         this.age = age;
         this.gender = gender;
     };
+    var anonymous = new AnonStudent('mary', 9, 'F');
 
     beforeEach(function () {
         this.student = new Student('tom', 10, 'M');
-        this.anonymous = new AnonStudent('mary', 9, 'F');
         this.longNameStudent = new Student('the_long_name_man', 18, 'M');
     });
 
@@ -87,27 +87,6 @@ describe('strategies', function () {
             }
         };
         assert.equal(stringify(this.student, options), 'Student{name:"tom",age:10,gender:"M"}');
-    });
-
-    it.skip('anonymous constructor object', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(),
-                '': s.object()
-            }
-        };
-        assert.equal(stringify(this.anonymous, options), '@Anonymous{name:"mary",age:9,gender:"F"}');
-    });
-
-    it.skip('anonymous constructor alternate name', function () {
-        var options = {
-            anonymous: 'Anon',
-            handlers: {
-                'Student': s.object(),
-                '': s.object()
-            }
-        };
-        assert.equal(stringify(this.anonymous, options), 'Anon{name:"mary",age:9,gender:"F"}');
     });
 
     it('number and array', function () {
@@ -251,25 +230,47 @@ describe('strategies', function () {
         assert.equal(stringify(this.longNameStudent, options), 'Student{name:"th..(snip),age:18,gender:"M"}');
     });
 
-    it.skip('type detection override', function () {
-        var options = {
-            typeFun: function (val) {
-                if (typeName(val) === '' &&
-                    typeName(val.name) === 'string' &&
-                    typeName(val.age) === 'number' &&
-                    typeName(val.gender) === 'string'
-                   ) {
-                       return 'Student';
-                   } else {
-                       return typeName(val);
-                   }
-            },
-            handlers: {
-                'Student': s.object()
-            }
-        };
-        assert.equal(stringify(this.anonymous, options), 'Student{name:"mary",age:9,gender:"F"}');
-    });
+    if (typeName(anonymous) !== 'AnonStudent') {
+        it('anonymous constructor object', function () {
+            var options = {
+                handlers: {
+                    'Student': s.object(),
+                    '': s.object()
+                }
+            };
+            assert.equal(stringify(anonymous, options), '@Anonymous{name:"mary",age:9,gender:"F"}');
+        });
+        it('anonymous constructor alternate name', function () {
+            var options = {
+                anonymous: 'Anon',
+                handlers: {
+                    'Student': s.object(),
+                    '': s.object()
+                }
+            };
+            assert.equal(stringify(anonymous, options), 'Anon{name:"mary",age:9,gender:"F"}');
+        });
+        it('type detection override', function () {
+            var options = {
+                typeFun: function (val) {
+                    if (typeName(val) === '' &&
+                        typeName(val.name) === 'string' &&
+                        typeName(val.age) === 'number' &&
+                        typeName(val.gender) === 'string'
+                       ) {
+                           return 'Student';
+                       } else {
+                           return typeName(val);
+                       }
+                },
+                handlers: {
+                    'Student': s.object()
+                }
+            };
+            assert.equal(stringify(anonymous, options), 'Student{name:"mary",age:9,gender:"F"}');
+        });
+    }
+
 
 });
 
