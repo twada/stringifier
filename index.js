@@ -12,6 +12,7 @@
 var traverse = require('traverse');
 var typeName = require('type-name');
 var assign = require('core-js/library/fn/object/assign');
+var endsWith = require('core-js/library/fn/string/ends-with');
 var s = require('./strategies');
 
 function defaultHandlers () {
@@ -30,6 +31,7 @@ function defaultHandlers () {
         'Date': s.newLike(),
         'Array': s.array(),
         'Object': s.object(),
+        'Error': s.object(null, ['message', 'code']),
         '@default': s.object()
     };
 }
@@ -77,6 +79,9 @@ function handlerFor (val, options, handlers) {
     var tname = options.typeFun(val);
     if (typeName(handlers[tname]) === 'function') {
         return handlers[tname];
+    }
+    if (endsWith(tname, 'Error')) {
+        return handlers['Error'];
     }
     return handlers['@default'];
 }

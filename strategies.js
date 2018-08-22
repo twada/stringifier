@@ -85,7 +85,7 @@ function allowedKeys (orderedWhiteList) {
             var isIteratingArray = (typeName(x) === 'Array');
             if (!isIteratingArray && typeName(orderedWhiteList) === 'Array') {
                 acc.context.keys = arrayFilter(orderedWhiteList, function (propKey) {
-                    return indexOf(acc.context.keys, propKey) !== -1;
+                    return x.hasOwnProperty(propKey);
                 });
             }
             return next(acc, x);

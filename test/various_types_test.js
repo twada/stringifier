@@ -104,13 +104,18 @@ var stringify = stringifier.stringify,
         },
         'Error object': {
             input:    new Error('error!'),
-            expected: 'Error{}',
+            expected: 'Error{message:"error!"}',
             pruned:   '#Error#'
         },
         'TypeError object': {
             input:    new TypeError('type error!'),
-            expected: 'TypeError{}',
+            expected: 'TypeError{message:"type error!"}',
             pruned:   '#TypeError#'
+        },
+        'RangeError object': {
+            input:    new RangeError('range error!'),
+            expected: 'RangeError{message:"range error!"}',
+            pruned:   '#RangeError#'
         },
         'user-defined constructor': {
             input:    new Person('alice', 5),
