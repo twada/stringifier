@@ -6,7 +6,6 @@ Yet another stringify function.
 [![Build Status][travis-image]][travis-url]
 [![NPM package][npm-image]][npm-url]
 [![Bower package][bower-image]][bower-url]
-[![Dependency Status][depstat-image]][depstat-url]
 [![License][license-image]][license-url]
 
 
@@ -530,9 +529,6 @@ Licensed under the [MIT](https://twada.mit-license.org/2014-2016) license.
 
 [bower-url]: https://badge.fury.io/bo/stringifier
 [bower-image]: https://badge.fury.io/bo/stringifier.svg
-
-[depstat-url]: https://gemnasium.com/twada/stringifier
-[depstat-image]: https://gemnasium.com/twada/stringifier.svg
 
 [license-url]: https://twada.mit-license.org/2014-2016
 [license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
