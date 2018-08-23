@@ -1,3 +1,11 @@
+## [1.4.0](https://github.com/twada/stringifier/releases/tag/v1.4.0) (2018-08-23)
+
+
+#### Features
+
+* prop name whitelist now works with non-enumerable properties like Error's ([fcb518ef](https://github.com/twada/stringifier/commit/fcb518eff7a20a8dba98ff3356eb8edbb30a093a))
+
+
 ## [1.3.0](https://github.com/twada/stringifier/releases/tag/v1.3.0) (2016-05-25)
 
 
