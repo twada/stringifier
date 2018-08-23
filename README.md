@@ -379,6 +379,7 @@ function defaultHandlers () {
         'Date': s.newLike(),
         'Array': s.array(),
         'Object': s.object(),
+        'Error': s.object(null, ['message', 'code']),
         '@default': s.object()
     };
 }
