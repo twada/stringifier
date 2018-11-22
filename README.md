@@ -5,7 +5,6 @@ Yet another stringify function.
 
 [![Build Status][travis-image]][travis-url]
 [![NPM package][npm-image]][npm-url]
-[![Bower package][bower-image]][bower-url]
 [![License][license-image]][license-url]
 
 
@@ -61,29 +60,6 @@ Use
 ```javascript
 var stringify = require('stringifier').stringify;
 console.log(stringify(anyVar));
-```
-
-#### use stringifier npm module on browser
-
-`stringifier` function is exported
-
-    <script type="text/javascript" src="./path/to/node_modules/stringifier/build/stringifier.js"></script>
-
-
-### via bower
-
-Install
-
-    $ bower install --save stringifier
-
-Load (`stringifier` function is exported)
-
-    <script type="text/javascript" src="./path/to/bower_components/stringifier/build/stringifier.js"></script>
-
-Use
-
-```javascript
-console.log(stringifier.stringify(anyVar));
 ```
 
 
@@ -527,9 +503,6 @@ Licensed under the [MIT](https://twada.mit-license.org/2014-2018) license.
 
 [npm-url]: https://npmjs.org/package/stringifier
 [npm-image]: https://badge.fury.io/js/stringifier.svg
-
-[bower-url]: https://badge.fury.io/bo/stringifier
-[bower-image]: https://badge.fury.io/bo/stringifier.svg
 
 [license-url]: https://twada.mit-license.org/2014-2018
 [license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
