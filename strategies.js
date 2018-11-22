@@ -1,12 +1,12 @@
 'use strict';
 
-var typeName = require('type-name');
-var END = {};
-var ITERATE = {};
+const typeName = require('type-name');
+const END = {};
+const ITERATE = {};
 
 // arguments should end with end or iterate
 function compose () {
-    var filters = Array.from(arguments);
+    const filters = Array.from(arguments);
     return filters.reduceRight((right, left) => left(right));
 }
 
@@ -26,17 +26,16 @@ function iterate () {
 function filter (predicate) {
     return (next) => {
         return (acc, x) => {
-            var toBeIterated;
-            var isIteratingArray = (typeName(x) === 'Array');
+            const isIteratingArray = (typeName(x) === 'Array');
             if (typeName(predicate) === 'function') {
-                toBeIterated = [];
+                const toBeIterated = [];
                 acc.context.keys.forEach((key) => {
-                    var indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
-                    var kvp = {
+                    const indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
+                    const kvp = {
                         key: indexOrKey,
                         value: x[key]
                     };
-                    var decision = predicate(kvp);
+                    const decision = predicate(kvp);
                     if (decision) {
                         toBeIterated.push(key);
                     }
@@ -63,7 +62,7 @@ function truncateByKey (size, key, acc) {
 }
 
 function currentPath (key, acc) {
-    var pathToCurrentNode = [''].concat(acc.context.path);
+    const pathToCurrentNode = [''].concat(acc.context.path);
     if (typeName(key) !== 'undefined') {
         pathToCurrentNode.push(key);
     }
@@ -73,7 +72,7 @@ function currentPath (key, acc) {
 function allowedKeys (orderedWhiteList) {
     return (next) => {
         return (acc, x) => {
-            var isIteratingArray = (typeName(x) === 'Array');
+            const isIteratingArray = (typeName(x) === 'Array');
             if (!isIteratingArray && typeName(orderedWhiteList) === 'Array') {
                 acc.context.keys = orderedWhiteList.filter((propKey) => x.hasOwnProperty(propKey));
             }
@@ -91,7 +90,7 @@ function safeKeys () {
                     // For example, on PhantomJS,
                     // accessing HTMLInputElement.selectionEnd causes TypeError
                     try {
-                        var val = x[propKey];
+                        const val = x[propKey];
                         return true;
                     } catch (e) {
                         // skip unsafe key
@@ -108,8 +107,8 @@ function arrayIndicesToKeys () {
     return (next) => {
         return (acc, x) => {
             if (typeName(x) === 'Array' && 0 < x.length) {
-                var indices = Array(x.length);
-                for(var i = 0; i < x.length; i += 1) {
+                const indices = Array(x.length);
+                for(let i = 0; i < x.length; i += 1) {
                     indices[i] = String(i); // traverse uses strings as keys
                 }
                 acc.context.keys = indices;
@@ -122,7 +121,7 @@ function arrayIndicesToKeys () {
 function when (guard, then) {
     return (next) => {
         return (acc, x) => {
-            var kvp = {
+            const kvp = {
                 key: acc.context.key,
                 value: x
             };
@@ -137,19 +136,17 @@ function when (guard, then) {
 function truncate (size) {
     return (next) => {
         return (acc, x) => {
-            var orig = acc.push;
-            var ret;
+            const orig = acc.push;
             acc.push = (str) => {
-                var savings = str.length - size;
-                var truncated;
+                const savings = str.length - size;
                 if (savings <= size) {
                     orig.call(acc, str);
                 } else {
-                    truncated = str.substring(0, size);
+                    const truncated = str.substring(0, size);
                     orig.call(acc, truncated + acc.options.snip);
                 }
             };
-            ret = next(acc, x);
+            const ret = next(acc, x);
             acc.push = orig;
             return ret;
         };
@@ -159,7 +156,7 @@ function truncate (size) {
 function constructorName () {
     return (next) => {
         return (acc, x) => {
-            var name = acc.options.typeFun(x);
+            const name = acc.options.typeFun(x);
             if (name === '') {
                 name = acc.options.anonymous;
             }
@@ -255,7 +252,7 @@ function sanitizeKey (key) {
 function afterAllChildren (context, push, options) {
     if (options.indent && 0 < context.keys.length) {
         push(options.lineSeparator);
-        for(var i = 0; i < context.level; i += 1) { // indent level - 1
+        for(let i = 0; i < context.level; i += 1) { // indent level - 1
             push(options.indent);
         }
     }
@@ -264,7 +261,7 @@ function afterAllChildren (context, push, options) {
 function beforeEachChild (context, push, options) {
     if (options.indent) {
         push(options.lineSeparator);
-        for(var i = 0; i <= context.level; i += 1) {
+        for(let i = 0; i <= context.level; i += 1) {
             push(options.indent);
         }
     }
@@ -296,29 +293,29 @@ function maxDepth (kvp, acc) {
     return (acc.options.maxDepth && acc.options.maxDepth <= acc.context.level);
 }
 
-var prune = compose(
+const prune = compose(
     always('#'),
     constructorName(),
     always('#'),
     end()
 );
-var omitNaN = when(nan, compose(
+const omitNaN = when(nan, compose(
     always('NaN'),
     end()
 ));
-var omitPositiveInfinity = when(positiveInfinity, compose(
+const omitPositiveInfinity = when(positiveInfinity, compose(
     always('Infinity'),
     end()
 ));
-var omitNegativeInfinity = when(negativeInfinity, compose(
+const omitNegativeInfinity = when(negativeInfinity, compose(
     always('-Infinity'),
     end()
 ));
-var omitCircular = when(circular, compose(
+const omitCircular = when(circular, compose(
     optionValue('circular'),
     end()
 ));
-var omitMaxDepth = when(maxDepth, prune);
+const omitMaxDepth = when(maxDepth, prune);
 
 module.exports = {
     filters: {
