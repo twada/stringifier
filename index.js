@@ -60,11 +60,11 @@ function createStringifier (customOptions) {
             handlers: handlers,
             push: push
         };
-        if (typeName(customization) === 'function') {
+        if (typeof customization === 'function') {
             handler = customization;
-        } else if (typeName(customization) === 'number') {
+        } else if (typeof customization === 'number') {
             handler = s.flow.compose(s.filters.truncate(customization),handler);
-        } else if (context.parent && typeName(context.parent.node) === 'Array' && !(context.key in context.parent.node)) {
+        } else if (context.parent && Array.isArray(context.parent.node) && !(context.key in context.parent.node)) {
             // sparse arrays
             handler = s.always('');
         }
@@ -75,7 +75,7 @@ function createStringifier (customOptions) {
 
 function handlerFor (val, options, handlers) {
     const tname = options.typeFun(val);
-    if (typeName(handlers[tname]) === 'function') {
+    if (typeof handlers[tname] === 'function') {
         return handlers[tname];
     }
     if (tname.endsWith('Error')) {

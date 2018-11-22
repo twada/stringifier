@@ -1,6 +1,5 @@
 'use strict';
 
-const typeName = require('type-name');
 const END = {};
 const ITERATE = {};
 
@@ -26,8 +25,8 @@ function iterate () {
 function filter (predicate) {
     return (next) => {
         return (acc, x) => {
-            const isIteratingArray = (typeName(x) === 'Array');
-            if (typeName(predicate) === 'function') {
+            const isIteratingArray = Array.isArray(x);
+            if (typeof predicate === 'function') {
                 const toBeIterated = [];
                 acc.context.keys.forEach((key) => {
                     const indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
@@ -39,10 +38,10 @@ function filter (predicate) {
                     if (decision) {
                         toBeIterated.push(key);
                     }
-                    if (typeName(decision) === 'number') {
+                    if (typeof decision === 'number') {
                         truncateByKey(decision, key, acc);
                     }
-                    if (typeName(decision) === 'function') {
+                    if (typeof decision === 'function') {
                         customizeStrategyForKey(decision, key, acc);
                     }
                 });
@@ -63,7 +62,7 @@ function truncateByKey (size, key, acc) {
 
 function currentPath (key, acc) {
     const pathToCurrentNode = [''].concat(acc.context.path);
-    if (typeName(key) !== 'undefined') {
+    if (key !== undefined) {
         pathToCurrentNode.push(key);
     }
     return pathToCurrentNode.join('/');
@@ -72,8 +71,7 @@ function currentPath (key, acc) {
 function allowedKeys (orderedWhiteList) {
     return (next) => {
         return (acc, x) => {
-            const isIteratingArray = (typeName(x) === 'Array');
-            if (!isIteratingArray && typeName(orderedWhiteList) === 'Array') {
+            if (!Array.isArray(x) && Array.isArray(orderedWhiteList)) {
                 acc.context.keys = orderedWhiteList.filter((propKey) => x.hasOwnProperty(propKey));
             }
             return next(acc, x);
@@ -84,7 +82,7 @@ function allowedKeys (orderedWhiteList) {
 function safeKeys () {
     return (next) => {
         return (acc, x) => {
-            if (typeName(x) !== 'Array') {
+            if (!Array.isArray(x)) {
                 acc.context.keys = acc.context.keys.filter((propKey) => {
                     // Error handling for unsafe property access.
                     // For example, on PhantomJS,
@@ -106,7 +104,7 @@ function safeKeys () {
 function arrayIndicesToKeys () {
     return (next) => {
         return (acc, x) => {
-            if (typeName(x) === 'Array' && 0 < x.length) {
+            if (Array.isArray(x) && 0 < x.length) {
                 const indices = Array(x.length);
                 for(let i = 0; i < x.length; i += 1) {
                     indices[i] = String(i); // traverse uses strings as keys
