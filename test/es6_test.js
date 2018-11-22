@@ -3,10 +3,10 @@ const stringifier = require('..');
 const stringify = stringifier.stringify;
 const assert = require('assert');
 
-const FOO = Symbol("FOO");
+const FOO = Symbol('FOO');
 
 describe('ES6 features', () => {
-    it('Symbol', () => {
-        assert.strictEqual(stringify(FOO), 'Symbol(FOO)');
-    });
+  it('Symbol', () => {
+    assert.strictEqual(stringify(FOO), 'Symbol(FOO)');
+  });
 });

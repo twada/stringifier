@@ -13,7 +13,9 @@
     "type-name": "^2.0.1"
   },
   "devDependencies": {
-    "mocha": "^5.0.0"
+    "mocha": "^5.0.0",
+    "semistandard": "^13.0.0",
+    "snazzy": "^8.0.0"
   },
   "files": [
     "CHANGELOG.md",
@@ -34,7 +36,15 @@
   },
   "scripts": {
     "preversion": "npm test",
-    "lint": "jshint index.js strategies.js",
+    "fmt": "semistandard --fix index.js strategies.js test/*.js",
+    "lint": "semistandard --verbose index.js strategies.js test/*.js | snazzy",
     "test": "mocha test"
+  },
+  "semistandard": {
+    "globals": [
+      "describe",
+      "beforeEach",
+      "it"
+    ]
   }
 }

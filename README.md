@@ -5,6 +5,7 @@ Yet another stringify function.
 
 [![Build Status][travis-image]][travis-url]
 [![NPM package][npm-image]][npm-url]
+[![Code Style][style-image]][style-url]
 [![License][license-image]][license-url]
 
 
@@ -503,6 +504,9 @@ Licensed under the [MIT](https://twada.mit-license.org/2014-2018) license.
 
 [npm-url]: https://npmjs.org/package/stringifier
 [npm-image]: https://badge.fury.io/js/stringifier.svg
+
+[style-url]: https://github.com/Flet/semistandard
+[style-image]: https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg
 
 [license-url]: https://twada.mit-license.org/2014-2018
 [license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
