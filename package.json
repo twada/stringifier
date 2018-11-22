@@ -13,7 +13,7 @@
     "type-name": "^2.0.1"
   },
   "devDependencies": {
-    "mocha": "^2.3.3"
+    "mocha": "^5.0.0"
   },
   "files": [
     "CHANGELOG.md",
