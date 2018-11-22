@@ -9,11 +9,9 @@
  */
 'use strict';
 
-var traverse = require('traverse');
-var typeName = require('type-name');
-var assign = require('core-js/library/fn/object/assign');
-var endsWith = require('core-js/library/fn/string/ends-with');
-var s = require('./strategies');
+const traverse = require('traverse');
+const typeName = require('type-name');
+const s = require('./strategies');
 
 function defaultHandlers () {
     return {
@@ -49,14 +47,14 @@ function defaultOptions () {
 }
 
 function createStringifier (customOptions) {
-    var options = assign({}, defaultOptions(), customOptions);
-    var handlers = assign({}, defaultHandlers(), options.handlers);
+    const options = Object.assign({}, defaultOptions(), customOptions);
+    const handlers = Object.assign({}, defaultHandlers(), options.handlers);
     return function stringifyAny (push, x) {
-        var context = this;
-        var handler = handlerFor(context.node, options, handlers);
-        var currentPath = '/' + context.path.join('/');
-        var customization = handlers[currentPath];
-        var acc = {
+        const context = this;
+        let handler = handlerFor(context.node, options, handlers);
+        const currentPath = '/' + context.path.join('/');
+        const customization = handlers[currentPath];
+        const acc = {
             context: context,
             options: options,
             handlers: handlers,
@@ -76,19 +74,19 @@ function createStringifier (customOptions) {
 }
 
 function handlerFor (val, options, handlers) {
-    var tname = options.typeFun(val);
+    const tname = options.typeFun(val);
     if (typeName(handlers[tname]) === 'function') {
         return handlers[tname];
     }
-    if (endsWith(tname, 'Error')) {
+    if (tname.endsWith('Error')) {
         return handlers['Error'];
     }
     return handlers['@default'];
 }
 
 function walk (val, reducer) {
-    var buffer = [];
-    var push = function (str) {
+    const buffer = [];
+    const push = function (str) {
         buffer.push(str);
     };
     traverse(val).reduce(reducer, push);

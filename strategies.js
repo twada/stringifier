@@ -1,25 +1,18 @@
 'use strict';
 
 var typeName = require('type-name');
-var forEach = require('core-js/library/fn/array/for-each');
-var arrayFilter = require('core-js/library/fn/array/filter');
-var reduceRight = require('core-js/library/fn/array/reduce-right');
-var indexOf = require('core-js/library/fn/array/index-of');
-var slice = Array.prototype.slice;
 var END = {};
 var ITERATE = {};
 
 // arguments should end with end or iterate
 function compose () {
-    var filters = slice.apply(arguments);
-    return reduceRight(filters, function(right, left) {
-        return left(right);
-    });
+    var filters = Array.from(arguments);
+    return filters.reduceRight((right, left) => left(right));
 }
 
 // skip children
 function end () {
-    return function (acc, x) {
+    return (acc, x) => {
         acc.context.keys = [];
         return END;
     };
@@ -27,19 +20,17 @@ function end () {
 
 // iterate children
 function iterate () {
-    return function (acc, x) {
-        return ITERATE;
-    };
+    return (acc, x) => ITERATE;
 }
 
 function filter (predicate) {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             var toBeIterated;
             var isIteratingArray = (typeName(x) === 'Array');
             if (typeName(predicate) === 'function') {
                 toBeIterated = [];
-                forEach(acc.context.keys, function (key) {
+                acc.context.keys.forEach((key) => {
                     var indexOrKey = isIteratingArray ? parseInt(key, 10) : key;
                     var kvp = {
                         key: indexOrKey,
@@ -80,13 +71,11 @@ function currentPath (key, acc) {
 }
 
 function allowedKeys (orderedWhiteList) {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             var isIteratingArray = (typeName(x) === 'Array');
             if (!isIteratingArray && typeName(orderedWhiteList) === 'Array') {
-                acc.context.keys = arrayFilter(orderedWhiteList, function (propKey) {
-                    return x.hasOwnProperty(propKey);
-                });
+                acc.context.keys = orderedWhiteList.filter((propKey) => x.hasOwnProperty(propKey));
             }
             return next(acc, x);
         };
@@ -94,10 +83,10 @@ function allowedKeys (orderedWhiteList) {
 }
 
 function safeKeys () {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             if (typeName(x) !== 'Array') {
-                acc.context.keys = arrayFilter(acc.context.keys, function (propKey) {
+                acc.context.keys = acc.context.keys.filter((propKey) => {
                     // Error handling for unsafe property access.
                     // For example, on PhantomJS,
                     // accessing HTMLInputElement.selectionEnd causes TypeError
@@ -116,8 +105,8 @@ function safeKeys () {
 }
 
 function arrayIndicesToKeys () {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             if (typeName(x) === 'Array' && 0 < x.length) {
                 var indices = Array(x.length);
                 for(var i = 0; i < x.length; i += 1) {
@@ -131,8 +120,8 @@ function arrayIndicesToKeys () {
 }
 
 function when (guard, then) {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             var kvp = {
                 key: acc.context.key,
                 value: x
@@ -146,11 +135,11 @@ function when (guard, then) {
 }
 
 function truncate (size) {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             var orig = acc.push;
             var ret;
-            acc.push = function (str) {
+            acc.push = (str) => {
                 var savings = str.length - size;
                 var truncated;
                 if (savings <= size) {
@@ -168,8 +157,8 @@ function truncate (size) {
 }
 
 function constructorName () {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             var name = acc.options.typeFun(x);
             if (name === '') {
                 name = acc.options.anonymous;
@@ -181,8 +170,8 @@ function constructorName () {
 }
 
 function always (str) {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             acc.push(str);
             return next(acc, x);
         };
@@ -190,8 +179,8 @@ function always (str) {
 }
 
 function optionValue (key) {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             acc.push(acc.options[key]);
             return next(acc, x);
         };
@@ -199,8 +188,8 @@ function optionValue (key) {
 }
 
 function json (replacer) {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             acc.push(JSON.stringify(x, replacer));
             return next(acc, x);
         };
@@ -208,8 +197,8 @@ function json (replacer) {
 }
 
 function toStr () {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             acc.push(x.toString());
             return next(acc, x);
         };
@@ -217,8 +206,8 @@ function toStr () {
 }
 
 function decorateArray () {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             acc.context.before(function (node) {
                 acc.push('[');
             });
@@ -238,8 +227,8 @@ function decorateArray () {
 }
 
 function decorateObject () {
-    return function (next) {
-        return function (acc, x) {
+    return (next) => {
+        return (acc, x) => {
             acc.context.before(function (node) {
                 acc.push('{');
             });
@@ -357,19 +346,11 @@ module.exports = {
         END: END,
         ITERATE: ITERATE
     },
-    always: function (str) {
-        return compose(always(str), end());
-    },
-    json: function () {
-        return compose(json(), end());
-    },
-    toStr: function () {
-        return compose(toStr(), end());
-    },
-    prune: function () {
-        return prune;
-    },
-    number: function () {
+    always: (str) => compose(always(str), end()),
+    json: () => compose(json(), end()),
+    toStr: () => compose(toStr(), end()),
+    prune: () => prune,
+    number: () => {
         return compose(
             omitNaN,
             omitPositiveInfinity,
@@ -378,7 +359,7 @@ module.exports = {
             end()
         );
     },
-    newLike: function () {
+    newLike: () => {
         return compose(
             always('new '),
             constructorName(),
@@ -388,7 +369,7 @@ module.exports = {
             end()
         );
     },
-    array: function (predicate) {
+    array: (predicate) => {
         return compose(
             omitCircular,
             omitMaxDepth,
@@ -398,7 +379,7 @@ module.exports = {
             iterate()
         );
     },
-    object: function (predicate, orderedWhiteList) {
+    object: (predicate, orderedWhiteList) => {
         return compose(
             omitCircular,
             omitMaxDepth,

@@ -9,7 +9,6 @@
   },
   "bugs": "https://github.com/twada/stringifier/issues",
   "dependencies": {
-    "core-js": "^2.0.0",
     "traverse": "^0.6.6",
     "type-name": "^2.0.1"
   },

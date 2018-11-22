@@ -1,58 +1,47 @@
-(function (root, factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['stringifier', 'assert'], factory);
-    } else if (typeof exports === 'object') {
-        factory(require('..'), require('assert'));
-    } else {
-        factory(root.stringifier, root.assert);
-    }
-}(this, function (
-    stringifier,
-    assert
-) {
+delete require.cache[require.resolve('..')];
+const stringifier = require('..');
+const assert = require('assert');
+const stringify = stringifier.stringify;
 
-var stringify = stringifier.stringify;
-
-describe('traverse', function () {
-    describe('Array', function () {
-        it('flat', function () {
-            var input = [4, 5, 6];
-            assert.equal(stringify(input), '[4,5,6]');
+describe('traverse', () => {
+    describe('Array', () => {
+        it('flat', () => {
+            const input = [4, 5, 6];
+            assert.strictEqual(stringify(input), '[4,5,6]');
         });
-        it('nested', function () {
-            var input = [4, [5, [6, 7, 8], 9], 10];
-            assert.equal(stringify(input), '[4,[5,[6,7,8],9],10]');
+        it('nested', () => {
+            const input = [4, [5, [6, 7, 8], 9], 10];
+            assert.strictEqual(stringify(input), '[4,[5,[6,7,8],9],10]');
         });
-        describe('sparse arrays', function () {
-            it('empty', function () {
-                var input = Array(3);
-                assert.equal(stringify(input), '[,,]');
+        describe('sparse arrays', () => {
+            it('empty', () => {
+                const input = Array(3);
+                assert.strictEqual(stringify(input), '[,,]');
             });
-            it('values', function () {
-                var input = [];
+            it('values', () => {
+                const input = [];
                 input[2] = 'foo';
                 input[5] = 'bar';
-                assert.equal(stringify(input), '[,,"foo",,,"bar"]');
+                assert.strictEqual(stringify(input), '[,,"foo",,,"bar"]');
             });
-            it('nested', function () {
-                var input = [];
+            it('nested', () => {
+                const input = [];
                 input[1] = 'foo';
                 input[3] = Array(4);
                 input[5] = 'bar';
-                assert.equal(stringify(input), '[,"foo",,[,,,],,"bar"]');
+                assert.strictEqual(stringify(input), '[,"foo",,[,,,],,"bar"]');
             });
         });
     });
 
 
-    describe('Array indentation', function () {
-        it('empty array', function () {
-            var input = [];
-            assert.equal(stringify(input, {indent: '  '}), '[]');
+    describe('Array indentation', () => {
+        it('empty array', () => {
+            const input = [];
+            assert.strictEqual(stringify(input, {indent: '  '}), '[]');
         });
-        it('3 items array', function () {
-            var input = [3, 5, 8],
+        it('3 items array', () => {
+            const input = [3, 5, 8],
                 expected = [
                     '[',
                     '  3,',
@@ -60,10 +49,10 @@ describe('traverse', function () {
                     '  8',
                     ']'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  '}), expected);
+            assert.strictEqual(stringify(input, {indent: '  '}), expected);
         });
-        it('nested array', function () {
-            var input = [4, [5, [6, 7, 8], 9], 10],
+        it('nested array', () => {
+            const input = [4, [5, [6, 7, 8], 9], 10],
                 expected = [
                     '[',
                     '  4,',
@@ -79,10 +68,10 @@ describe('traverse', function () {
                     '  10',
                     ']'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  '}), expected);
+            assert.strictEqual(stringify(input, {indent: '  '}), expected);
         });
-        it('nested empty array', function () {
-            var input = [3, [], 8],
+        it('nested empty array', () => {
+            const input = [3, [], 8],
                 expected = [
                     '[',
                     '  3,',
@@ -90,10 +79,10 @@ describe('traverse', function () {
                     '  8',
                     ']'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  '}), expected);
+            assert.strictEqual(stringify(input, {indent: '  '}), expected);
         });
-        it('nested array with maxDepth option', function () {
-            var input = [3, [4, 5], 8],
+        it('nested array with maxDepth option', () => {
+            const input = [3, [4, 5], 8],
                 expected = [
                     '[',
                     '  3,',
@@ -101,28 +90,28 @@ describe('traverse', function () {
                     '  8',
                     ']'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  ', maxDepth: 1}), expected);
+            assert.strictEqual(stringify(input, {indent: '  ', maxDepth: 1}), expected);
         });
     });
 
 
-    describe('Object indentation', function () {
-        it('empty object', function () {
-            var input = {};
-            assert.equal(stringify(input, {indent: '  '}), 'Object{}');
+    describe('Object indentation', () => {
+        it('empty object', () => {
+            const input = {};
+            assert.strictEqual(stringify(input, {indent: '  '}), 'Object{}');
         });
-        it('two props object', function () {
-            var input = {name: 'bob', age: 3},
+        it('two props object', () => {
+            const input = {name: 'bob', age: 3},
                 expected = [
                     'Object{',
                     '  name: "bob",',
                     '  age: 3',
                     '}'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  '}), expected);
+            assert.strictEqual(stringify(input, {indent: '  '}), expected);
         });
-        it('nested object', function () {
-            var input = {a: 'A', b: {ba: 'BA', bb: 'BB'}, c: 4},
+        it('nested object', () => {
+            const input = {a: 'A', b: {ba: 'BA', bb: 'BB'}, c: 4},
                 expected = [
                     'Object{',
                     '  a: "A",',
@@ -133,10 +122,10 @@ describe('traverse', function () {
                     '  c: 4',
                     '}'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  '}), expected);
+            assert.strictEqual(stringify(input, {indent: '  '}), expected);
         });
-        it('nested empty object', function () {
-            var input = {a: 'A', b: {}, c: 4},
+        it('nested empty object', () => {
+            const input = {a: 'A', b: {}, c: 4},
                 expected = [
                     'Object{',
                     '  a: "A",',
@@ -144,10 +133,10 @@ describe('traverse', function () {
                     '  c: 4',
                     '}'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  '}), expected);
+            assert.strictEqual(stringify(input, {indent: '  '}), expected);
         });
-        it('nested object with maxDepth option', function () {
-            var input = {a: 'A', b: {ba: 'BA', bb: 'BB'}, c: 4},
+        it('nested object with maxDepth option', () => {
+            const input = {a: 'A', b: {ba: 'BA', bb: 'BB'}, c: 4},
                 expected = [
                     'Object{',
                     '  a: "A",',
@@ -155,17 +144,17 @@ describe('traverse', function () {
                     '  c: 4',
                     '}'
                 ].join('\n');
-            assert.equal(stringify(input, {indent: '  ', maxDepth: 1}), expected);
+            assert.strictEqual(stringify(input, {indent: '  ', maxDepth: 1}), expected);
         });
     });
 
 
-    describe('circular references', function () {
-        it('circular object', function () {
-            var circularObj = {};
+    describe('circular references', () => {
+        it('circular object', () => {
+            const circularObj = {};
             circularObj.circularRef = circularObj;
             circularObj.list = [ circularObj, circularObj ];
-            var expected = [
+            const expected = [
                 'Object{',
                 '  circularRef: #@Circular#,',
                 '  list: [',
@@ -174,21 +163,19 @@ describe('traverse', function () {
                 '  ]',
                 '}'
             ].join('\n');
-            assert.equal(stringify(circularObj, {indent: '  '}), expected);
+            assert.strictEqual(stringify(circularObj, {indent: '  '}), expected);
         });
-        it('circular array', function () {
-            var circularArray = [3, 5];
+        it('circular array', () => {
+            const circularArray = [3, 5];
             circularArray.push(circularArray);
-            var expected = [
+            const expected = [
                 '[',
                 '  3,',
                 '  5,',
                 '  #@Circular#',
                 ']'
             ].join('\n');
-            assert.equal(stringify(circularArray, {indent: '  '}), expected);
+            assert.strictEqual(stringify(circularArray, {indent: '  '}), expected);
         });
     });
 });
-
-}));

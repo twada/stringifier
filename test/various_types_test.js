@@ -1,32 +1,20 @@
-(function (root, factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['stringifier', 'type-name', 'assert'], factory);
-    } else if (typeof exports === 'object') {
-        factory(require('..'), require('type-name'), require('assert'));
-    } else {
-        factory(root.stringifier, root.typeName, root.assert);
-    }
-}(this, function (
-    stringifier,
-    typeName,
-    assert
-) {
+delete require.cache[require.resolve('..')];
+const stringifier = require('..');
+const assert = require('assert');
+const typeName = require('type-name');
+const stringify = stringifier.stringify;
 
 function Person(name, age) {
     this.name = name;
     this.age = age;
 }
 
-var AnonPerson = function(name, age) {
+const AnonPerson = function(name, age) {
     this.name = name;
     this.age = age;
 };
 
-var stringify = stringifier.stringify,
-    keys = Object.keys,
-    isPhantom = typeof window !== 'undefined' && typeof window.callPhantom === 'function',
-    fixtures = {
+const fixtures = {
         'string literal':  {
             input:    'foo',
             expected: '"foo"',
@@ -166,7 +154,7 @@ if (typeof JSON !== 'undefined') {
     };
 }
 
-var anonymous = new AnonPerson('bob', 4);
+const anonymous = new AnonPerson('bob', 4);
 if (typeName(anonymous) === 'AnonPerson') {
     fixtures['anonymous constructor'] = {
         input:    anonymous,
@@ -182,53 +170,47 @@ if (typeName(anonymous) === 'AnonPerson') {
 }
 
 
-describe('stringify', function () {
-    var i, testKeys = keys(fixtures);
-    for(i = 0; i < testKeys.length; i += 1) {
-        (function(){
-            var testTarget = testKeys[i],
-                sut = fixtures[testTarget],
-                input = sut.input;
+describe('stringify', () => {
+    Object.keys(fixtures).forEach((testTarget) => {
+        const sut = fixtures[testTarget];
+        const input = sut.input;
 
-            describe('without maxDepth option', function () {
-                it('single ' + testTarget, function () {
-                    assert.equal(stringify(input), sut.expected);
-                });
-                it('Array containing ' + testTarget, function () {
-                    var ary = [];
-                    ary.push(input);
-                    assert.equal(stringify(ary), '[' + sut.expected + ']');
-                });
-                it('Object containing ' + testTarget, function () {
-                    var obj = {};
-                    obj.val = input;
-                    assert.equal(stringify(obj), 'Object{val:' + sut.expected + '}');
-                });
+        describe('without maxDepth option', () => {
+            it('single ' + testTarget, () => {
+                assert.strictEqual(stringify(input), sut.expected);
             });
+            it('Array containing ' + testTarget, () => {
+                const ary = [];
+                ary.push(input);
+                assert.strictEqual(stringify(ary), '[' + sut.expected + ']');
+            });
+            it('Object containing ' + testTarget, () => {
+                const obj = {};
+                obj.val = input;
+                assert.strictEqual(stringify(obj), 'Object{val:' + sut.expected + '}');
+            });
+        });
 
-            describe('with maxDepth = 1', function () {
-                it('single ' + testTarget, function () {
-                    assert.equal(stringify(input, {maxDepth: 1}), sut.expected);
-                });
-                it('Array containing ' + testTarget, function () {
-                    var ary = [];
-                    ary.push(input);
-                    assert.equal(stringify(ary, {maxDepth: 1}), '[' + sut.pruned + ']');
-                });
-                it('Object containing ' + testTarget, function () {
-                    var obj = {};
-                    obj.val = input;
-                    assert.equal(stringify(obj, {maxDepth: 1}), 'Object{val:' + sut.pruned + '}');
-                });
+        describe('with maxDepth = 1', () => {
+            it('single ' + testTarget, () => {
+                assert.strictEqual(stringify(input, {maxDepth: 1}), sut.expected);
             });
+            it('Array containing ' + testTarget, () => {
+                const ary = [];
+                ary.push(input);
+                assert.strictEqual(stringify(ary, {maxDepth: 1}), '[' + sut.pruned + ']');
+            });
+            it('Object containing ' + testTarget, () => {
+                const obj = {};
+                obj.val = input;
+                assert.strictEqual(stringify(obj, {maxDepth: 1}), 'Object{val:' + sut.pruned + '}');
+            });
+        });
 
-            it('non-regular prop name' + testTarget, function () {
-                var obj = {};
-                obj['^pr"op-na:me'] = input;
-                assert.equal(stringify(obj, {maxDepth: 1}), 'Object{"^pr\\"op-na:me":' + sut.pruned + '}');
-            });
-        })();
-    }
+        it('non-regular prop name' + testTarget, () => {
+            const obj = {};
+            obj['^pr"op-na:me'] = input;
+            assert.strictEqual(stringify(obj, {maxDepth: 1}), 'Object{"^pr\\"op-na:me":' + sut.pruned + '}');
+        });
+    });
 });
-
-}));
