@@ -1,3 +1,16 @@
+## [2.0.0](https://github.com/twada/stringifier/releases/tag/v2.0.0) (2018-11-23)
+
+
+#### Breaking Changes
+
+* [stringifier2](https://github.com/twada/stringifier/pull/9)
+
+  * modernize codebase, stop using ponyfills and core-js
+  * We drop support of ancient (= before ES6) environments. Please use polyfills by your own.
+  * We stopped providing prebuilt bundle for browsers. Please build your own by your bundler.
+  * We also dropped bower and component support. Please use npm instead.
+
+
 ## [1.4.0](https://github.com/twada/stringifier/releases/tag/v1.4.0) (2018-08-23)
 
 
