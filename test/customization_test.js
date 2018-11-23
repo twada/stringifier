@@ -1,277 +1,263 @@
-(function (root, factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['stringifier', 'type-name', 'assert'], factory);
-    } else if (typeof exports === 'object') {
-        factory(require('..'), require('type-name'), require('assert'));
-    } else {
-        factory(root.stringifier, root.typeName, root.assert);
-    }
-}(this, function (
-    stringifier,
-    typeName,
-    assert
-) {
+delete require.cache[require.resolve('..')];
+const stringifier = require('..');
+const assert = require('assert');
+const typeName = require('type-name');
+const stringify = stringifier.stringify;
+const s = stringifier.strategies;
 
-var stringify = stringifier.stringify,
-    s = stringifier.strategies;
+describe('strategies', () => {
+  function Student (name, age, gender) {
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+  }
 
-describe('strategies', function () {
-    function Student (name, age, gender) {
-        this.name = name;
-        this.age = age;
-        this.gender = gender;
-    }
+  var AnonStudent = function (name, age, gender) {
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+  };
+  var anonymous = new AnonStudent('mary', 9, 'F');
 
-    var AnonStudent = function(name, age, gender) {
-        this.name = name;
-        this.age = age;
-        this.gender = gender;
+  let student, longNameStudent;
+  beforeEach(() => {
+    student = new Student('tom', 10, 'M');
+    longNameStudent = new Student('the_long_name_man', 18, 'M');
+  });
+
+  it('always', () => {
+    var options = {
+      handlers: {
+        'Student': s.always('BOOM')
+      }
     };
-    var anonymous = new AnonStudent('mary', 9, 'F');
+    assert.strictEqual(stringify(student, options), 'BOOM');
+  });
 
-    beforeEach(function () {
-        this.student = new Student('tom', 10, 'M');
-        this.longNameStudent = new Student('the_long_name_man', 18, 'M');
+  it('prune', () => {
+    var options = {
+      handlers: {
+        'Student': s.prune()
+      }
+    };
+    assert.strictEqual(stringify(student, options), '#Student#');
+  });
+
+  it('json', () => {
+    var options = {
+      handlers: {
+        'Student': s.json()
+      }
+    };
+    assert.strictEqual(stringify(student, options), '{"name":"tom","age":10,"gender":"M"}');
+  });
+
+  it('toStr', () => {
+    var options = {
+      handlers: {
+        'Student': s.toStr()
+      }
+    };
+    assert.strictEqual(stringify(student, options), '[object Object]');
+  });
+
+  it('newLike', () => {
+    var options = {
+      handlers: {
+        'Student': s.newLike()
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'new Student({"name":"tom","age":10,"gender":"M"})');
+  });
+
+  it('object', () => {
+    var options = {
+      handlers: {
+        'Student': s.object()
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{name:"tom",age:10,gender:"M"}');
+  });
+
+  it('number and array', () => {
+    var options = {
+      handlers: {
+        'Array': s.array(),
+        'number': s.number()
+      }
+    };
+    assert.strictEqual(stringify([NaN, 0, Infinity, -0, -Infinity], options), '[NaN,0,Infinity,0,-Infinity]');
+  });
+
+  it('whitelist by property name', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          return ['name', 'age'].indexOf(kvp.key) !== -1;
+        })
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{name:"tom",age:10}');
+  });
+
+  it('blacklist by property name', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          return ['age', 'gender'].indexOf(kvp.key) === -1;
+        })
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{name:"tom"}');
+  });
+
+  it('whitelist by property value', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          return typeName(kvp.value) === 'string';
+        })
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{name:"tom",gender:"M"}');
+  });
+
+  it('blacklist by property value', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          return kvp.value !== 'M';
+        })
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{name:"tom",age:10}');
+  });
+
+  it('array filtering by value', () => {
+    var options = {
+      handlers: {
+        'Array': s.array((kvp) => {
+          return /^b.*$/.test(kvp.value);
+        })
+      }
+    };
+    assert.strictEqual(stringify(['foo', 'bar', 'baz'], options), '["bar","baz"]');
+  });
+
+  it('array filtering by index', () => {
+    var options = {
+      handlers: {
+        'Array': s.array((kvp) => {
+          return typeName(kvp.key) === 'number' && kvp.key % 2 === 0;
+        })
+      }
+    };
+    assert.strictEqual(stringify(['foo', 'bar', 'baz'], options), '["foo","baz"]');
+  });
+
+  it('per-property strategy customization', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          if (kvp.key === 'age') {
+            return s.always('*secret*');
+          }
+          return true;
+        })
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{name:"tom",age:*secret*,gender:"M"}');
+  });
+
+  it('property whitelist and reordering', () => {
+    var options = {
+      handlers: {
+        'Student': s.object(null, ['gender', 'age'])
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{gender:"M",age:10}');
+  });
+
+  it('per-property truncate simply', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          if (kvp.key === 'name') {
+            return 3;
+          }
+          return true;
+        })
+      }
+    };
+    assert.strictEqual(stringify(longNameStudent, options), 'Student{name:"th..(snip),age:18,gender:"M"}');
+  });
+
+  it('do not truncate if string length is short enough', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          if (kvp.key === 'name') {
+            return 3;
+          }
+          return true;
+        })
+      }
+    };
+    assert.strictEqual(stringify(student, options), 'Student{name:"tom",age:10,gender:"M"}');
+  });
+
+  it('per-property truncate bare handler', () => {
+    var options = {
+      handlers: {
+        'Student': s.object((kvp) => {
+          if (kvp.key === 'name') {
+            return s.flow.compose(s.filters.truncate(3), s.json());
+          }
+          return true;
+        })
+      }
+    };
+    assert.strictEqual(stringify(longNameStudent, options), 'Student{name:"th..(snip),age:18,gender:"M"}');
+  });
+
+  if (typeName(anonymous) !== 'AnonStudent') {
+    it('anonymous constructor object', () => {
+      var options = {
+        handlers: {
+          'Student': s.object(),
+          '': s.object()
+        }
+      };
+      assert.strictEqual(stringify(anonymous, options), '@Anonymous{name:"mary",age:9,gender:"F"}');
     });
-
-    it('always', function () {
-        var options = {
-            handlers: {
-                'Student': s.always('BOOM')
-            }
-        };
-        assert.equal(stringify(this.student, options), 'BOOM');
+    it('anonymous constructor alternate name', () => {
+      var options = {
+        anonymous: 'Anon',
+        handlers: {
+          'Student': s.object(),
+          '': s.object()
+        }
+      };
+      assert.strictEqual(stringify(anonymous, options), 'Anon{name:"mary",age:9,gender:"F"}');
     });
-
-    it('prune', function () {
-        var options = {
-            handlers: {
-                'Student': s.prune()
-            }
-        };
-        assert.equal(stringify(this.student, options), '#Student#');
-    });
-
-    it('json', function () {
-        var options = {
-            handlers: {
-                'Student': s.json()
-            }
-        };
-        assert.equal(stringify(this.student, options), '{"name":"tom","age":10,"gender":"M"}');
-    });
-
-    it('toStr', function () {
-        var options = {
-            handlers: {
-                'Student': s.toStr()
-            }
-        };
-        assert.equal(stringify(this.student, options), '[object Object]');
-    });
-
-    it('newLike', function () {
-        var options = {
-            handlers: {
-                'Student': s.newLike()
-            }
-        };
-        assert.equal(stringify(this.student, options), 'new Student({"name":"tom","age":10,"gender":"M"})');
-    });
-
-    it('object', function () {
-        var options = {
-            handlers: {
-                'Student': s.object()
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{name:"tom",age:10,gender:"M"}');
-    });
-
-    it('number and array', function () {
-        var options = {
-            handlers: {
-                'Array': s.array(),
-                'number': s.number()
-            }
-        };
-        assert.equal(stringify([NaN, 0, Infinity, -0, -Infinity], options), '[NaN,0,Infinity,0,-Infinity]');
-    });
-
-    it('whitelist by property name', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    return ['name', 'age'].indexOf(kvp.key) !== -1;
-                })
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{name:"tom",age:10}');
-    });
-
-    it('blacklist by property name', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    return ['age', 'gender'].indexOf(kvp.key) === -1;
-                })
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{name:"tom"}');
-    });
-
-    it('whitelist by property value', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    return typeName(kvp.value) === 'string';
-                })
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{name:"tom",gender:"M"}');
-    });
-
-    it('blacklist by property value', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    return kvp.value !== 'M';
-                })
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{name:"tom",age:10}');
-    });
-
-    it('array filtering by value', function () {
-        var options = {
-            handlers: {
-                'Array': s.array(function (kvp) {
-                    return /^b.*$/.test(kvp.value);
-                })
-            }
-        };
-        assert.equal(stringify(['foo', 'bar', 'baz'], options), '["bar","baz"]');
-    });
-
-    it('array filtering by index', function () {
-        var options = {
-            handlers: {
-                'Array': s.array(function (kvp) {
-                    return typeName(kvp.key) === 'number' && kvp.key % 2 === 0;
-                })
-            }
-        };
-        assert.equal(stringify(['foo', 'bar', 'baz'], options), '["foo","baz"]');
-    });
-
-    it('per-property strategy customization', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    if (kvp.key === 'age') {
-                        return s.always('*secret*');
-                    }
-                    return true;
-                })
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{name:"tom",age:*secret*,gender:"M"}');
-    });
-
-    it('property whitelist and reordering', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(null, ['gender', 'age'])
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{gender:"M",age:10}');
-    });
-
-    it('per-property truncate simply', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    if (kvp.key === 'name') {
-                        return 3;
-                    }
-                    return true;
-                })
-            }
-        };
-        assert.equal(stringify(this.longNameStudent, options), 'Student{name:"th..(snip),age:18,gender:"M"}');
-    });
-
-    it('do not truncate if string length is short enough', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    if (kvp.key === 'name') {
-                        return 3;
-                    }
-                    return true;
-                })
-            }
-        };
-        assert.equal(stringify(this.student, options), 'Student{name:"tom",age:10,gender:"M"}');
-    });
-
-    it('per-property truncate bare handler', function () {
-        var options = {
-            handlers: {
-                'Student': s.object(function (kvp) {
-                    if (kvp.key === 'name') {
-                        return s.flow.compose(s.filters.truncate(3), s.json());
-                    }
-                    return true;
-                })
-            }
-        };
-        assert.equal(stringify(this.longNameStudent, options), 'Student{name:"th..(snip),age:18,gender:"M"}');
-    });
-
-    if (typeName(anonymous) !== 'AnonStudent') {
-        it('anonymous constructor object', function () {
-            var options = {
-                handlers: {
-                    'Student': s.object(),
-                    '': s.object()
-                }
-            };
-            assert.equal(stringify(anonymous, options), '@Anonymous{name:"mary",age:9,gender:"F"}');
-        });
-        it('anonymous constructor alternate name', function () {
-            var options = {
-                anonymous: 'Anon',
-                handlers: {
-                    'Student': s.object(),
-                    '': s.object()
-                }
-            };
-            assert.equal(stringify(anonymous, options), 'Anon{name:"mary",age:9,gender:"F"}');
-        });
-        it('type detection override', function () {
-            var options = {
-                typeFun: function (val) {
-                    if (typeName(val) === '' &&
+    it('type detection override', () => {
+      var options = {
+        typeFun: function (val) {
+          if (typeName(val) === '' &&
                         typeName(val.name) === 'string' &&
                         typeName(val.age) === 'number' &&
                         typeName(val.gender) === 'string'
-                       ) {
-                           return 'Student';
-                       } else {
-                           return typeName(val);
-                       }
-                },
-                handlers: {
-                    'Student': s.object()
-                }
-            };
-            assert.equal(stringify(anonymous, options), 'Student{name:"mary",age:9,gender:"F"}');
-        });
-    }
-
-
+          ) {
+            return 'Student';
+          } else {
+            return typeName(val);
+          }
+        },
+        handlers: {
+          'Student': s.object()
+        }
+      };
+      assert.strictEqual(stringify(anonymous, options), 'Student{name:"mary",age:9,gender:"F"}');
+    });
+  }
 });
-
-}));
