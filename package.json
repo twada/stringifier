@@ -42,6 +42,7 @@
   },
   "semistandard": {
     "globals": [
+      "BigInt",
       "describe",
       "beforeEach",
       "it"

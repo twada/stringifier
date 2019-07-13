@@ -21,6 +21,7 @@ function defaultHandlers () {
     'string': s.json(),
     'boolean': s.json(),
     'number': s.number(),
+    'bigint': s.bigint(),
     'symbol': s.toStr(),
     'RegExp': s.toStr(),
     'String': s.newLike(),

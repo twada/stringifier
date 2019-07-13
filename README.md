@@ -348,6 +348,7 @@ function defaultHandlers () {
         'string': s.json(),
         'boolean': s.json(),
         'number': s.number(),
+        'bigint': s.bigint(),
         'symbol': s.toStr(),
         'RegExp': s.toStr(),
         'String': s.newLike(),
@@ -487,6 +488,18 @@ var stringify = stringifier({
 });
 assert(stringify([NaN, 0, Infinity, -0, -Infinity]) === '[NaN,0,Infinity,0,-Infinity]');
 ```
+
+#### bigint
+
+`bigint` strategy stringifies `BigInt` values as literals with a trailing `n`.
+
+```javascript
+var stringify = stringifier({
+    handlers: {
+        'bigint': s.bigint()
+    }
+});
+assert(stringify(BigInt('-100000000000000005')) === '-100000000000000005n');
 
 
 AUTHOR
