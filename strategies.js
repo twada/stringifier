@@ -315,6 +315,15 @@ const omitCircular = when(circular, compose(
 ));
 const omitMaxDepth = when(maxDepth, prune);
 
+function bigint () {
+  return (next) => {
+    return (acc, x) => {
+      acc.push(BigInt(x).toString() + 'n');
+      return next(acc, x);
+    };
+  };
+}
+
 module.exports = {
   filters: {
     always: always,
@@ -354,6 +363,7 @@ module.exports = {
       end()
     );
   },
+  bigint: () => compose(bigint(), end()),
   newLike: () => {
     return compose(
       always('new '),

@@ -146,6 +146,13 @@ const fixtures = {
     pruned: 'undefined'
   }
 };
+if (typeof BigInt !== 'undefined') {
+  fixtures['bigint literal'] = {
+    input: BigInt('-100000000000000005'),
+    expected: '-100000000000000005n',
+    pruned: '-100000000000000005n'
+  };
+}
 if (typeof JSON !== 'undefined') {
   fixtures['JSON'] = {
     input: JSON,
