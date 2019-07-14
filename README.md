@@ -514,7 +514,7 @@ CONTRIBUTORS
 
 LICENSE
 ---------------------------------------
-Licensed under the [MIT](https://twada.mit-license.org/2014-2018) license.
+Licensed under the [MIT](https://twada.mit-license.org/2014-2019) license.
 
 
 [travis-url]: https://travis-ci.org/twada/stringifier
@@ -526,5 +526,5 @@ Licensed under the [MIT](https://twada.mit-license.org/2014-2018) license.
 [style-url]: https://github.com/Flet/semistandard
 [style-image]: https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg
 
-[license-url]: https://twada.mit-license.org/2014-2018
+[license-url]: https://twada.mit-license.org/2014-2019
 [license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
