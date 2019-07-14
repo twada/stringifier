@@ -1,3 +1,11 @@
+## [2.1.0](https://github.com/twada/stringifier/releases/tag/v2.1.0) (2019-07-14)
+
+
+#### Features
+
+* [support BigInt values](https://github.com/twada/stringifier/pull/10) (by [@Zalathar](https://github.com/Zalathar))
+
+
 ## [2.0.0](https://github.com/twada/stringifier/releases/tag/v2.0.0) (2018-11-23)
 
 
