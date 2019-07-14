@@ -500,6 +500,7 @@ var stringify = stringifier({
     }
 });
 assert(stringify(BigInt('-100000000000000005')) === '-100000000000000005n');
+```
 
 
 AUTHOR
