@@ -507,6 +507,11 @@ AUTHOR
 * [Takuto Wada](https://github.com/twada)
 
 
+CONTRIBUTORS
+---------------------------------------
+* [Stuart Cook (Zalathar)](https://github.com/Zalathar)
+
+
 LICENSE
 ---------------------------------------
 Licensed under the [MIT](https://twada.mit-license.org/2014-2018) license.
