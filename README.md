@@ -515,7 +515,7 @@ CONTRIBUTORS
 
 LICENSE
 ---------------------------------------
-Licensed under the [MIT](https://twada.mit-license.org/2014-2019) license.
+Licensed under the [MIT](https://twada.mit-license.org/2014-2024) license.
 
 
 [ci-image]: https://github.com/twada/stringifier/workflows/Node.js%20CI/badge.svg
@@ -527,5 +527,5 @@ Licensed under the [MIT](https://twada.mit-license.org/2014-2019) license.
 [style-url]: https://github.com/Flet/semistandard
 [style-image]: https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg
 
-[license-url]: https://twada.mit-license.org/2014-2019
+[license-url]: https://twada.mit-license.org/2014-2024
 [license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
