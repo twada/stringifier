@@ -53,7 +53,7 @@ function createStringifier (customOptions) {
   return function stringifyAny (push, x) {
     const context = this;
     let handler = handlerFor(context.node, options, handlers);
-    const currentPath = '/' + context.path.join('/');
+    const currentPath = '/' + context.path.map(String).join('/');
     const customization = handlers[currentPath];
     const acc = {
       context: context,

@@ -244,7 +244,11 @@ function decorateObject () {
 }
 
 function sanitizeKey (key) {
-  return /^[A-Za-z_]+$/.test(key) ? key : JSON.stringify(key);
+  if (typeof key === 'symbol') {
+    return key.toString();
+  } else {
+    return /^[A-Za-z_]+$/.test(key) ? key : JSON.stringify(key);
+  }
 }
 
 function afterAllChildren (context, push, options) {
