@@ -54,7 +54,7 @@ function createStringifier (customOptions) {
     return function stringifyAny (push, x) {
         var context = this;
         var handler = handlerFor(context.node, options, handlers);
-        var currentPath = '/' + context.path.join('/');
+        var currentPath = '/' + context.path.map(String).join('/');
         var customization = handlers[currentPath];
         var acc = {
             context: context,

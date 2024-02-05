@@ -85,7 +85,7 @@ function createStringifier (customOptions) {
     return function stringifyAny (push, x) {
         var context = this;
         var handler = handlerFor(context.node, options, handlers);
-        var currentPath = '/' + context.path.join('/');
+        var currentPath = '/' + context.path.map(String).join('/');
         var customization = handlers[currentPath];
         var acc = {
             context: context,
@@ -1435,7 +1435,11 @@ function decorateObject () {
 }
 
 function sanitizeKey (key) {
-    return /^[A-Za-z_]+$/.test(key) ? key : JSON.stringify(key);
+    if (typeof key === 'symbol') {
+        return key.toString();
+    } else {
+        return /^[A-Za-z_]+$/.test(key) ? key : JSON.stringify(key);
+    }
 }
 
 function afterAllChildren (context, push, options) {
