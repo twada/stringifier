@@ -1,3 +1,11 @@
+## [1.4.1](https://github.com/twada/stringifier/releases/tag/v1.4.1) (2024-02-06)
+
+
+#### Bug Fixes
+
+* support symbol as object key ([44e72350](https://github.com/twada/stringifier/commit/44e723505cd0cf02e77a35f1e1385e4d91c786e1))
+
+
 ## [1.4.0](https://github.com/twada/stringifier/releases/tag/v1.4.0) (2018-08-23)
 
 
