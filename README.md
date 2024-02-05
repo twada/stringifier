@@ -3,7 +3,7 @@ stringifier
 
 Yet another stringify function.
 
-[![Build Status][travis-image]][travis-url]
+[![Build Status][ci-image]][ci-url]
 [![NPM package][npm-image]][npm-url]
 [![Code Style][style-image]][style-url]
 [![License][license-image]][license-url]
@@ -518,8 +518,8 @@ LICENSE
 Licensed under the [MIT](https://twada.mit-license.org/2014-2019) license.
 
 
-[travis-url]: https://travis-ci.org/twada/stringifier
-[travis-image]: https://secure.travis-ci.org/twada/stringifier.svg?branch=master
+[ci-image]: https://github.com/twada/stringifier/workflows/Node.js%20CI/badge.svg
+[ci-url]: https://github.com/twada/stringifier/actions?query=workflow%3A%22Node.js+CI%22
 
 [npm-url]: https://npmjs.org/package/stringifier
 [npm-image]: https://badge.fury.io/js/stringifier.svg
