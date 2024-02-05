@@ -19,9 +19,9 @@
     "type-name": "^2.0.1"
   },
   "devDependencies": {
-    "mocha": "^6.0.0",
-    "semistandard": "^13.0.0",
-    "snazzy": "^8.0.0"
+    "mocha": "^10.0.0",
+    "semistandard": "^17.0.0",
+    "snazzy": "^9.0.0"
   },
   "files": [
     "CHANGELOG.md",
