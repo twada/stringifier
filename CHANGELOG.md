@@ -1,3 +1,11 @@
+### [2.1.1](https://github.com/twada/stringifier/releases/tag/v2.1.1) (2024-02-05)
+
+
+#### Bug Fixes
+
+* [fix: Symbol as object key](https://github.com/twada/stringifier/pull/22)
+
+
 ## [2.1.0](https://github.com/twada/stringifier/releases/tag/v2.1.0) (2019-07-14)
 
 
